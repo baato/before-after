@@ -3,6 +3,8 @@ services:
   backend:
     build: app-docker-config/
     container_name: app-docker
+    ports:
+      - 8848:8848
     environment:
       - YEAR=${YEAR}
       - bbox=${bbox}

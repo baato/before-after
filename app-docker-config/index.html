@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After map</title>
+    <title>Before-After Map - _UUID_</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -76,7 +76,7 @@
         function parseStyle(data, tileEpoch) {
             const clonedData = JSON.parse(JSON.stringify(data));
             clonedData.sources.qvez6ula1.tiles = [
-                `http://localhost:5678/${tileEpoch}/{z}/{x}/{y}.pbf`,
+                `http://localhost:5678/${tileEpoch}/_UUID_/{z}/{x}/{y}.pbf`,
             ];
             return clonedData;
         }
