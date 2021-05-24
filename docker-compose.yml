@@ -1,0 +1,27 @@
+version: "3"
+services:
+  backend:
+    build: app-docker-config/
+    container_name: app-docker
+    environment:
+      - YEAR=${YEAR}
+      - bbox=${bbox}
+      - STYLE=${STYLE}
+      - BAATO_ACCESS_TOKEN=${BAATO_ACCESS_TOKEN}
+    env_file:
+      - .env
+    volumes:
+      - appdata:/appdata
+
+  nginx:
+    restart: always
+    container_name: app-nginx
+    build: nginx-docker-config/
+    ports:
+      - 5678:80
+    depends_on:
+      - backend
+    volumes:
+      - appdata:/appdata
+volumes:
+  appdata:
