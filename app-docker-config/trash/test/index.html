@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - _UUID_</title>
+    <title>Before-After Map - mouse</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -89,7 +89,7 @@
     <script>
         function getStyle() {
             fetch(
-                "https://api-staging.baato.io/api/v1/styles/_STYLE_?key=_BAATO_ACCESS_TOKEN_"
+                "https://api-staging.baato.io/api/v1/styles/retro?key=bpk.whkzK2b4MgeI9s7l-Y9izy11aE6j5sQzd-GrkYzMpkKS"
             )
                 .then(function (response) {
                     let json = response.json();
@@ -111,7 +111,7 @@
         function parseStyle(data, tileEpoch) {
             const clonedData = JSON.parse(JSON.stringify(data));
             clonedData.sources.qvez6ula1.tiles = [
-                `http://localhost:5678/${tileEpoch}/_UUID_/{z}/{x}/{y}.pbf`,
+                `http://localhost:5678/${tileEpoch}/mouse/{z}/{x}/{y}.pbf`,
             ];
             return clonedData;
         }
@@ -120,7 +120,7 @@
             const beforeMap = new mapboxgl.Map({
                 container: "before",
                 style: parseStyle(data, "beforetiles"),
-                center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
+                center: [84.517822, 27.747050], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             });
@@ -128,7 +128,7 @@
             const afterMap = new mapboxgl.Map({
                 container: "after",
                 style: parseStyle(data, "aftertiles"),
-                center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
+                center: [84.517822, 27.747050], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             });
 
@@ -140,5 +140,3 @@
         getStyle();
     </script>
 </body>
-
-</html>

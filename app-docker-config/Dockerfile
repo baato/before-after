@@ -15,10 +15,6 @@ RUN make
 RUN make install
 
 RUN apt-get install -y golang
-# COPY beforestyles.json /beforestyles.json
-# COPY afterstyles.json /afterstyles.json
-# COPY retro_template.json /retro_template.json
-# COPY breeze_template.json /breeze_template.json
 
 COPY tilemaker-configs/config.json /
 COPY tilemaker-configs/process.lua /

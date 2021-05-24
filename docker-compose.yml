@@ -10,6 +10,7 @@ services:
       - bbox=${bbox}
       - STYLE=${STYLE}
       - BAATO_ACCESS_TOKEN=${BAATO_ACCESS_TOKEN}
+      - COUNTRY=${COUNTRY}
     env_file:
       - .env
     volumes:

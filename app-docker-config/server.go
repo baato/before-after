@@ -5,8 +5,6 @@ import (
     "net/http"
 	"os/exec"
 	"fmt"
-
-	
 )
 
 type server struct{}
@@ -21,13 +19,13 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		style := r.URL.Query().Get("style")
 		uuid := r.URL.Query().Get("uuid")
 		baato_access_token := r.URL.Query().Get("baato_access_token")
-		cmd := exec.Command("/bin/bash", "/provision.sh", year, bbox, style, baato_access_token, uuid)
+		country := r.URL.Query().Get("country")
+		cmd := exec.Command("/bin/bash", "/provision.sh", year, bbox, style, baato_access_token, uuid, country)
 		stdout, err := cmd.Output()
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
-	
 		// Print the output
 		fmt.Println(string(stdout))
         w.Write([]byte(`{"message": "get called"}`))
