@@ -1,8 +1,9 @@
 <template>
-  <v-dialog v-model="dialog" hide-overlay persistent width="300">
-    <v-card color="#e67e22" dark>
+  <v-dialog v-model="dialog" persistent width="400">
+    <v-card color="#d35400" dark>
       <v-card-text>
-        Provisioning a new instance...
+        Provisioning a new instance for {{ country.toUpperCase() }} with
+        specified bounding box
         <v-progress-linear
           indeterminate
           color="white"
@@ -19,6 +20,9 @@ export default {
     return {
       dialog: true,
     };
+  },
+  props: {
+    country: String,
   },
 };
 </script>
