@@ -11,6 +11,9 @@ type server struct{}
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
+	//Allow CORS here By * or specific origin
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
     switch r.Method {
     case "GET":
         w.WriteHeader(http.StatusOK)
@@ -28,7 +31,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		// Print the output
 		fmt.Println(string(stdout))
-        w.Write([]byte(`{"message": "get called"}`))
+        w.Write([]byte(`{"success": true}`))
     default:
         w.WriteHeader(http.StatusNotFound)
         w.Write([]byte(`{"message": "not found"}`))
