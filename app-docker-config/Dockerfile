@@ -16,6 +16,8 @@ RUN make install
 
 RUN apt-get install -y golang
 
+RUN go get github.com/gorilla/websocket
+
 COPY tilemaker-configs/config.json /
 COPY tilemaker-configs/process.lua /
 
