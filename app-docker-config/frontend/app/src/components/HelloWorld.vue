@@ -4,7 +4,7 @@
       v-if="successfullyProvisioned"
       :instanceName="instance.uuid"
     />
-    <Loader v-if="showLoading" :country="instance.country" />
+    <Loader :showLoading="showLoading" :country="instance.country" />
     <br />
     <v-card elevation="10">
       <v-row>
@@ -21,7 +21,7 @@
                   required
                   @blur="getCountryCodeFromNominatim"
                   append-icon="mdi-eyedropper"
-                  @click:append="called"
+                  @click:append="openBboxFinder"
                   prepend-icon-tooltip="Click here to add a new User Type"
                 ></v-text-field>
               </v-col>
@@ -140,26 +140,26 @@ export default {
       };
       return centerCoordinates;
     },
-    called() {
+    openBboxFinder() {
       window.open("http://bboxfinder.com", "_blank");
     },
     provisionInstanceAPICall() {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
-      axios
-        .get("http://localhost:8848", {
-          params: this.instance,
-          timeout: 1000 * 60 * 10,
-        })
-        .then((res) => {
-          console.log(res);
-          this.showLoading = false;
-          this.successfullyProvisioned = true;
-        })
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        });
+      // axios
+      //   .get("http://localhost:8848", {
+      //     params: this.instance,
+      //     timeout: 1000 * 60 * 10,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //     this.showLoading = false;
+      //     this.successfullyProvisioned = true;
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     // error.response.status Check status code
+      //   });
     },
     submitForm() {
       this.provisionInstanceAPICall();

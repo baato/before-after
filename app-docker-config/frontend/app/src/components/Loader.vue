@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent width="400">
+  <v-dialog v-model="showLoading" persistent width="400">
     <v-card color="#d35400" dark>
       <v-card-text>
         Provisioning a new instance for {{ country.toUpperCase() }} with
@@ -23,6 +23,7 @@ export default {
   },
   props: {
     country: String,
+    showLoading: Boolean,
   },
 };
 </script>
