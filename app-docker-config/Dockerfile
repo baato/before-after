@@ -25,9 +25,11 @@ COPY server.go /
 RUN chmod +x /server.go
 
 COPY start.sh /start.sh
-COPY provision.sh /provision.sh
+
+RUN mkdir -p /provisioning-scripts
+COPY provisioning-scripts/ /provisioning-scripts
 
 RUN chmod +x /start.sh
-RUN chmod +x /provision.sh
+RUN chmod +x /provisioning-scripts/*.sh
 
 ENTRYPOINT ["/start.sh"]

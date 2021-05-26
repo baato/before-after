@@ -23,14 +23,20 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		uuid := r.URL.Query().Get("uuid")
 		baato_access_token := r.URL.Query().Get("baato_access_token")
 		country := r.URL.Query().Get("country")
-		cmd := exec.Command("/bin/bash", "/provision.sh", year, bbox, style, baato_access_token, uuid, country)
-		stdout, err := cmd.Output()
-		if err != nil {
+
+		scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh","/provisioning-scripts/download-data.sh","/provisioning-scripts/generate-extracts.sh","/provisioning-scripts/generate-tiles.sh","/provisioning-scripts/provision.sh"}
+
+		for i, s := range scripts_to_run {
+			cmd := exec.Command("/bin/bash", s , year, bbox, style, baato_access_token, uuid, country)
+			stdout, err := cmd.Output()
+			if err != nil {
 			fmt.Println(err.Error())
-			return
+			}
+			// Print the output
+			fmt.Println(i, s, string(stdout))
 		}
-		// Print the output
-		fmt.Println(string(stdout))
+
+		
         w.Write([]byte(`{"success": true}`))
     default:
         w.WriteHeader(http.StatusNotFound)
