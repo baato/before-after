@@ -12,20 +12,27 @@
 
         <v-col cols="12" sm="8">
           <v-form ref="form" v-model="valid" lazy-validation>
-            <!-- <v-text-field
-              label="Enter country name (eg: Nepal)"
-              v-model="instance.country"
-              :rules="requiredRules"
-              required
-            ></v-text-field> -->
-            <v-text-field
-              label="Enter bbox (eg: 84.715576,26.887167,85.168076,27.250357)"
-              v-model="instance.bbox"
-              :rules="requiredRules"
-              required
-              @blur="getCountryCodeFromNominatim"
-            ></v-text-field>
-            <strong v-if="instance.country"
+            <v-row>
+              <v-col cols="12" sm="10">
+                <v-text-field
+                  label="Enter bbox (eg: 84.715576,26.887167,85.168076,27.250357)"
+                  v-model="instance.bbox"
+                  :rules="requiredRules"
+                  required
+                  @blur="getCountryCodeFromNominatim"
+                ></v-text-field>
+              </v-col>
+              <v-col>
+                <small>
+                  You can find the bbox using
+                  <a target="_blank" href="http://bboxfinder.com"
+                    >this site</a
+                  ></small
+                >
+              </v-col>
+            </v-row>
+
+            <strong class="teal--text" v-if="instance.country"
               >This area is identified to be within
               {{ instance.country.toUpperCase() }}</strong
             >
@@ -118,6 +125,7 @@ export default {
             countryCodes[countrycodeWhereCoordinatesBelong];
         })
         .catch((error) => {
+          this.instance.country = "Invalid bounding box!";
           console.log(error);
         });
     },

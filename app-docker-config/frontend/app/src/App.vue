@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <v-app-bar app color="#2c3e50" dark>
-      Provision a before-after map</v-app-bar
+      <img :src="'logo.png'" style="padding: 5px" />
+      Provision before-after map with ease</v-app-bar
     >
 
     <v-main>

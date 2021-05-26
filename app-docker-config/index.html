@@ -68,9 +68,20 @@
     <link rel="stylesheet"
         href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css"
         type="text/css" />
-    <div id="comparison-container">
+    <div id="comparison-container" style="position: absolute; top: 0; bottom: 0; width: 100%;">
         <div id="before" class="map"></div>
         <div id="after" class="map"></div>
+        <div
+            style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
+            © <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
+                target="_blank">OpenStreetMap contributors</a></div>
+        <div
+            style="z-index: 100; padding: 1px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; left: 0px">
+            <a href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
+                    src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
+                    width="80px"></img></a>
+        </div>
+
     </div>
     <div class="before-label">
         <strong>BEFORE</strong>
