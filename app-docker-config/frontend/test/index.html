@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - mouse</title>
+    <title>Before-After Map - test2</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -83,7 +83,6 @@
         </div>
 
     </div>
-
     <div class="before-label">
         <strong>BEFORE</strong>
         <br />
@@ -122,8 +121,13 @@
 
         function parseStyle(data, tileEpoch) {
             const clonedData = JSON.parse(JSON.stringify(data));
+            clonedData.layers.forEach((layer) => {
+                if (layer['source-layer'] == "building") {
+                    layer.minzoom = 10;
+                }
+            })
             clonedData.sources.qvez6ula1.tiles = [
-                `http://localhost:5678/${tileEpoch}/mouse/{z}/{x}/{y}.pbf`,
+                `http://localhost:5678/${tileEpoch}/test2/{z}/{x}/{y}.pbf`,
             ];
             return clonedData;
         }
@@ -132,7 +136,7 @@
             const beforeMap = new mapboxgl.Map({
                 container: "before",
                 style: parseStyle(data, "beforetiles"),
-                center: [84.517822, 27.747050], // starting position [lng, lat]
+                center: [(91.260681 + 89.425964) / 2, (27.805069 + 26.936762) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             });
@@ -140,7 +144,7 @@
             const afterMap = new mapboxgl.Map({
                 container: "after",
                 style: parseStyle(data, "aftertiles"),
-                center: [84.517822, 27.747050], // starting position [lng, lat]
+                center: [(91.260681 + 89.425964) / 2, (27.805069 + 26.936762) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             });
 

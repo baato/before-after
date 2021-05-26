@@ -13,23 +13,26 @@
         <v-col cols="12" sm="8">
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-row>
-              <v-col cols="12" sm="10">
+              <v-col cols="12" sm="12">
                 <v-text-field
-                  label="Enter bounding box for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
+                  label="Enter bounding box (or select using icon) for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
                   v-model="instance.bbox"
                   :rules="requiredRules"
                   required
                   @blur="getCountryCodeFromNominatim"
+                  append-icon="mdi-eyedropper"
+                  @click:append="called"
+                  prepend-icon-tooltip="Click here to add a new User Type"
                 ></v-text-field>
               </v-col>
-              <v-col>
+              <!-- <v-col>
                 <small>
                   You can find the bbox using
                   <a target="_blank" href="http://bboxfinder.com"
                     >this site</a
                   ></small
                 >
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <strong class="teal--text" v-if="instance.country"
@@ -44,7 +47,7 @@
             ></v-text-field>
             <v-text-field
               label="Enter before-year (eg: 2015)"
-              v-model="instance.year"
+              v-model="instance.beforeYear"
               :rules="requiredRules"
               required
             ></v-text-field>
@@ -94,7 +97,7 @@ export default {
   data: () => ({
     instance: {
       uuid: null,
-      year: 2015,
+      year: null,
       bbox: null,
       style: null,
       country: null,
@@ -137,9 +140,12 @@ export default {
       };
       return centerCoordinates;
     },
+    called() {
+      window.open("http://bboxfinder.com", "_blank");
+    },
     provisionInstanceAPICall() {
       this.showLoading = true;
-      this.instance.year = this.instance.year.toString().split("20")[1];
+      this.instance.year = this.instance.beforeYear.toString().substring(2);
       axios
         .get("http://localhost:8848", {
           params: this.instance,

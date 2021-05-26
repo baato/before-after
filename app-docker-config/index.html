@@ -121,6 +121,11 @@
 
         function parseStyle(data, tileEpoch) {
             const clonedData = JSON.parse(JSON.stringify(data));
+            clonedData.layers.forEach((layer) => {
+                if (layer['source-layer'] == "building") {
+                    layer.minzoom = 10;
+                }
+            })
             clonedData.sources.qvez6ula1.tiles = [
                 `http://localhost:5678/${tileEpoch}/_UUID_/{z}/{x}/{y}.pbf`,
             ];

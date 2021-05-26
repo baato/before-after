@@ -1,3 +1,3 @@
 #!/bin/bash 
-echo "Go server running at port 8848..."
+echo "The platform is available at http://localhost:5678"
 go run /server.go
