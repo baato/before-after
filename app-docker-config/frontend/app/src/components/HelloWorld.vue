@@ -15,7 +15,7 @@
             <v-row>
               <v-col cols="12" sm="10">
                 <v-text-field
-                  label="Enter bbox (eg: 84.715576,26.887167,85.168076,27.250357)"
+                  label="Enter bounding box for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
                   v-model="instance.bbox"
                   :rules="requiredRules"
                   required
@@ -50,7 +50,7 @@
             ></v-text-field>
 
             <v-select
-              label="Select style"
+              label="Select map style"
               :items="styles"
               v-model="instance.style"
               :rules="requiredRules"
