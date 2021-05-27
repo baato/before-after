@@ -2,8 +2,11 @@
   <v-dialog v-model="showLoading" persistent width="400">
     <v-card color="#d35400" dark>
       <v-card-text>
-        Provisioning a new instance for {{ country.toUpperCase() }} with
-        specified bounding box
+        <span v-if="progressMessage">{{ progressMessage }}</span>
+        <span v-if="!progressMessage"
+          >Provisioning a new instance for {{ country.toUpperCase() }} with
+          specified bounding box</span
+        >
         <v-progress-linear
           indeterminate
           color="white"
@@ -24,6 +27,7 @@ export default {
   props: {
     country: String,
     showLoading: Boolean,
+    progressMessage: String,
   },
 };
 </script>

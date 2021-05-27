@@ -4,7 +4,11 @@
       v-if="successfullyProvisioned"
       :instanceName="instance.uuid"
     />
-    <Loader :showLoading="showLoading" :country="instance.country" />
+    <Loader
+      :showLoading="showLoading"
+      :country="instance.country"
+      :progressMessage="provisioningStateMappings[provisioningState]"
+    />
     <br />
     <v-card elevation="10">
       <v-row>
@@ -97,8 +101,9 @@ export default {
   data: () => ({
     instance: {
       uuid: null,
-      year: null,
-      bbox: null,
+      year: 15,
+      beforeYear: 2015,
+      bbox: "89.569130,27.419014,89.710236,27.500658",
       style: null,
       country: null,
       baato_access_token: "bpk.whkzK2b4MgeI9s7l-Y9izy11aE6j5sQzd-GrkYzMpkKS",
@@ -107,10 +112,31 @@ export default {
     showLoading: false,
     successfullyProvisioned: false,
     valid: true,
+    ws: null,
+    provisioningState: null,
     requiredRules: [(v) => !!v || "This field is required"],
+    provisioningStateMappings: {
+      "/provisioning-scripts/prepare-provision.sh": "Preparing provision",
+      "/provisioning-scripts/download-data.sh": "Downloading OSM data",
+      "/provisioning-scripts/generate-extracts.sh":
+        "Generating extracts for the region",
+      "/provisioning-scripts/generate-tiles.sh": "Generating tiles",
+      "/provisioning-scripts/provision.sh": "Finishing up",
+      done: "Done",
+    },
   }),
+  created: function () {
+    this.ws = new WebSocket("ws://localhost:8848/ws");
+    this.ws.addEventListener("message", (e) => {
+      this.provisioningState = e.data;
+      if (this.provisioningState == "done") {
+        this.showLoading = false;
+        this.successfullyProvisioned = true;
+      }
+    });
+  },
   methods: {
-    getCountryCodeFromNominatim() {
+    getCountryCodeFromNominatim(invokeProvisioning) {
       const centerCoordinates = this.getBoundingBoxCenter(this.instance.bbox);
       axios
         .get("http://nominatim.openstreetmap.org/reverse", {
@@ -126,6 +152,7 @@ export default {
             res.data.address.country_code;
           this.instance.country =
             countryCodes[countrycodeWhereCoordinatesBelong];
+          if (invokeProvisioning) this.invokeSocket();
         })
         .catch((error) => {
           this.instance.country = "Invalid bounding box!";
@@ -143,23 +170,41 @@ export default {
     openBboxFinder() {
       window.open("http://bboxfinder.com", "_blank");
     },
+    invokeSocket() {
+      const signalToSendToSocket = {
+        message: "provision",
+        uuid: this.instance.uuid,
+        year: this.instance.year,
+        bbox: this.instance.bbox,
+        style: this.instance.style,
+        country: this.instance.country,
+        baato_access_token: this.instance.baato_access_token,
+      };
+      this.ws.send(JSON.stringify(signalToSendToSocket));
+    },
     provisionInstanceAPICall() {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
-      axios
-        .get("http://localhost:8848/api/v1/instance", {
-          params: this.instance,
-          timeout: 1000 * 60 * 10,
-        })
-        .then((res) => {
-          console.log(res);
-          this.showLoading = false;
-          this.successfullyProvisioned = true;
-        })
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        });
+      if (this.instance.bbox && !this.instance.country) {
+        this.getCountryCodeFromNominatim(true);
+      } else {
+        this.invokeSocket();
+      }
+
+      // axios
+      //   .get("http://localhost:8848/api/v1/instance", {
+      //     params: this.instance,
+      //     timeout: 1000 * 60 * 10,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //     this.showLoading = false;
+      //     this.successfullyProvisioned = true;
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     // error.response.status Check status code
+      //   });
     },
     submitForm() {
       this.provisionInstanceAPICall();
