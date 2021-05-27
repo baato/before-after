@@ -127,6 +127,7 @@ export default {
   }),
   created: function () {
     this.ws = new WebSocket("ws://localhost:8848/ws");
+    console.log(this.ws);
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
       if (this.provisioningState == "done") {
@@ -136,7 +137,7 @@ export default {
     });
   },
   methods: {
-    getCountryCodeFromNominatim(invokeProvisioning) {
+    getCountryCodeFromNominatim() {
       const centerCoordinates = this.getBoundingBoxCenter(this.instance.bbox);
       axios
         .get("http://nominatim.openstreetmap.org/reverse", {
@@ -152,7 +153,6 @@ export default {
             res.data.address.country_code;
           this.instance.country =
             countryCodes[countrycodeWhereCoordinatesBelong];
-          if (invokeProvisioning) this.invokeSocket();
         })
         .catch((error) => {
           this.instance.country = "Invalid bounding box!";
@@ -174,22 +174,20 @@ export default {
       const signalToSendToSocket = {
         message: "provision",
         uuid: this.instance.uuid,
-        year: this.instance.year,
+        year: this.instance.year.toString(),
         bbox: this.instance.bbox,
         style: this.instance.style,
         country: this.instance.country,
         baato_access_token: this.instance.baato_access_token,
       };
+      console.log("signalToSendToSocket", signalToSendToSocket);
       this.ws.send(JSON.stringify(signalToSendToSocket));
     },
     provisionInstanceAPICall() {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
-      if (this.instance.bbox && !this.instance.country) {
-        this.getCountryCodeFromNominatim(true);
-      } else {
-        this.invokeSocket();
-      }
+
+      this.invokeSocket();
 
       // axios
       //   .get("http://localhost:8848/api/v1/instance", {
