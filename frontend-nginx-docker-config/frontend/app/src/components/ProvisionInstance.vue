@@ -10,73 +10,74 @@
       :progressMessage="provisioningStateMappings[provisioningState]"
     />
     <br />
-    <v-row no-gutters>
-      <v-col sm="3" />
-      <v-col sm="6">
-        <v-card elevation="10" class="pa-5">
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field
-              label="Enter name for the before-after instance (eg: Pokhara)"
-              v-model="instance.name"
-              :rules="requiredRules"
-              required
-            ></v-text-field>
-            <v-row>
-              <v-col cols="12" sm="12">
-                <v-text-field
-                  label="Enter bounding box (or select using icon) for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
-                  v-model="instance.bbox"
-                  :rules="requiredRules"
-                  required
-                  @blur="getCountryCodeFromNominatim"
-                  append-icon="mdi-eyedropper"
-                  @click:append="openBboxFinder"
-                ></v-text-field>
-                <div v-if="instance.country">
-                  <strong class="teal--text"
-                    >This area is identified to be within
-                    {{ instance.country.toUpperCase() }}</strong
-                  >
-                  <p />
-                </div>
-              </v-col>
-            </v-row>
+    <v-container fill-height fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" xs="12" lg="8" xl="6">
+          <v-card elevation="10" class="pa-5">
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-text-field
+                label="Enter name for the before-after instance (eg: Pokhara)"
+                v-model="instance.name"
+                :rules="requiredRules"
+                required
+              ></v-text-field>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    label="Enter bounding box (or select using icon) for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
+                    v-model="instance.bbox"
+                    :rules="requiredRules"
+                    required
+                    @blur="getCountryCodeFromNominatim"
+                    append-icon="mdi-eyedropper"
+                    @click:append="openBboxFinder"
+                  ></v-text-field>
+                  <div v-if="instance.country">
+                    <strong class="teal--text"
+                      >This area is identified to be within
+                      {{ instance.country.toUpperCase() }}</strong
+                    >
+                    <p />
+                  </div>
+                </v-col>
+              </v-row>
 
-            <v-text-field
-              label="Enter the earlier year to compare (eg: 2015)"
-              v-model="instance.beforeYear"
-              :rules="requiredRules"
-              required
-            ></v-text-field>
+              <v-text-field
+                label="Enter the earlier year to compare (eg: 2015)"
+                v-model="instance.beforeYear"
+                :rules="requiredRules"
+                required
+              ></v-text-field>
 
-            <v-select
-              label="Select Baato map style"
-              :items="styles"
-              v-model="instance.style"
-              :rules="requiredRules"
-              required
-            ></v-select>
-            <v-text-field
-              label="Enter Baato access token"
-              v-model="instance.baato_access_token"
-              :rules="requiredRules"
-              required
-              append-icon="mdi-cursor-pointer"
-              @click:append="openBaatoSite"
-            ></v-text-field>
+              <v-select
+                label="Select Baato map style"
+                :items="styles"
+                v-model="instance.style"
+                :rules="requiredRules"
+                required
+              ></v-select>
+              <v-text-field
+                label="Enter Baato access token"
+                v-model="instance.baato_access_token"
+                :rules="requiredRules"
+                required
+                append-icon="mdi-cursor-pointer"
+                @click:append="openBaatoSite"
+              ></v-text-field>
 
-            <v-btn
-              :disabled="!valid"
-              color="#bdc3c7"
-              class="mr-4 text-xs-center"
-              @click="validate"
-            >
-              Provision
-            </v-btn>
-          </v-form>
-        </v-card>
-      </v-col>
-    </v-row>
+              <v-btn
+                :disabled="!valid"
+                color="#bdc3c7"
+                class="mr-4 text-xs-center"
+                @click="validate"
+              >
+                Provision
+              </v-btn>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-container>
 </template>
 
@@ -165,6 +166,7 @@ export default {
     invokeSocket() {
       const signalToSendToSocket = {
         message: "provision",
+        name: this.instance.name,
         uuid: this.instance.uuid,
         year: this.instance.year.toString(),
         bbox: this.instance.bbox,
