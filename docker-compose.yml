@@ -11,6 +11,7 @@ services:
       - STYLE=${STYLE}
       - BAATO_ACCESS_TOKEN=${BAATO_ACCESS_TOKEN}
       - COUNTRY=${COUNTRY}
+      - HOST_IP=${HOST_IP}
     env_file:
       - .env
     volumes:

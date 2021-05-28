@@ -9,15 +9,8 @@
         A new instance is successfuly provisioned at
         <a
           target="_blank"
-          :href="
-            'http://' +
-            window.location.hostname +
-            ':5678/provision/' +
-            instanceName
-          "
-          >http://{{ window.location.hostname }}:5678/provision/{{
-            instanceName
-          }}</a
+          :href="'http://' + hostName + ':5678/provision/' + instanceName"
+          >http://{{ hostName }}:5678/provision/{{ instanceName }}</a
         >
       </v-card-text>
 
@@ -37,6 +30,7 @@ export default {
   data() {
     return {
       dialog: true,
+      hostName: window.location.hostname,
     };
   },
   props: {
