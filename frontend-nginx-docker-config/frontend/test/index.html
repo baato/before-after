@@ -47,8 +47,6 @@
             position: absolute;
             top: 50px;
             left: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
         }
@@ -57,10 +55,16 @@
             position: absolute;
             top: 50px;
             right: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
+
+        }
+
+        .name-label {
+            position: absolute;
+            top: 15px;
+            text-align: center;
+            width: 100%;
 
         }
     </style>
@@ -85,17 +89,12 @@
     </div>
     <div class="before-label">
         <strong>BEFORE</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
     </div>
     <div class="after-label">
         <strong>AFTER</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
+    </div>
+    <div class="name-label">
+        <strong>BEFORE AFTER MAP - KATHMANDU</strong>
     </div>
     <script>
         function getStyle() {

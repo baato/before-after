@@ -15,6 +15,12 @@
       <v-col sm="6">
         <v-card elevation="10" class="pa-5">
           <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              label="Enter name for the before-after instance (eg: Pokhara)"
+              v-model="instance.name"
+              :rules="requiredRules"
+              required
+            ></v-text-field>
             <v-row>
               <v-col cols="12" sm="12">
                 <v-text-field
@@ -26,28 +32,25 @@
                   append-icon="mdi-eyedropper"
                   @click:append="openBboxFinder"
                 ></v-text-field>
+                <div v-if="instance.country">
+                  <strong class="teal--text"
+                    >This area is identified to be within
+                    {{ instance.country.toUpperCase() }}</strong
+                  >
+                  <p />
+                </div>
               </v-col>
             </v-row>
 
-            <strong class="teal--text" v-if="instance.country"
-              >This area is identified to be within
-              {{ instance.country.toUpperCase() }}</strong
-            >
             <v-text-field
-              label="Enter name for the instance (eg: Pokhara)"
-              v-model="instance.uuid"
-              :rules="requiredRules"
-              required
-            ></v-text-field>
-            <v-text-field
-              label="Enter before-year (eg: 2015)"
+              label="Enter the earlier year to compare (eg: 2015)"
               v-model="instance.beforeYear"
               :rules="requiredRules"
               required
             ></v-text-field>
 
             <v-select
-              label="Select map style"
+              label="Select Baato map style"
               :items="styles"
               v-model="instance.style"
               :rules="requiredRules"
@@ -83,6 +86,7 @@ import Loader from "./Loader";
 import axios from "axios";
 import countryCodes from "./countryCodes.json";
 import provisioningStates from "./provisioningStates.json";
+import { uuid } from "vue-uuid";
 
 export default {
   name: "HelloWorld",
@@ -93,7 +97,7 @@ export default {
 
   data: () => ({
     instance: {
-      uuid: null,
+      name: null,
       year: 15,
       beforeYear: 2015,
       bbox: "89.569130,27.419014,89.710236,27.500658",
@@ -184,6 +188,8 @@ export default {
     provisionInstanceAPICall() {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
+      this.instance.uuid = uuid.v4();
+      console.log(this.instance.uuid);
       this.enableNavigationPrompt();
       this.invokeSocket();
       // axios

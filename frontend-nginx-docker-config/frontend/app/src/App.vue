@@ -15,7 +15,7 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+      <ProvisionInstance />
     </v-main>
     <v-footer padless>
       <v-col class="text-center" cols="12">
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import ProvisionInstance from "./components/ProvisionInstance";
 
 export default {
   name: "App",
 
   components: {
-    HelloWorld,
+    ProvisionInstance,
   },
 
   data: () => ({

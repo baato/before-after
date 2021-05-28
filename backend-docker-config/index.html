@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - _UUID_</title>
+    <title>Before-After Map - _NAME_</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -47,8 +47,6 @@
             position: absolute;
             top: 50px;
             left: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
         }
@@ -57,10 +55,16 @@
             position: absolute;
             top: 50px;
             right: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
+
+        }
+
+        .name-label {
+            position: absolute;
+            top: 15px;
+            text-align: center;
+            width: 100%;
 
         }
     </style>
@@ -84,18 +88,13 @@
 
     </div>
     <div class="before-label">
-        <strong>BEFORE</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
+        <strong>BEFORE MAP</strong>
     </div>
     <div class="after-label">
-        <strong>AFTER</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
+        <strong>AFTER MAP</strong>
+    </div>
+    <div class="name-label">
+        <strong>BEFORE AFTER MAP - _NAME_</strong>
     </div>
     <script>
         function getStyle() {
