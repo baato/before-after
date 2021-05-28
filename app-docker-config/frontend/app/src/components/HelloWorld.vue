@@ -126,7 +126,7 @@ export default {
     },
   }),
   created: function () {
-    this.ws = new WebSocket("ws://localhost:8848/ws");
+    this.ws = new WebSocket(`ws://${window.location.hostname}:8848/ws`);
     console.log(this.ws);
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
