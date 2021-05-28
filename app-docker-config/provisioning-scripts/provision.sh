@@ -5,6 +5,6 @@ IFS=','
 # Reading the split string into array 
 read -ra arr <<< "$2"
 b_array=arr
-sed -e 's#_CENTERLAT_MAX_#'"${arr[3]}"'#g' -e 's#_CENTERLAT_MIN_#'"${arr[1]}"'#g' -e 's#_CENTERLNG_MAX_#'"${arr[2]}"'#g'  -e 's#_CENTERLNG_MIN_#'"${arr[0]}"'#g' -e 's#_STYLE_#'"${3}"'#g' -e 's#_BAATO_ACCESS_TOKEN_#'"${4}"'#g' -e 's#_UUID_#'"${5}"'#g'  /index.html > /appdata/provision/${5}/index.html
+sed -e 's#_CENTERLAT_MAX_#'"${arr[3]}"'#g' -e 's#_CENTERLAT_MIN_#'"${arr[1]}"'#g' -e 's#_CENTERLNG_MAX_#'"${arr[2]}"'#g'  -e 's#_CENTERLNG_MIN_#'"${arr[0]}"'#g' -e 's#_STYLE_#'"${3}"'#g' -e 's#_BAATO_ACCESS_TOKEN_#'"${4}"'#g' -e 's#_UUID_#'"${5}"'#g' -e 's#_HOSTNAME_#'"143.110.245.175"'#g'  /index.html > /appdata/provision/${5}/index.html
 
 echo "Provision ready!"

@@ -9,8 +9,15 @@
         A new instance is successfuly provisioned at
         <a
           target="_blank"
-          :href="'http://localhost:5678/provision/' + instanceName"
-          >http://localhost:5678/provision/{{ instanceName }}</a
+          :href="
+            'http://' +
+            window.location.hostname +
+            ':5678/provision/' +
+            instanceName
+          "
+          >http://{{ window.location.hostname }}:5678/provision/{{
+            instanceName
+          }}</a
         >
       </v-card-text>
 
