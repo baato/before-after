@@ -3,7 +3,7 @@
     <v-card color="#d35400" dark>
       <v-card-text>
         <span v-if="progressMessage">{{ progressMessage }}</span>
-        <span v-if="!progressMessage"
+        <span v-if="!progressMessage && country"
           >Provisioning a new instance for {{ country.toUpperCase() }} with
           specified bounding box</span
         >

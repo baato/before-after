@@ -25,7 +25,6 @@
                   @blur="getCountryCodeFromNominatim"
                   append-icon="mdi-eyedropper"
                   @click:append="openBboxFinder"
-                  prepend-icon-tooltip="Click here to add a new User Type"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -59,6 +58,8 @@
               v-model="instance.baato_access_token"
               :rules="requiredRules"
               required
+              append-icon="mdi-cursor-pointer"
+              @click:append="openBaatoSite"
             ></v-text-field>
 
             <v-btn
@@ -81,6 +82,7 @@ import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
 import Loader from "./Loader";
 import axios from "axios";
 import countryCodes from "./countryCodes.json";
+import provisioningStates from "./provisioningStates.json";
 
 export default {
   name: "HelloWorld",
@@ -106,19 +108,10 @@ export default {
     ws: null,
     provisioningState: null,
     requiredRules: [(v) => !!v || "This field is required"],
-    provisioningStateMappings: {
-      "/provisioning-scripts/prepare-provision.sh": "Preparing provision",
-      "/provisioning-scripts/download-data.sh": "Downloading OSM data",
-      "/provisioning-scripts/generate-extracts.sh":
-        "Generating extracts for the region",
-      "/provisioning-scripts/generate-tiles.sh": "Generating tiles",
-      "/provisioning-scripts/provision.sh": "Finishing up",
-      done: "Done",
-    },
+    provisioningStateMappings: provisioningStates,
   }),
   created: function () {
     this.ws = new WebSocket(`ws://${window.location.hostname}:8848/ws`);
-
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
       if (this.provisioningState == "done") {
@@ -162,6 +155,9 @@ export default {
     openBboxFinder() {
       window.open("http://bboxfinder.com", "_blank");
     },
+    openBaatoSite() {
+      window.open("https://baato.io", "_blank");
+    },
     invokeSocket() {
       const signalToSendToSocket = {
         message: "provision",
@@ -190,7 +186,6 @@ export default {
       this.instance.year = this.instance.beforeYear.toString().substring(2);
       this.enableNavigationPrompt();
       this.invokeSocket();
-
       // axios
       //   .get("http://localhost:8848/api/v1/instance", {
       //     params: this.instance,

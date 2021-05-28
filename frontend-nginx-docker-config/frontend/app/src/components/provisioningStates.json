@@ -1,0 +1,9 @@
+{
+    "/provisioning-scripts/prepare-provision.sh": "Preparing provision",
+    "/provisioning-scripts/download-data.sh": "Downloading OSM data",
+    "/provisioning-scripts/generate-extracts.sh":
+      "Generating extracts for the region",
+    "/provisioning-scripts/generate-tiles.sh": "Generating tiles",
+    "/provisioning-scripts/provision.sh": "Finishing up",
+    "done": "Done"
+  }
