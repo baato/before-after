@@ -31,7 +31,7 @@
       "simplify_below": 14,
       "simplify_level": 0.0003
     },
-    "building": { "minzoom": 12, "maxzoom": 14 },
+    "building": { "minzoom": 11, "maxzoom": 14 },
 
     "water": { "minzoom": 7, "maxzoom": 14 },
     "water_name": { "minzoom": 7, "maxzoom": 14 },

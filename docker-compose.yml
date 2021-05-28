@@ -1,16 +1,12 @@
 version: "3"
 services:
   backend:
-    build: app-docker-config/
+    build: backend-docker-config/
+    restart: always
     container_name: app-docker
     ports:
       - 8848:8848
     environment:
-      - YEAR=${YEAR}
-      - bbox=${bbox}
-      - STYLE=${STYLE}
-      - BAATO_ACCESS_TOKEN=${BAATO_ACCESS_TOKEN}
-      - COUNTRY=${COUNTRY}
       - HOST_IP=${HOST_IP}
     env_file:
       - .env
@@ -20,7 +16,7 @@ services:
   nginx:
     restart: always
     container_name: app-nginx
-    build: nginx-docker-config/
+    build: frontend-nginx-docker-config/
     ports:
       - 5678:80
     depends_on:

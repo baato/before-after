@@ -123,7 +123,7 @@
             const clonedData = JSON.parse(JSON.stringify(data));
             clonedData.layers.forEach((layer) => {
                 if (layer['source-layer'] == "building") {
-                    layer.minzoom = 12;
+                    layer.minzoom = 11;
                 }
             })
             clonedData.sources.qvez6ula1.tiles = [
