@@ -10,11 +10,10 @@
       :progressMessage="provisioningStateMappings[provisioningState]"
     />
     <br />
-    <v-card elevation="10">
-      <v-row>
-        <v-col cols="12" sm="1" />
-
-        <v-col cols="12" sm="8">
+    <v-row no-gutters>
+      <v-col sm="3" />
+      <v-col sm="6">
+        <v-card elevation="10" class="pa-5">
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-row>
               <v-col cols="12" sm="12">
@@ -71,9 +70,9 @@
               Provision
             </v-btn>
           </v-form>
-        </v-col>
-      </v-row>
-    </v-card>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
