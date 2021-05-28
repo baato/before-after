@@ -29,14 +29,6 @@
                   prepend-icon-tooltip="Click here to add a new User Type"
                 ></v-text-field>
               </v-col>
-              <!-- <v-col>
-                <small>
-                  You can find the bbox using
-                  <a target="_blank" href="http://bboxfinder.com"
-                    >this site</a
-                  ></small
-                >
-              </v-col> -->
             </v-row>
 
             <strong class="teal--text" v-if="instance.country"
@@ -127,12 +119,13 @@ export default {
   }),
   created: function () {
     this.ws = new WebSocket(`ws://${window.location.hostname}:8848/ws`);
-    console.log(this.ws);
+
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
       if (this.provisioningState == "done") {
         this.showLoading = false;
         this.successfullyProvisioned = true;
+        this.disableNavigationPrompt();
       }
     });
   },
@@ -183,10 +176,20 @@ export default {
       console.log("signalToSendToSocket", signalToSendToSocket);
       this.ws.send(JSON.stringify(signalToSendToSocket));
     },
+    enableNavigationPrompt() {
+      // Enable navigation prompt
+      window.onbeforeunload = function () {
+        return true;
+      };
+    },
+    disableNavigationPrompt() {
+      // Remove navigation prompt
+      window.onbeforeunload = null;
+    },
     provisionInstanceAPICall() {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
-
+      this.enableNavigationPrompt();
       this.invokeSocket();
 
       // axios
