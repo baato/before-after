@@ -64,15 +64,11 @@
                 append-icon="mdi-cursor-pointer"
                 @click:append="openBaatoSite"
               ></v-text-field>
-
-              <v-btn
-                :disabled="!valid"
-                color="#bdc3c7"
-                class="mr-4 text-xs-center"
-                @click="validate"
-              >
-                Provision
-              </v-btn>
+              <v-row align="center" justify="space-around">
+                <v-btn :disabled="!valid" color="#bdc3c7" @click="validate">
+                  Provision
+                </v-btn>
+              </v-row>
             </v-form>
           </v-card>
         </v-col>
