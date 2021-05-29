@@ -2,14 +2,12 @@
   <div class="text-center">
     <v-dialog v-model="aboutDialog" width="500">
       <v-card>
-        <v-card-title class="headline grey lighten-2">
-          Before-After map generator
-        </v-card-title>
+        <v-card-title class="headline grey lighten-2"> About </v-card-title>
 
         <v-card-text>
           Creating before-after maps is generally time consuming and also
-          requires some technical knowledge. This platform tries to simply this
-          process a bit.
+          requires some form of technical knowledge. This platform tries to
+          simply this process a bit.
         </v-card-text>
 
         <v-divider></v-divider>

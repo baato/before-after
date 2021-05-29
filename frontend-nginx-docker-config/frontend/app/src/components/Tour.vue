@@ -1,5 +1,5 @@
 <template>
-  <v-tour name="myTour" :steps="steps"></v-tour>
+  <v-tour :options="{ highlight: true }" name="myTour" :steps="steps"></v-tour>
 </template>
 
 <script>

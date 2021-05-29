@@ -11,6 +11,11 @@
     />
     <br />
     <v-container fill-height fluid>
+      <v-row align="center" justify="space-around">
+        <span class="headline font-weight-bold">
+          Before-after map generator
+        </span>
+      </v-row>
       <v-row align="center" justify="center">
         <v-col cols="12" xs="12" lg="8" xl="6">
           <v-card elevation="10" class="pa-5">
@@ -72,9 +77,9 @@
               ></v-select>
               <v-row align="center" justify="space-around">
                 <v-btn
-                  class="v-step-5"
+                  class="v-step-5 white--text"
                   :disabled="!valid"
-                  color="#bdc3c7"
+                  color="#b7a75c"
                   @click="validate"
                 >
                   Provision

@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="500">
     <v-card>
-      <v-card-title class="headline green lighten-2">
+      <v-card-title class="headline grey lighten-2">
         Instance successfully provisioned
       </v-card-title>
 
@@ -18,7 +18,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="dialog = false"> OK </v-btn>
+        <v-btn color="#b7a75c" class="white--text" @click="dialog = false">
+          OK
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
