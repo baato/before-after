@@ -16,6 +16,7 @@
           <v-card elevation="10" class="pa-5">
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
+                class="v-step-0"
                 label="Enter name for the before-after instance (eg: Pokhara before-after map)"
                 v-model="instance.name"
                 :rules="requiredRules"
@@ -24,6 +25,7 @@
               <v-row>
                 <v-col>
                   <v-text-field
+                    class="v-step-1"
                     label="Enter bounding box (or select using icon) for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
                     v-model="instance.bbox"
                     :rules="requiredRules"
@@ -43,6 +45,7 @@
               </v-row>
 
               <v-select
+                class="v-step-2"
                 label="Select the earlier year to compare (eg: 2015)"
                 :items="years"
                 v-model="instance.beforeYear"
@@ -51,6 +54,7 @@
               ></v-select>
 
               <v-text-field
+                class="v-step-3"
                 label="Enter Baato access token (Registration with Baato.io required)"
                 v-model="instance.baato_access_token"
                 :rules="requiredRules"
@@ -59,6 +63,7 @@
                 @click:append="openBaatoSite"
               ></v-text-field>
               <v-select
+                class="v-step-4"
                 label="Select Baato map style (Retro is default)"
                 :items="styles"
                 v-model="instance.style"
@@ -66,7 +71,12 @@
                 required
               ></v-select>
               <v-row align="center" justify="space-around">
-                <v-btn :disabled="!valid" color="#bdc3c7" @click="validate">
+                <v-btn
+                  class="v-step-5"
+                  :disabled="!valid"
+                  color="#bdc3c7"
+                  @click="validate"
+                >
                   Provision
                 </v-btn>
               </v-row>
