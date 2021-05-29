@@ -16,7 +16,7 @@
           <v-card elevation="10" class="pa-5">
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
-                label="Enter name for the before-after instance (eg: Pokhara)"
+                label="Enter name for the before-after instance (eg: Pokhara before-after map)"
                 v-model="instance.name"
                 :rules="requiredRules"
                 required
@@ -42,28 +42,29 @@
                 </v-col>
               </v-row>
 
-              <v-text-field
-                label="Enter the earlier year to compare (eg: 2015)"
+              <v-select
+                label="Select the earlier year to compare (eg: 2015)"
+                :items="years"
                 v-model="instance.beforeYear"
                 :rules="requiredRules"
                 required
-              ></v-text-field>
-
-              <v-select
-                label="Select Baato map style"
-                :items="styles"
-                v-model="instance.style"
-                :rules="requiredRules"
-                required
               ></v-select>
+
               <v-text-field
-                label="Enter Baato access token"
+                label="Enter Baato access token (Registration with Baato.io required)"
                 v-model="instance.baato_access_token"
                 :rules="requiredRules"
                 required
                 append-icon="mdi-cursor-pointer"
                 @click:append="openBaatoSite"
               ></v-text-field>
+              <v-select
+                label="Select Baato map style (Retro is default)"
+                :items="styles"
+                v-model="instance.style"
+                :rules="requiredRules"
+                required
+              ></v-select>
               <v-row align="center" justify="space-around">
                 <v-btn :disabled="!valid" color="#bdc3c7" @click="validate">
                   Provision
@@ -85,8 +86,18 @@ import countryCodes from "./countryCodes.json";
 import provisioningStates from "./provisioningStates.json";
 import { uuid } from "vue-uuid";
 
+function generateYears() {
+  const currentYear = new Date().getFullYear();
+  const yearsSupportedTill = 2015;
+  let years = [];
+  for (let i = currentYear - 1; i >= yearsSupportedTill; i--) {
+    years.push(i);
+  }
+  return years;
+}
+
 export default {
-  name: "HelloWorld",
+  name: "ProvisionInstance",
   components: {
     Loader,
     SuccessfullyProvisioned,
@@ -94,14 +105,9 @@ export default {
 
   data: () => ({
     instance: {
-      name: null,
-      year: 15,
-      beforeYear: 2015,
-      bbox: "89.569130,27.419014,89.710236,27.500658",
-      style: null,
-      country: null,
-      baato_access_token: "bpk.whkzK2b4MgeI9s7l-Y9izy11aE6j5sQzd-GrkYzMpkKS",
+      style: "retro",
     },
+    years: generateYears(),
     styles: ["retro", "breeze"],
     showLoading: false,
     successfullyProvisioned: false,
@@ -187,23 +193,8 @@ export default {
       this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
       this.instance.uuid = uuid.v4();
-      console.log(this.instance.uuid);
       this.enableNavigationPrompt();
       this.invokeSocket();
-      // axios
-      //   .get("http://localhost:8848/api/v1/instance", {
-      //     params: this.instance,
-      //     timeout: 1000 * 60 * 10,
-      //   })
-      //   .then((res) => {
-      //     console.log(res);
-      //     this.showLoading = false;
-      //     this.successfullyProvisioned = true;
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     // error.response.status Check status code
-      //   });
     },
     submitForm() {
       this.provisionInstanceAPICall();
