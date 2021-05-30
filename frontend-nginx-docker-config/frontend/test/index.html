@@ -133,22 +133,29 @@
         }
 
         function initMapView(data) {
+
+            const bounds = [
+                [85.346925, 27.713356],
+                [85.359285, 27.720062]
+            ]
             const beforeMap = new mapboxgl.Map({
                 container: "before",
                 style: parseStyle(data, "beforetiles"),
-                center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
+                // center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
 
-                zoom: 11, // starting zoom
-            });
+                // zoom: 11, // starting zoom
+                maxBounds: bounds
+            }).fitBounds(bounds);
 
 
 
             const afterMap = new mapboxgl.Map({
                 container: "after",
                 style: parseStyle(data, "aftertiles"),
-                center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
-                zoom: 11, // starting zoom
-            });
+                // center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
+                // zoom: 11, // starting zoom
+                maxBounds: bounds
+            }).fitBounds(bounds);
 
             // 85.320339,27.686112,85.378704,27.721524
             // A,B,C,D
@@ -159,12 +166,6 @@
             //     [85.378704, 27.721524]
             // ]);
 
-            afterMap.fitBounds([
-                [85.346925, 27.713356],
-                [85.359285, 27.720062]
-
-
-            ]);
 
             const container = "#comparison-container";
 

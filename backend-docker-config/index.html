@@ -132,29 +132,28 @@
         }
 
         function initMapView(data) {
+            const bounds = [
+                [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
+                [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
+            ];
             const beforeMap = new mapboxgl.Map({
                 container: "before",
                 style: parseStyle(data, "beforetiles"),
-                center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
+                maxBounds: bounds
+                // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
 
-                zoom: 11, // starting zoom
-            }).fitBounds([
-                [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
-                [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
-            ]);
+                // zoom: 11, // starting zoom
+            }).fitBounds(bounds);
 
             const afterMap = new mapboxgl.Map({
                 container: "after",
                 style: parseStyle(data, "aftertiles"),
-                center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
-                zoom: 11, // starting zoom
-            }).fitBounds([
-                [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
-                [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
-            ]);
+                maxBounds: bounds
+                // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
+                // zoom: 11, // starting zoom
+            }).fitBounds(bounds);
 
             const container = "#comparison-container";
-
             const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
         }
 
