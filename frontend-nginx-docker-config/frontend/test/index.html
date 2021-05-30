@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - test2</title>
+    <title>Before-After Map - ghar</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -47,6 +47,8 @@
             position: absolute;
             top: 50px;
             left: 0;
+            width: 200px;
+            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
         }
@@ -55,16 +57,10 @@
             position: absolute;
             top: 50px;
             right: 0;
+            width: 200px;
+            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
-
-        }
-
-        .name-label {
-            position: absolute;
-            top: 15px;
-            text-align: center;
-            width: 100%;
 
         }
     </style>
@@ -89,12 +85,17 @@
     </div>
     <div class="before-label">
         <strong>BEFORE</strong>
+        <br />
+        Building: 10K (Dummy data)
+        <br />
+        Road: x KM
     </div>
     <div class="after-label">
         <strong>AFTER</strong>
-    </div>
-    <div class="name-label">
-        <strong>BEFORE AFTER MAP - KATHMANDU</strong>
+        <br />
+        Building: 10K (Dummy data)
+        <br />
+        Road: x KM
     </div>
     <script>
         function getStyle() {
@@ -122,11 +123,11 @@
             const clonedData = JSON.parse(JSON.stringify(data));
             clonedData.layers.forEach((layer) => {
                 if (layer['source-layer'] == "building") {
-                    layer.minzoom = 10;
+                    layer.minzoom = 11;
                 }
             })
             clonedData.sources.qvez6ula1.tiles = [
-                `http://localhost:5678/${tileEpoch}/test2/{z}/{x}/{y}.pbf`,
+                `http://localhost:5678/${tileEpoch}/ghar/{z}/{x}/{y}.pbf`,
             ];
             return clonedData;
         }
@@ -135,17 +136,35 @@
             const beforeMap = new mapboxgl.Map({
                 container: "before",
                 style: parseStyle(data, "beforetiles"),
-                center: [(91.260681 + 89.425964) / 2, (27.805069 + 26.936762) / 2], // starting position [lng, lat]
+                center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             });
+
+
 
             const afterMap = new mapboxgl.Map({
                 container: "after",
                 style: parseStyle(data, "aftertiles"),
-                center: [(91.260681 + 89.425964) / 2, (27.805069 + 26.936762) / 2], // starting position [lng, lat]
+                center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             });
+
+            // 85.320339,27.686112,85.378704,27.721524
+            // A,B,C,D
+            // 85.346925, 27.713356, 85.359285, 27.720062
+
+            // afterMap.fitBounds([
+            //     [85.320339, 27.686112],
+            //     [85.378704, 27.721524]
+            // ]);
+
+            afterMap.fitBounds([
+                [85.346925, 27.713356],
+                [85.359285, 27.720062]
+
+
+            ]);
 
             const container = "#comparison-container";
 
@@ -155,3 +174,5 @@
         getStyle();
     </script>
 </body>
+
+</html>
