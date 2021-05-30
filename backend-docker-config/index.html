@@ -138,9 +138,7 @@
                 center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
-            });
-
-            beforeMap.fitBounds([
+            }).fitBounds([
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ]);
@@ -150,9 +148,7 @@
                 style: parseStyle(data, "aftertiles"),
                 center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
-            });
-
-            afterMap.fitBounds([
+            }).fitBounds([
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ]);
