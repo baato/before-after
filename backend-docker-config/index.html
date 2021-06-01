@@ -97,40 +97,6 @@
         <strong>BEFORE AFTER MAP - _NAME_</strong>
     </div>
     <script>
-        function getStyle() {
-            fetch(
-                "https://api-staging.baato.io/api/v1/styles/_STYLE_?key=_BAATO_ACCESS_TOKEN_"
-            )
-                .then(function (response) {
-                    let json = response.json();
-                    if (response.status == 200) {
-                        return json;
-                    } else {
-                        throw Error(response.statusText);
-                    }
-                })
-                .then(function (data) {
-                    initMapView(data);
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    alert("Map view could not be loaded");
-                });
-        }
-
-        function parseStyle(data, tileEpoch) {
-            const clonedData = JSON.parse(JSON.stringify(data));
-            clonedData.layers.forEach((layer) => {
-                if (layer['source-layer'] == "building") {
-                    layer.minzoom = 11;
-                }
-            })
-            clonedData.sources.qvez6ula1.tiles = [
-                `http://_HOSTNAME_:5678/${tileEpoch}/_UUID_/{z}/{x}/{y}.pbf`,
-            ];
-            return clonedData;
-        }
-
         function initMapView(data) {
             const bounds = [
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
@@ -138,26 +104,25 @@
             ];
             const beforeMap = new mapboxgl.Map({
                 container: "before",
-                style: parseStyle(data, "beforetiles"),
-                maxBounds: bounds
+                style: "http://_HOSTNAME_:5678/beforestyles/_UUID_/style.json",
+                // maxBounds: bounds,
                 // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
 
-                // zoom: 11, // starting zoom
+                zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
             const afterMap = new mapboxgl.Map({
                 container: "after",
-                style: parseStyle(data, "aftertiles"),
-                maxBounds: bounds
+                style: "http://_HOSTNAME_:5678/afterstyles/_UUID_/style.json",
+                // maxBounds: bounds,
                 // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
-                // zoom: 11, // starting zoom
+                zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
             const container = "#comparison-container";
             const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
         }
-
-        getStyle();
+        initMapView();
     </script>
 </body>
 

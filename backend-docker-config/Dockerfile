@@ -31,6 +31,9 @@ COPY start.sh /start.sh
 RUN mkdir -p /provisioning-scripts
 COPY provisioning-scripts/ /provisioning-scripts
 
+RUN mkdir -p /map-styles
+COPY map-styles/ /map-styles
+
 RUN chmod +x /start.sh
 RUN chmod +x /provisioning-scripts/*.sh
 

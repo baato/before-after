@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - ghar</title>
+    <title>Before-After Map - garima</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -47,8 +47,6 @@
             position: absolute;
             top: 50px;
             left: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
         }
@@ -57,10 +55,16 @@
             position: absolute;
             top: 50px;
             right: 0;
-            width: 200px;
-            height: 100px;
             border: 3px solid #73AD21;
             padding: 5px;
+
+        }
+
+        .name-label {
+            position: absolute;
+            top: 15px;
+            text-align: center;
+            width: 100%;
 
         }
     </style>
@@ -84,95 +88,41 @@
 
     </div>
     <div class="before-label">
-        <strong>BEFORE</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
+        <strong>BEFORE MAP at 2015</strong>
     </div>
     <div class="after-label">
-        <strong>AFTER</strong>
-        <br />
-        Building: 10K (Dummy data)
-        <br />
-        Road: x KM
+        <strong>AFTER MAP at Present</strong>
+    </div>
+    <div class="name-label">
+        <strong>BEFORE AFTER MAP - garima</strong>
     </div>
     <script>
-        function getStyle() {
-            fetch(
-                "https://api-staging.baato.io/api/v1/styles/retro?key=bpk.whkzK2b4MgeI9s7l-Y9izy11aE6j5sQzd-GrkYzMpkKS"
-            )
-                .then(function (response) {
-                    let json = response.json();
-                    if (response.status == 200) {
-                        return json;
-                    } else {
-                        throw Error(response.statusText);
-                    }
-                })
-                .then(function (data) {
-                    initMapView(data);
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    alert("Map view could not be loaded");
-                });
-        }
-
-        function parseStyle(data, tileEpoch) {
-            const clonedData = JSON.parse(JSON.stringify(data));
-            clonedData.layers.forEach((layer) => {
-                if (layer['source-layer'] == "building") {
-                    layer.minzoom = 11;
-                }
-            })
-            clonedData.sources.qvez6ula1.tiles = [
-                `http://localhost:5678/${tileEpoch}/ghar/{z}/{x}/{y}.pbf`,
-            ];
-            return clonedData;
-        }
-
         function initMapView(data) {
-
             const bounds = [
-                [85.346925, 27.713356],
-                [85.359285, 27.720062]
-            ]
+                [89.579773, 27.401032],
+                [89.711609, 27.522887]
+            ];
             const beforeMap = new mapboxgl.Map({
                 container: "before",
-                style: parseStyle(data, "beforetiles"),
-                // center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
+                style: "http://localhost:5678/beforestyles/bbb6a42e-69bf-46ce-9c1f-2cd782bdecd3/style.json",
+                maxBounds: bounds,
+                // center: [(89.711609 + 89.579773) / 2, (27.522887 + 27.401032) / 2], // starting position [lng, lat]
 
-                // zoom: 11, // starting zoom
-                maxBounds: bounds
+                zoom: 11, // starting zoom
             }).fitBounds(bounds);
-
-
 
             const afterMap = new mapboxgl.Map({
                 container: "after",
-                style: parseStyle(data, "aftertiles"),
-                // center: [(85.352869 + 85.350820) / 2, (27.717412 + 27.716225) / 2], // starting position [lng, lat]
-                // zoom: 11, // starting zoom
-                maxBounds: bounds
+                style: "http://localhost:5678/afterstyles/bbb6a42e-69bf-46ce-9c1f-2cd782bdecd3/style.json",
+                maxBounds: bounds,
+                // center: [(89.711609 + 89.579773) / 2, (27.522887 + 27.401032) / 2], // starting position [lng, lat]
+                zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
-            // 85.320339,27.686112,85.378704,27.721524
-            // A,B,C,D
-            // 85.346925, 27.713356, 85.359285, 27.720062
-
-            // afterMap.fitBounds([
-            //     [85.320339, 27.686112],
-            //     [85.378704, 27.721524]
-            // ]);
-
-
             const container = "#comparison-container";
-
             const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
         }
-
-        getStyle();
+        initMapView();
     </script>
 </body>
 

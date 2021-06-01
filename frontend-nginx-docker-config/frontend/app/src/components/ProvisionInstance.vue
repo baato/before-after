@@ -20,6 +20,23 @@
         <v-col cols="12" xs="12" lg="8" xl="6">
           <v-card elevation="10" class="pa-5">
             <v-form ref="form" v-model="valid" lazy-validation>
+              <v-autocomplete
+                v-model="model"
+                :loading="isLoading"
+                :items="items"
+                item-text="name"
+                flat
+                :search-input.sync="search"
+                cache-items
+                hide-no-data
+                hide-details
+                label="Search for a place (eg: Pokhara)"
+                solo-inverted
+                @change="selectPlace()"
+                return-object
+                color="blue-grey lighten-2"
+              ></v-autocomplete>
+
               <v-text-field
                 class="v-step-0"
                 label="Enter name for the before-after instance (eg: Pokhara before-after map)"
@@ -27,7 +44,8 @@
                 :rules="requiredRules"
                 required
               ></v-text-field>
-              <v-row>
+
+              <!-- <v-row>
                 <v-col>
                   <v-text-field
                     class="v-step-1"
@@ -47,7 +65,7 @@
                     <p />
                   </div>
                 </v-col>
-              </v-row>
+              </v-row> -->
 
               <v-select
                 class="v-step-2"
@@ -58,21 +76,13 @@
                 required
               ></v-select>
 
-              <v-text-field
-                class="v-step-3"
-                label="Enter Baato access token (Registration with Baato.io required)"
-                v-model="instance.baato_access_token"
-                :rules="requiredRules"
-                required
-                append-icon="mdi-cursor-pointer"
-                @click:append="openBaatoSite"
-              ></v-text-field>
               <v-select
                 class="v-step-4"
                 label="Select Baato map style (Retro is default)"
                 :items="styles"
                 v-model="instance.style"
                 :rules="requiredRules"
+                @click:append="openBaatoSite"
                 required
               ></v-select>
               <v-row align="center" justify="space-around">
@@ -118,10 +128,21 @@ export default {
     SuccessfullyProvisioned,
   },
 
+  watch: {
+    search(val) {
+      val && val !== this.model && this.querySelections(val);
+    },
+  },
+
   data: () => ({
     instance: {
       style: "retro",
     },
+    entries: [],
+    items: [],
+    isLoading: false,
+    model: null,
+    search: null,
     years: generateYears(),
     styles: ["retro", "breeze"],
     showLoading: false,
@@ -144,6 +165,46 @@ export default {
     });
   },
   methods: {
+    querySelections(query) {
+      this.isLoading = true;
+      const filteringValues = ["state", "city", "district", "county"];
+      axios
+        .get("https://photon.komoot.io/api/", {
+          params: {
+            q: query,
+            limit: 5,
+          },
+          timeout: 1000 * 60 * 10,
+        })
+        .then((res) => {
+          const adminBoundaries = res.data.features
+            .filter((r) => {
+              return (
+                r.properties.extent &&
+                filteringValues.includes(r.properties.type)
+              );
+            })
+            .map((r) => {
+              return {
+                name: `${r.properties.name} (${r.properties.type}) - ${r.properties.country}`,
+                extent: r.properties.extent,
+                countrycode: r.properties.countrycode,
+              };
+            });
+          this.isLoading = false;
+          this.items = adminBoundaries;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          console.log(error);
+        });
+    },
+    selectPlace() {
+      console.log(this.model);
+      this.instance.bbox = this.model.extent.join(",");
+      this.instance.country =
+        countryCodes[this.model.countrycode.toLowerCase()];
+    },
     getCountryCodeFromNominatim() {
       const centerCoordinates = this.getBoundingBoxCenter(this.instance.bbox);
       axios
@@ -189,7 +250,6 @@ export default {
         bbox: this.instance.bbox,
         style: this.instance.style,
         country: this.instance.country,
-        baato_access_token: this.instance.baato_access_token,
       };
       console.log("signalToSendToSocket", signalToSendToSocket);
       this.ws.send(JSON.stringify(signalToSendToSocket));

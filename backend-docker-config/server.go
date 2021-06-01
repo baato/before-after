@@ -11,14 +11,13 @@ import (
 
 // Define our message object
 type Message struct {
-	Message            string `json:"message"`
-	Name               string `json:"name"`
-	Uuid               string `json:"uuid"`
-	Year               string `json:"year"`
-	Bbox               string `json:"bbox"`
-	Style              string `json:"style"`
-	Country            string `json:"country"`
-	Baato_access_token string `json:"baato_access_token"`
+	Message string `json:"message"`
+	Name    string `json:"name"`
+	Uuid    string `json:"uuid"`
+	Year    string `json:"year"`
+	Bbox    string `json:"bbox"`
+	Style   string `json:"style"`
+	Country string `json:"country"`
 }
 
 var clients = make(map[*websocket.Conn]bool) // connected clients
@@ -39,12 +38,12 @@ func NotifyClient(msg string, ws *websocket.Conn) {
 	ws.WriteMessage(websocket.TextMessage, msge)
 }
 
-func provision(year, bbox, style, name, uuid, baato_access_token, country string, ws *websocket.Conn) {
+func provision(year, bbox, style, name, uuid, country string, ws *websocket.Conn) {
 	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
 
 	for i, s := range scripts_to_run {
 		NotifyClient(s, ws)
-		cmd := exec.Command("/bin/bash", s, year, bbox, style, baato_access_token, uuid, country, name)
+		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name)
 		stdout, err := cmd.Output()
 		if err != nil {
 			fmt.Println(err.Error())
@@ -92,7 +91,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		if msg.Message == "provision" {
-			go provision(msg.Year, msg.Bbox, msg.Style, msg.Name, msg.Uuid, msg.Baato_access_token, msg.Country, ws)
+			go provision(msg.Year, msg.Bbox, msg.Style, msg.Name, msg.Uuid, msg.Country, ws)
 		}
 	}
 }
