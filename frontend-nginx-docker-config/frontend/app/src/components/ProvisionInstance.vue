@@ -15,7 +15,7 @@
 
       <v-container fill-height fluid>
         <v-row align="center" justify="center">
-          <v-col style="z-index: 1000" cols="12" xs="12" lg="8" xl="6">
+          <v-col style="z-index: 10" cols="12" xs="12" lg="8" xl="6">
             <v-card elevation="20" class="pa-5">
               <v-form ref="form" v-model="valid" lazy-validation>
                 <v-autocomplete

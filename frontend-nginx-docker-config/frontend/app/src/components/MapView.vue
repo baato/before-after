@@ -15,6 +15,7 @@
 
 <script>
 import mapboxgl from "mapbox-gl";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { bboxPolygon } from "@turf/turf";
 
 export default {
@@ -24,6 +25,7 @@ export default {
       accessToken:
         "pk.eyJ1Ijoic3J2YmgiLCJhIjoiY2l5bWtwb2ZsMDAwbzJ2cXo4cm0zczU2diJ9.YBNdguBp6N0s5bEDi25uCA",
       mapView: null,
+      drawView: null,
     };
   },
   methods: {
@@ -56,6 +58,8 @@ export default {
           "line-dasharray": [2, 1],
         },
       });
+
+      // this.drawView.add(bboxPolygon(extent));
     },
   },
   mounted() {
@@ -66,6 +70,18 @@ export default {
       style: "mapbox://styles/mapbox/streets-v11",
       center: [103.811279, 1.345399],
       zoom: 0,
+    });
+
+    this.drawView = new MapboxDraw({
+      drawing: true,
+      controls: {
+        polygon: true,
+        trash: true,
+      },
+    });
+
+    this.mapView.on("load", () => {
+      this.mapView.addControl(this.drawView, "top-left");
     });
   },
 };
