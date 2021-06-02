@@ -1,51 +1,50 @@
 <template>
-  <v-container>
-    <SuccessfullyProvisioned
-      v-if="successfullyProvisioned"
-      :instanceName="instance.uuid"
-    />
-    <Loader
-      :showLoading="showLoading"
-      :country="instance.country"
-      :progressMessage="provisioningStateMappings[provisioningState]"
-    />
-    <br />
-    <v-container fill-height fluid>
-      <v-row align="center" justify="space-around">
-        <span class="headline font-weight-bold">
-          Before-after map generator
-        </span>
-      </v-row>
-      <v-row align="center" justify="center">
-        <v-col cols="12" xs="12" lg="8" xl="6">
-          <v-card elevation="10" class="pa-5">
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <v-autocomplete
-                v-model="model"
-                :loading="isLoading"
-                :items="items"
-                item-text="name"
-                flat
-                :search-input.sync="search"
-                cache-items
-                hide-no-data
-                hide-details
-                label="Search for a place (eg: Pokhara)"
-                solo-inverted
-                @change="selectPlace()"
-                return-object
-                color="blue-grey lighten-2"
-              ></v-autocomplete>
+  <div>
+    <MapView ref="mapView" />
+    <v-container>
+      <SuccessfullyProvisioned
+        style="z-index: 20000 !important"
+        :instanceName="instance.uuid"
+      />
+      <Loader
+        style="z-index: 1000"
+        :showLoading="true"
+        :country="instance.country"
+        :progressMessage="provisioningStateMappings[provisioningState]"
+      />
+      <br />
 
-              <v-text-field
-                class="v-step-0"
-                label="Enter name for the before-after instance (eg: Pokhara before-after map)"
-                v-model="instance.name"
-                :rules="requiredRules"
-                required
-              ></v-text-field>
+      <v-container fill-height fluid>
+        <v-row align="center" justify="center">
+          <v-col style="z-index: 1000" cols="12" xs="12" lg="8" xl="6">
+            <v-card elevation="20" class="pa-5">
+              <v-form ref="form" v-model="valid" lazy-validation>
+                <v-autocomplete
+                  v-model="model"
+                  :loading="isLoading"
+                  :items="items"
+                  item-text="name"
+                  flat
+                  :search-input.sync="search"
+                  cache-items
+                  hide-no-data
+                  hide-details
+                  label="Search for a place (eg: Pokhara)"
+                  solo-inverted
+                  @change="selectPlace()"
+                  return-object
+                  color="blue-grey lighten-2"
+                ></v-autocomplete>
 
-              <!-- <v-row>
+                <v-text-field
+                  class="v-step-0"
+                  label="Enter name for the before-after instance (eg: Pokhara before-after map)"
+                  v-model="instance.name"
+                  :rules="requiredRules"
+                  required
+                ></v-text-field>
+
+                <!-- <v-row>
                 <v-col>
                   <v-text-field
                     class="v-step-1"
@@ -67,44 +66,46 @@
                 </v-col>
               </v-row> -->
 
-              <v-select
-                class="v-step-2"
-                label="Select the earlier year to compare (eg: 2015)"
-                :items="years"
-                v-model="instance.beforeYear"
-                :rules="requiredRules"
-                required
-              ></v-select>
+                <v-select
+                  class="v-step-2"
+                  label="Select the earlier year to compare (eg: 2015)"
+                  :items="years"
+                  v-model="instance.beforeYear"
+                  :rules="requiredRules"
+                  required
+                ></v-select>
 
-              <v-select
-                class="v-step-4"
-                label="Select Baato map style (Retro is default)"
-                :items="styles"
-                v-model="instance.style"
-                :rules="requiredRules"
-                @click:append="openBaatoSite"
-                required
-              ></v-select>
-              <v-row align="center" justify="space-around">
-                <v-btn
-                  class="v-step-5 white--text"
-                  :disabled="!valid"
-                  color="#b7a75c"
-                  @click="validate"
-                >
-                  Provision
-                </v-btn>
-              </v-row>
-            </v-form>
-          </v-card>
-        </v-col>
-      </v-row>
+                <v-select
+                  class="v-step-4"
+                  label="Select Baato map style (Retro is default)"
+                  :items="styles"
+                  v-model="instance.style"
+                  :rules="requiredRules"
+                  @click:append="openBaatoSite"
+                  required
+                ></v-select>
+                <v-row align="center" justify="space-around">
+                  <v-btn
+                    class="v-step-5 white--text"
+                    :disabled="!valid"
+                    color="#b7a75c"
+                    @click="validate"
+                  >
+                    Provision
+                  </v-btn>
+                </v-row>
+              </v-form>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-container>
-  </v-container>
+  </div>
 </template>
 
 <script>
 import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
+import MapView from "./MapView";
 import Loader from "./Loader";
 import axios from "axios";
 import countryCodes from "./countryCodes.json";
@@ -126,6 +127,7 @@ export default {
   components: {
     Loader,
     SuccessfullyProvisioned,
+    MapView,
   },
 
   watch: {
@@ -167,12 +169,19 @@ export default {
   methods: {
     querySelections(query) {
       this.isLoading = true;
-      const filteringValues = ["state", "city", "district", "county"];
+      const filteringValues = [
+        "state",
+        "city",
+        "district",
+        "county",
+        "suburb",
+        "country",
+      ];
       axios
         .get("https://photon.komoot.io/api/", {
           params: {
             q: query,
-            limit: 5,
+            limit: 15,
           },
           timeout: 1000 * 60 * 10,
         })
@@ -189,6 +198,7 @@ export default {
                 name: `${r.properties.name} (${r.properties.type}) - ${r.properties.country}`,
                 extent: r.properties.extent,
                 countrycode: r.properties.countrycode,
+                geometry: r.geometry,
               };
             });
           this.isLoading = false;
@@ -200,7 +210,7 @@ export default {
         });
     },
     selectPlace() {
-      console.log(this.model);
+      this.$refs.mapView.applySource(this.model.geometry, this.model.extent);
       this.instance.bbox = this.model.extent.join(",");
       this.instance.country =
         countryCodes[this.model.countrycode.toLowerCase()];
