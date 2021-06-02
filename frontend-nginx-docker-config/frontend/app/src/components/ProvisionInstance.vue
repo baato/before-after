@@ -3,12 +3,11 @@
     <MapView ref="mapView" />
     <v-container>
       <SuccessfullyProvisioned
-        style="z-index: 20000 !important"
+        v-if="successfullyProvisioned"
         :instanceName="instance.uuid"
       />
       <Loader
-        style="z-index: 1000"
-        :showLoading="true"
+        :showLoading="showLoading"
         :country="instance.country"
         :progressMessage="provisioningStateMappings[provisioningState]"
       />
