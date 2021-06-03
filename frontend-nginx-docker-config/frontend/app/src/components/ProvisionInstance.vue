@@ -60,7 +60,7 @@
                   <v-btn
                     class="v-step-3 white--text"
                     :disabled="!valid"
-                    color="#b7a75c"
+                    color="#2c3e50"
                     @click="validate"
                   >
                     Provision

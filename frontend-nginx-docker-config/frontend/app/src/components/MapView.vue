@@ -72,7 +72,7 @@ export default {
         if (this.mapView) {
           this.mapView.setStyle(
             newVal == false
-              ? "mapbox://styles/mapbox/streets-v11"
+              ? "mapbox://styles/mapbox/basic-v8"
               : "mapbox://styles/mapbox/dark-v9"
           );
         }
@@ -88,7 +88,7 @@ export default {
       container: "mapContainer",
       style:
         this.theme == false
-          ? "mapbox://styles/mapbox/streets-v11"
+          ? "mapbox://styles/mapbox/basic-v8"
           : "mapbox://styles/mapbox/dark-v9",
       center: [103.811279, 1.345399],
       zoom: 0,
