@@ -22,15 +22,16 @@
       <v-btn class="v-step-5" @click="aboutDialog = true" text
         >About <v-icon right dark> mdi-information-outline </v-icon></v-btn
       >
+      <span> | </span>
+      <v-btn text @click="toggleTour"
+        >How to use <v-icon right dark> mdi-help-circle-outline </v-icon></v-btn
+      >
       <v-col class="text-center">
         <strong
           >Powered by
           <a href="https://baato.io" target="_blank">baato.io</a></strong
         >
       </v-col>
-      <v-btn text @click="toggleTour"
-        >How to use <v-icon right dark> mdi-help-circle-outline </v-icon></v-btn
-      >
     </v-footer>
   </v-app>
 </template>

@@ -14,6 +14,7 @@
     "core-js": "^3.6.5",
     "mapbox-gl": "^2.3.0",
     "vue": "^2.6.11",
+    "vue-fb-customer-chat": "^0.2.0",
     "vue-tour": "^2.0.0",
     "vue-uuid": "^2.0.2",
     "vuetify": "^2.4.0"
