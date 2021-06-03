@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     applySource(geometry, extent) {
-      console.log(geometry);
       this.mapView.flyTo({
         center: geometry.coordinates,
         zoom: 10,
@@ -58,16 +57,39 @@ export default {
       //     "line-dasharray": [2, 1],
       //   },
       // });
-
+      this.drawView.deleteAll().getAll();
       this.drawView.add(bboxPolygon(extent));
     },
   },
+
+  props: {
+    theme: Boolean,
+  },
+
+  watch: {
+    theme: {
+      handler(newVal) {
+        if (this.mapView) {
+          this.mapView.setStyle(
+            newVal == false
+              ? "mapbox://styles/mapbox/streets-v11"
+              : "mapbox://styles/mapbox/dark-v9"
+          );
+        }
+      },
+      immediate: true,
+    },
+  },
+
   mounted() {
     mapboxgl.accessToken = this.accessToken;
 
     this.mapView = new mapboxgl.Map({
       container: "mapContainer",
-      style: "mapbox://styles/mapbox/streets-v11",
+      style:
+        this.theme == false
+          ? "mapbox://styles/mapbox/streets-v11"
+          : "mapbox://styles/mapbox/dark-v9",
       center: [103.811279, 1.345399],
       zoom: 0,
     });

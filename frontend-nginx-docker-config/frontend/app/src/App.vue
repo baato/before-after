@@ -16,7 +16,7 @@
     </v-app-bar>
     <About :aboutDialog="aboutDialog" :closeAboutDialog="closeAboutDialog" />
     <v-main>
-      <ProvisionInstance />
+      <ProvisionInstance :theme="$vuetify.theme.dark" />
     </v-main>
     <v-footer padless>
       <v-btn class="v-step-5" @click="aboutDialog = true" text

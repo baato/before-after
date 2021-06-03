@@ -16,9 +16,6 @@ sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e '
 sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"beforetiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/breeze.json > /appdata/beforestyles/${4}/breeze.json
 sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/breeze.json > /appdata/afterstyles/${4}/breeze.json
 
-sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"beforetiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/dark.json > /appdata/beforestyles/${4}/dark.json
-sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/dark.json > /appdata/afterstyles/${4}/dark.json
-
 sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"beforetiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/monochrome.json > /appdata/beforestyles/${4}/monochrome.json
 sed -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/monochrome.json > /appdata/afterstyles/${4}/monochrome.json
 

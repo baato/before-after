@@ -4,8 +4,7 @@
       <v-card-text>
         <span v-if="progressMessage">{{ progressMessage }}</span>
         <span v-if="!progressMessage && country"
-          >Provisioning a new instance for {{ country.toUpperCase() }} with
-          specified bounding box</span
+          >Provisioning a new instance for the selected place</span
         >
         <v-progress-linear
           indeterminate

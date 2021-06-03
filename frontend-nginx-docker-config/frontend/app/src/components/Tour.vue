@@ -9,7 +9,7 @@ export default {
     return {
       steps: [
         {
-          target: ".v-step-0", // We're using document.querySelector() under the hood
+          target: ".v-step-0",
           header: {
             title: "Search for the place name",
           },
@@ -29,7 +29,7 @@ export default {
           },
         },
         {
-          target: ".v-step-2", // We're using document.querySelector() under the hood
+          target: ".v-step-2",
           header: {
             title: "Select before-year",
           },
@@ -39,7 +39,7 @@ export default {
           },
         },
         {
-          target: ".v-step-3", // We're using document.querySelector() under the hood
+          target: ".v-step-3",
           header: {
             title: "Finally, provision this instance",
           },
@@ -49,7 +49,7 @@ export default {
           },
         },
         {
-          target: ".v-step-4", // We're using document.querySelector() under the hood
+          target: ".v-step-4",
           header: {
             title: "Choose your theme",
           },
@@ -59,7 +59,7 @@ export default {
           },
         },
         {
-          target: ".v-step-5", // We're using document.querySelector() under the hood
+          target: ".v-step-5",
           header: {
             title: "Learn more about this application",
           },

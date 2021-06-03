@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MapView ref="mapView" />
+    <MapView ref="mapView" :theme="theme" />
     <v-container>
       <SuccessfullyProvisioned
         v-if="successfullyProvisioned"
@@ -35,7 +35,10 @@
                   return-object
                   color="blue-grey lighten-2"
                 ></v-autocomplete>
-
+                <small v-if="this.instance.bbox">
+                  <v-icon>mdi-information</v-icon> Selected bounding box:
+                  {{ this.instance.bbox }}
+                </small>
                 <v-text-field
                   class="v-step-1"
                   label="Enter name for this before-after map (eg: Pokhara 2019 vs Present)"
@@ -103,6 +106,10 @@ export default {
     search(val) {
       val && val !== this.model && this.querySelections(val);
     },
+  },
+
+  props: {
+    theme: Boolean,
   },
 
   data: () => ({
