@@ -19,6 +19,7 @@
             <v-card elevation="20" class="pa-5">
               <v-form ref="form" v-model="valid" lazy-validation>
                 <v-autocomplete
+                  class="v-step-0"
                   v-model="model"
                   :loading="isLoading"
                   :items="items"
@@ -28,64 +29,33 @@
                   cache-items
                   hide-no-data
                   hide-details
-                  label="Search for a place (eg: Pokhara)"
+                  label="Search for a place where you want to generate the before-after map (eg: Pokhara)"
                   solo-inverted
-                  @change="selectPlace()"
+                  @change="selectPlace"
                   return-object
                   color="blue-grey lighten-2"
                 ></v-autocomplete>
 
                 <v-text-field
-                  class="v-step-0"
-                  label="Enter name for the before-after instance (eg: Pokhara before-after map)"
+                  class="v-step-1"
+                  label="Enter name for this before-after map (eg: Pokhara 2019 vs Present)"
                   v-model="instance.name"
                   :rules="requiredRules"
                   required
                 ></v-text-field>
 
-                <!-- <v-row>
-                <v-col>
-                  <v-text-field
-                    class="v-step-1"
-                    label="Enter bounding box (or select using icon) for the region (eg: 84.715576,26.887167,85.168076,27.250357)"
-                    v-model="instance.bbox"
-                    :rules="requiredRules"
-                    required
-                    @blur="getCountryCodeFromNominatim"
-                    append-icon="mdi-eyedropper"
-                    @click:append="openBboxFinder"
-                  ></v-text-field>
-                  <div v-if="instance.country">
-                    <strong class="teal--text"
-                      >This area is identified to be within
-                      {{ instance.country.toUpperCase() }}</strong
-                    >
-                    <p />
-                  </div>
-                </v-col>
-              </v-row> -->
-
                 <v-select
                   class="v-step-2"
-                  label="Select the earlier year to compare (eg: 2015)"
+                  label="Select the earlier year to compare with present (eg: 2015)"
                   :items="years"
                   v-model="instance.beforeYear"
                   :rules="requiredRules"
                   required
                 ></v-select>
 
-                <v-select
-                  class="v-step-4"
-                  label="Select Baato map style (Retro is default)"
-                  :items="styles"
-                  v-model="instance.style"
-                  :rules="requiredRules"
-                  @click:append="openBaatoSite"
-                  required
-                ></v-select>
                 <v-row align="center" justify="space-around">
                   <v-btn
-                    class="v-step-5 white--text"
+                    class="v-step-3 white--text"
                     :disabled="!valid"
                     color="#b7a75c"
                     @click="validate"

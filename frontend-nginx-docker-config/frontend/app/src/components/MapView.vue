@@ -41,25 +41,25 @@ export default {
         this.mapView.removeLayer("bbox").removeSource("bbox");
       }
 
-      this.mapView.addSource("bbox", {
-        type: "geojson",
-        data: bboxPolygon(extent),
-      });
+      // this.mapView.addSource("bbox", {
+      //   type: "geojson",
+      //   data: bboxPolygon(extent),
+      // });
 
-      // Add a new layer to visualize the polygon.
-      this.mapView.addLayer({
-        id: "bbox",
-        type: "line",
-        source: "bbox", // reference the data source
-        layout: {},
-        paint: {
-          "line-color": "#000000", // blue color fill
-          "line-width": 2.5,
-          "line-dasharray": [2, 1],
-        },
-      });
+      // // Add a new layer to visualize the polygon.
+      // this.mapView.addLayer({
+      //   id: "bbox",
+      //   type: "line",
+      //   source: "bbox", // reference the data source
+      //   layout: {},
+      //   paint: {
+      //     "line-color": "#000000", // blue color fill
+      //     "line-width": 2.5,
+      //     "line-dasharray": [2, 1],
+      //   },
+      // });
 
-      // this.drawView.add(bboxPolygon(extent));
+      this.drawView.add(bboxPolygon(extent));
     },
   },
   mounted() {
@@ -73,7 +73,7 @@ export default {
     });
 
     this.drawView = new MapboxDraw({
-      drawing: true,
+      displayControlsDefault: false,
       controls: {
         polygon: true,
         trash: true,

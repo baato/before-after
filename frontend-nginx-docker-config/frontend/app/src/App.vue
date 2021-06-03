@@ -6,7 +6,7 @@
       Provision before-after map with ease
       <v-spacer></v-spacer>
       <v-switch
-        class="text-right v-step-6"
+        class="text-right v-step-4"
         v-model="$vuetify.theme.dark"
         inset
         prepend-icon="mdi-theme-light-dark"
@@ -19,7 +19,7 @@
       <ProvisionInstance />
     </v-main>
     <v-footer padless>
-      <v-btn @click="aboutDialog = true" text
+      <v-btn class="v-step-5" @click="aboutDialog = true" text
         >About <v-icon right dark> mdi-information-outline </v-icon></v-btn
       >
       <v-col class="text-center">
@@ -28,7 +28,7 @@
           <a href="https://baato.io" target="_blank">baato.io</a></strong
         >
       </v-col>
-      <v-btn id="v-step-0" text @click="toggleTour"
+      <v-btn text @click="toggleTour"
         >How to use <v-icon right dark> mdi-help-circle-outline </v-icon></v-btn
       >
     </v-footer>

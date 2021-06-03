@@ -60,6 +60,13 @@
 
         }
 
+        .style-selector {
+            position: absolute;
+            top: 50px;
+            text-align: center;
+            width: 100%;
+        }
+
         .name-label {
             position: absolute;
             top: 15px;
@@ -90,6 +97,17 @@
     <div class="before-label">
         <strong>BEFORE MAP at _BEFORE_YEAR_</strong>
     </div>
+
+    <div class="style-selector">
+        <label for="style">Choose a style (from baato.io)</label>
+        <select name="style" id="style" onchange="styleChangeHandler()">
+            <option value="retro">Retro</option>
+            <option value="breeze">Breeze</option>
+            <option value="monochrome">Monochrome</option>
+        </select>
+
+    </div>
+
     <div class="after-label">
         <strong>AFTER MAP at _AFTER_YEAR_</strong>
     </div>
@@ -97,23 +115,34 @@
         <strong>BEFORE AFTER MAP - _NAME_</strong>
     </div>
     <script>
+        const defaultStyle = "retro";
+        let selectedStyle = defaultStyle;
+        let beforeMap;
+        let afterMap;
+
+        function styleChangeHandler() {
+            selectedStyle = document.getElementById("style").value;
+            beforeMap.setStyle(`http://_HOSTNAME_:5678/beforestyles/_UUID_/${selectedStyle}.json`);
+            afterMap.setStyle(`http://_HOSTNAME_:5678/afterstyles/_UUID_/${selectedStyle}.json`);
+        }
+
         function initMapView(data) {
             const bounds = [
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ];
-            const beforeMap = new mapboxgl.Map({
+            beforeMap = new mapboxgl.Map({
                 container: "before",
-                style: "http://_HOSTNAME_:5678/beforestyles/_UUID_/style.json",
+                style: `http://_HOSTNAME_:5678/beforestyles/_UUID_/${selectedStyle}.json`,
                 // maxBounds: bounds,
                 // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
-            const afterMap = new mapboxgl.Map({
+            afterMap = new mapboxgl.Map({
                 container: "after",
-                style: "http://_HOSTNAME_:5678/afterstyles/_UUID_/style.json",
+                style: `http://_HOSTNAME_:5678/afterstyles/_UUID_/${selectedStyle}.json`,
                 // maxBounds: bounds,
                 // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom

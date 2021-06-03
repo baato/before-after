@@ -8,6 +8,24 @@
           Creating before-after maps is generally time consuming and also
           requires some form of technical knowledge. This platform tries to
           simply this process a bit.
+
+          <p />
+          This app uses public version of Photon API (<a
+            href="https://github.com/komoot/photon"
+          >
+            https://github.com/komoot/photon </a
+          >) to search for the places.
+
+          <p />
+          The OSM data is used from Geofabrik (<a
+            href="https://download.geofabrik.de/"
+            >https://download.geofabrik.de/</a
+          >)
+
+          <p />
+          The map styles are provided by baato.io (<a href="https://baato.io"
+            >https://baato.io</a
+          >)
         </v-card-text>
 
         <v-divider></v-divider>

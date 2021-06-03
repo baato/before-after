@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - garima</title>
+    <title>Before-After Map - Lalala</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
@@ -60,6 +60,13 @@
 
         }
 
+        .style-selector {
+            position: absolute;
+            top: 50px;
+            text-align: center;
+            width: 100%;
+        }
+
         .name-label {
             position: absolute;
             top: 15px;
@@ -88,34 +95,57 @@
 
     </div>
     <div class="before-label">
-        <strong>BEFORE MAP at 2015</strong>
+        <strong>BEFORE MAP at 2018</strong>
     </div>
+
+    <div class="style-selector">
+        <label for="cars">Choose a style</label>
+        <select name="style" id="style" onchange="styleChangeHandler()">
+            <option value="retro">Retro</option>
+            <option value="breeze">Breeze</option>
+            <option value="dark">Dark</option>
+            <option value="monochrome">Monochrome</option>
+        </select>
+
+    </div>
+
     <div class="after-label">
         <strong>AFTER MAP at Present</strong>
     </div>
     <div class="name-label">
-        <strong>BEFORE AFTER MAP - garima</strong>
+        <strong>BEFORE AFTER MAP - Lalala</strong>
     </div>
     <script>
+        const defaultStyle = "retro";
+        let selectedStyle = defaultStyle;
+        let beforeMap;
+        let afterMap;
+
+        function styleChangeHandler() {
+            selectedStyle = document.getElementById("style").value;
+            beforeMap.setStyle(`http://localhost:5678/beforestyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`);
+            afterMap.setStyle(`http://localhost:5678/afterstyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`);
+        }
+
         function initMapView(data) {
             const bounds = [
-                [89.579773, 27.401032],
-                [89.711609, 27.522887]
+                [89.6104685, 27.5478857],
+                [89.6818368, 27.4077718]
             ];
-            const beforeMap = new mapboxgl.Map({
+            beforeMap = new mapboxgl.Map({
                 container: "before",
-                style: "http://localhost:5678/beforestyles/bbb6a42e-69bf-46ce-9c1f-2cd782bdecd3/style.json",
-                maxBounds: bounds,
-                // center: [(89.711609 + 89.579773) / 2, (27.522887 + 27.401032) / 2], // starting position [lng, lat]
+                style: `http://localhost:5678/beforestyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`,
+                // maxBounds: bounds,
+                // center: [(89.6818368 + 89.6104685) / 2, (27.4077718 + 27.5478857) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
-            const afterMap = new mapboxgl.Map({
+            afterMap = new mapboxgl.Map({
                 container: "after",
-                style: "http://localhost:5678/afterstyles/bbb6a42e-69bf-46ce-9c1f-2cd782bdecd3/style.json",
-                maxBounds: bounds,
-                // center: [(89.711609 + 89.579773) / 2, (27.522887 + 27.401032) / 2], // starting position [lng, lat]
+                style: `http://localhost:5678/afterstyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`,
+                // maxBounds: bounds,
+                // center: [(89.6818368 + 89.6104685) / 2, (27.4077718 + 27.5478857) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
 
