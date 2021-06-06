@@ -2,7 +2,7 @@
 FROM node:12.2.0-alpine AS frontend_app
 
 RUN mkdir /src
-COPY frontend/ /src/
+COPY src/ /src/
 
 WORKDIR /src/app/
 RUN yarn install

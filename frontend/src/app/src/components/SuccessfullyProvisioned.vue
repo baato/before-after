@@ -2,11 +2,11 @@
   <v-dialog v-model="dialog" width="500">
     <v-card>
       <v-card-title class="headline grey lighten-2">
-        Instance successfully provisioned
+        Map generated!
       </v-card-title>
 
-      <v-card-text>
-        A new instance is successfuly provisioned at
+      <v-card-text class="pt-4">
+        Your map has been successfully generated at
         <a
           target="_blank"
           :href="'http://' + hostName + ':5678/provision/' + instanceName"
@@ -14,11 +14,10 @@
         >
       </v-card-text>
 
-      <v-divider></v-divider>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="#b7a75c" class="white--text" @click="dialog = false">
+        <v-btn color="#47889d" class="white--text" @click="dialog = false">
           OK
         </v-btn>
       </v-card-actions>

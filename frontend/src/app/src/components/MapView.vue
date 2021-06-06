@@ -4,11 +4,14 @@
 
 <style lang="scss" scoped>
 .basemap {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  height: 82vh;
   width: 100%;
-  z-index: 10;
+  // border-radius: 5px;
+  // box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  // z-index: 10;
 }
 </style>
 
@@ -30,11 +33,18 @@ export default {
   },
   methods: {
     applySource(geometry, extent) {
-      this.mapView.flyTo({
-        center: geometry.coordinates,
-        zoom: 10,
-        offset: [0, 200],
-      });
+      console.log("Extent", extent);
+
+      this.mapView.fitBounds([
+        [extent[0], extent[1]], // southwestern corner of the bounds
+        [extent[2], extent[3]], // northeastern corner of the bounds
+      ], {padding: 200});
+
+      // this.mapView.flyTo({
+      //   center: geometry.coordinates,
+      //   zoom: 10,
+      //   offset: [0, 200],
+      // });
 
       if (this.mapView.getSource("bbox")) {
         this.mapView.removeLayer("bbox").removeSource("bbox");
@@ -92,6 +102,7 @@ export default {
           : "mapbox://styles/mapbox/dark-v9",
       center: [103.811279, 1.345399],
       zoom: 0,
+      attributionControl: false,
     });
 
     // this.drawView = new MapboxDraw({

@@ -13,7 +13,7 @@ export default {
           header: {
             title: "Search for the place name",
           },
-          content: `It can be something like <strong>Pokhara</strong>`,
+          content: `It can be something like <strong>Tashkent </strong>`,
           params: {
             placement: "right",
           },
@@ -23,7 +23,7 @@ export default {
           header: {
             title: "Enter the name for the before-after map",
           },
-          content: `It can be something like <strong>Pokhara 2019 vs Present</strong>`,
+          content: `It can be something like <strong>Tashkent 2019 vs Present</strong>`,
           params: {
             placement: "right",
           },
@@ -33,7 +33,7 @@ export default {
           header: {
             title: "Select before-year",
           },
-          content: `This is the past year against which you want to compare with`,
+          content: `This is the year against which you want to compare today's OSM data with`,
           params: {
             placement: "right",
           },
@@ -41,23 +41,23 @@ export default {
         {
           target: ".v-step-3",
           header: {
-            title: "Finally, provision this instance",
+            title: "Generate the interactive map",
           },
-          content: `It will take some minutes to provision the instance. Please have patience during that`,
+          content: `It will take some minutes to provision the instance.`,
           params: {
             placement: "right",
           },
         },
-        {
-          target: ".v-step-4",
-          header: {
-            title: "Choose your theme",
-          },
-          content: `You can choose a light theme or the dark one`,
-          params: {
-            placement: "bottom",
-          },
-        },
+        // {
+        //   target: ".v-step-4",
+        //   header: {
+        //     title: "Choose your theme",
+        //   },
+        //   content: `You can choose a light theme or the dark one`,
+        //   params: {
+        //     placement: "bottom",
+        //   },
+        // },
         {
           target: ".v-step-5",
           header: {

@@ -3,18 +3,15 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>_NAME_ - Before After Map</title>
+    <title>Before-After Map - _NAME_</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
+    
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Roboto';
         }
 
         #map {
@@ -49,45 +46,34 @@
 
         .before-label {
             position: absolute;
-            top: 15px;
+            top: 50px;
             left: 0;
-            /* border: 3px solid #73AD21; */
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom-right-radius: 5px;
-            border-top-right-radius: 5px;
-            padding: 10px;
-            z-index: 120;
+            border: 3px solid #73AD21;
+            padding: 5px;
         }
 
         .after-label {
             position: absolute;
-            top: 15px;
+            top: 50px;
             right: 0;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom-left-radius: 5px;
-            border-top-left-radius: 5px;
-            padding: 10px;
-            z-index: 120;
-
+            border: 3px solid #73AD21;
+            padding: 5px;
 
         }
 
         .style-selector {
             position: absolute;
-            bottom: 10px;
+            top: 50px;
             text-align: center;
             width: 100%;
-            z-index: 100;
         }
 
         .name-label {
             position: absolute;
-            top: 0px;
-            padding: 10px 0;
+            top: 15px;
             text-align: center;
             width: 100%;
-            z-index: 100;
-            background-color: rgba(255, 255, 255, 0.4);
+
         }
     </style>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
@@ -98,9 +84,9 @@
         <div id="before" class="map"></div>
         <div id="after" class="map"></div>
         <div
-            style="z-index: 10; padding: 10px; background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; font-size: 0.8rem; right: 0px">
-            Map data: <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
-                target="_blank">© OpenStreetMap contributors</a></div>
+            style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
+            © <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
+                target="_blank">OpenStreetMap contributors</a></div>
         <div
             style="z-index: 100; padding: 1px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; left: 0px">
             <a href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
@@ -114,7 +100,7 @@
     </div>
 
     <div class="style-selector">
-        <label for="style">Choose map style</label>
+        <label for="style">Choose a style (from baato.io)</label>
         <select name="style" id="style" onchange="styleChangeHandler()">
             <option value="retro">Retro</option>
             <option value="breeze">Breeze</option>
@@ -123,14 +109,11 @@
 
     </div>
 
-
     <div class="after-label">
         <strong>AFTER MAP at _AFTER_YEAR_</strong>
     </div>
     <div class="name-label">
-        <span style="font-size: 0.7rem">BEFORE AFTER MAP</span>
-        <br />
-        <strong style="font-size: 1.8rem">UB 2015 v Present</strong>
+        <strong>BEFORE AFTER MAP - _NAME_</strong>
     </div>
     <script>
         const defaultStyle = "retro";
