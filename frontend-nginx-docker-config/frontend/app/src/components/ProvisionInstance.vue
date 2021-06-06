@@ -11,7 +11,6 @@
         :country="instance.country"
         :progressMessage="provisioningStateMappings[provisioningState]"
       />
-      <br />
 
       <v-container fill-height fluid>
         <v-row align="center" justify="center">
@@ -20,7 +19,7 @@
               <v-form ref="form" v-model="valid" lazy-validation>
                 <v-autocomplete
                   class="v-step-0"
-                  v-model="model"
+                  v-model="place"
                   :loading="isLoading"
                   :items="items"
                   item-text="name"
@@ -35,10 +34,7 @@
                   return-object
                   color="blue-grey lighten-2"
                 ></v-autocomplete>
-                <small v-if="this.instance.bbox">
-                  <v-icon>mdi-information</v-icon> Selected bounding box:
-                  {{ this.instance.bbox }}
-                </small>
+
                 <v-text-field
                   class="v-step-1"
                   label="Enter name for this before-after map (eg: Pokhara 2019 vs Present)"
@@ -55,7 +51,6 @@
                   :rules="requiredRules"
                   required
                 ></v-select>
-
                 <v-row align="center" justify="space-around">
                   <v-btn
                     class="v-step-3 white--text"
@@ -65,6 +60,16 @@
                   >
                     Provision
                   </v-btn>
+                </v-row>
+                <v-row
+                  v-if="this.instance.bbox"
+                  align="center"
+                  justify="space-around"
+                >
+                  <small align="center">
+                    <v-icon>mdi-information</v-icon> Selected bounding box:
+                    {{ this.instance.bbox }}
+                  </small>
                 </v-row>
               </v-form>
             </v-card>
@@ -80,19 +85,10 @@ import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
 import MapView from "./MapView";
 import Loader from "./Loader";
 import axios from "axios";
-import countryCodes from "./countryCodes.json";
-import provisioningStates from "./provisioningStates.json";
+import countryCodes from "../configs/countryCodes.json";
+import provisioningStates from "../configs/provisioningStates.json";
 import { uuid } from "vue-uuid";
-
-function generateYears() {
-  const currentYear = new Date().getFullYear();
-  const yearsSupportedTill = 2015;
-  let years = [];
-  for (let i = currentYear - 1; i >= yearsSupportedTill; i--) {
-    years.push(i);
-  }
-  return years;
-}
+import { generateYears } from "../utils/helpers.js";
 
 export default {
   name: "ProvisionInstance",
@@ -104,7 +100,7 @@ export default {
 
   watch: {
     search(val) {
-      val && val !== this.model && this.querySelections(val);
+      val && val !== this.place && this.querySelections(val);
     },
   },
 
@@ -116,10 +112,9 @@ export default {
     instance: {
       style: "retro",
     },
-    entries: [],
     items: [],
     isLoading: false,
-    model: null,
+    place: null,
     search: null,
     years: generateYears(),
     styles: ["retro", "breeze"],
@@ -186,40 +181,10 @@ export default {
         });
     },
     selectPlace() {
-      this.$refs.mapView.applySource(this.model.geometry, this.model.extent);
-      this.instance.bbox = this.model.extent.join(",");
+      this.$refs.mapView.applySource(this.place.geometry, this.place.extent);
+      this.instance.bbox = this.place.extent.join(",");
       this.instance.country =
-        countryCodes[this.model.countrycode.toLowerCase()];
-    },
-    getCountryCodeFromNominatim() {
-      const centerCoordinates = this.getBoundingBoxCenter(this.instance.bbox);
-      axios
-        .get("http://nominatim.openstreetmap.org/reverse", {
-          params: {
-            format: "json",
-            lat: centerCoordinates.lat,
-            lon: centerCoordinates.lon,
-          },
-          timeout: 1000 * 60 * 10,
-        })
-        .then((res) => {
-          const countrycodeWhereCoordinatesBelong =
-            res.data.address.country_code;
-          this.instance.country =
-            countryCodes[countrycodeWhereCoordinatesBelong];
-        })
-        .catch((error) => {
-          this.instance.country = "Invalid bounding box!";
-          console.log(error);
-        });
-    },
-    getBoundingBoxCenter(bbox) {
-      const bboxCoordinates = bbox.split(",").map((e) => Number(e));
-      const centerCoordinates = {
-        lat: (bboxCoordinates[1] + bboxCoordinates[3]) / 2,
-        lon: (bboxCoordinates[0] + bboxCoordinates[2]) / 2,
-      };
-      return centerCoordinates;
+        countryCodes[this.place.countrycode.toLowerCase()];
     },
     openBboxFinder() {
       window.open("http://bboxfinder.com", "_blank");
@@ -237,7 +202,6 @@ export default {
         style: this.instance.style,
         country: this.instance.country,
       };
-      console.log("signalToSendToSocket", signalToSendToSocket);
       this.ws.send(JSON.stringify(signalToSendToSocket));
     },
     enableNavigationPrompt() {

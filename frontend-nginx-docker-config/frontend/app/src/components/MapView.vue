@@ -15,7 +15,7 @@
 
 <script>
 import mapboxgl from "mapbox-gl";
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+// import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { bboxPolygon } from "@turf/turf";
 
 export default {
@@ -40,25 +40,25 @@ export default {
         this.mapView.removeLayer("bbox").removeSource("bbox");
       }
 
-      // this.mapView.addSource("bbox", {
-      //   type: "geojson",
-      //   data: bboxPolygon(extent),
-      // });
+      this.mapView.addSource("bbox", {
+        type: "geojson",
+        data: bboxPolygon(extent),
+      });
 
-      // // Add a new layer to visualize the polygon.
-      // this.mapView.addLayer({
-      //   id: "bbox",
-      //   type: "line",
-      //   source: "bbox", // reference the data source
-      //   layout: {},
-      //   paint: {
-      //     "line-color": "#000000", // blue color fill
-      //     "line-width": 2.5,
-      //     "line-dasharray": [2, 1],
-      //   },
-      // });
-      this.drawView.deleteAll().getAll();
-      this.drawView.add(bboxPolygon(extent));
+      // Add a new layer to visualize the polygon.
+      this.mapView.addLayer({
+        id: "bbox",
+        type: "line",
+        source: "bbox", // reference the data source
+        layout: {},
+        paint: {
+          "line-color": "#000000", // blue color fill
+          "line-width": 2.5,
+          "line-dasharray": [2, 1],
+        },
+      });
+      // this.drawView.deleteAll().getAll();
+      // this.drawView.add(bboxPolygon(extent));
     },
   },
 
@@ -94,17 +94,17 @@ export default {
       zoom: 0,
     });
 
-    this.drawView = new MapboxDraw({
-      displayControlsDefault: false,
-      controls: {
-        polygon: true,
-        trash: true,
-      },
-    });
+    // this.drawView = new MapboxDraw({
+    //   displayControlsDefault: false,
+    //   controls: {
+    //     polygon: true,
+    //     trash: true,
+    //   },
+    // });
 
-    this.mapView.on("load", () => {
-      this.mapView.addControl(this.drawView, "top-left");
-    });
+    // this.mapView.on("load", () => {
+    //   this.mapView.addControl(this.drawView, "top-left");
+    // });
   },
 };
 </script>
