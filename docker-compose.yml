@@ -12,6 +12,7 @@ services:
       - .env
     volumes:
       - appdata:/appdata
+      - downloads:/downloads
   nginx:
     restart: always
     container_name: app-nginx
@@ -25,3 +26,4 @@ services:
       - appdata:/appdata
 volumes:
   appdata:
+  downloads:
