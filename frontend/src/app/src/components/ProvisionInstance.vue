@@ -43,7 +43,7 @@
           solo-inverted
           @change="selectPlace"
           return-object
-          :required="required"
+          required
           :rules="requiredRules"
           color="blue-grey lighten-2"
         ></v-autocomplete>
@@ -146,19 +146,20 @@ export default {
     requiredRules: [(v) => !!v || "This field is required"],
     provisioningStateMappings: provisioningStates,
   }),
-  created: function () {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    this.ws = new WebSocket(`${protocol}//${window.location.hostname}/ws`);
-    this.ws.addEventListener("message", (e) => {
-      this.provisioningState = e.data;
-      if (this.provisioningState == "done") {
-        this.showLoading = false;
-        this.successfullyProvisioned = true;
-        this.disableNavigationPrompt();
-      }
-    });
-  },
   methods: {
+    connectToWebsocket() {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      this.ws = new WebSocket(`${protocol}//${window.location.hostname}/ws`);
+      this.ws.addEventListener("message", (e) => {
+        this.provisioningState = e.data;
+        if (this.provisioningState == "done") {
+          this.showLoading = false;
+          this.successfullyProvisioned = true;
+          this.disableNavigationPrompt();
+        }
+      });
+    },
+
     querySelections(query) {
       this.isLoading = true;
       const filteringValues = [
@@ -220,7 +221,10 @@ export default {
         style: this.instance.style,
         country: this.instance.country,
       };
-      this.ws.send(JSON.stringify(signalToSendToSocket));
+      this.connectToWebsocket();
+      this.showLoading = true;
+      this.enableNavigationPrompt();
+      this.ws.onopen = () => this.ws.send(JSON.stringify(signalToSendToSocket));
     },
     enableNavigationPrompt() {
       // Enable navigation prompt
@@ -233,10 +237,9 @@ export default {
       window.onbeforeunload = null;
     },
     provisionInstanceAPICall() {
-      this.showLoading = true;
       this.instance.year = this.instance.beforeYear.toString().substring(2);
       this.instance.uuid = uuid.v4();
-      this.enableNavigationPrompt();
+
       this.invokeSocket();
     },
     submitForm() {
