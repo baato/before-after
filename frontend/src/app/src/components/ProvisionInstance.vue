@@ -147,7 +147,7 @@ export default {
     provisioningStateMappings: provisioningStates,
   }),
   created: function () {
-    this.ws = new WebSocket(`ws://${window.location.hostname}:8848/ws`);
+    this.ws = new WebSocket(`wss://${window.location.hostname}:8848/ws`);
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
       if (this.provisioningState == "done") {

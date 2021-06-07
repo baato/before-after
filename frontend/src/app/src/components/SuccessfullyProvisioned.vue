@@ -9,11 +9,10 @@
         Your map has been successfully generated at
         <a
           target="_blank"
-          :href="'http://' + hostName + ':5678/provision/' + instanceName"
-          >http://{{ hostName }}:5678/provision/{{ instanceName }}</a
+          :href="'http://' + hostName + '/provision/' + instanceName"
+          >http://{{ hostName }}/provision/{{ instanceName }}</a
         >
       </v-card-text>
-
 
       <v-card-actions>
         <v-spacer></v-spacer>
