@@ -12,15 +12,15 @@ services:
       - .env
     volumes:
       - appdata:/appdata
-  # nginx:
-  #   restart: always
-  #   container_name: app-nginx
-  #   build: frontend/
-  #   ports:
-  #     - 5678:80
-  #   depends_on:
-  #     - backend
-  #   volumes:
-  #     - appdata:/appdata
+  nginx:
+    restart: always
+    container_name: app-nginx
+    build: frontend/
+    ports:
+      - 5678:80
+    depends_on:
+      - backend
+    volumes:
+      - appdata:/appdata
 volumes:
   appdata:

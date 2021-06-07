@@ -1,84 +1,110 @@
+
+
+
 <template>
-  <div>
-    <MapView ref="mapView" :theme="theme" />
-    <v-container>
-      <SuccessfullyProvisioned
-        v-if="successfullyProvisioned"
-        :instanceName="instance.uuid"
-      />
-      <Loader
-        :showLoading="showLoading"
-        :country="instance.country"
-        :progressMessage="provisioningStateMappings[provisioningState]"
-      />
+  <div class="row">
+    <SuccessfullyProvisioned
+      v-if="successfullyProvisioned"
+      :instanceName="instance.uuid"
+    />
+    <Loader
+      :showLoading="showLoading"
+      :country="instance.country"
+      :progressMessage="provisioningStateMappings[provisioningState]"
+    />
 
-      <v-container fill-height fluid>
-        <v-row align="center" justify="center">
-          <v-col style="z-index: 10" cols="12" xs="12" lg="8" xl="6">
-            <v-card elevation="20" class="pa-5">
-              <v-form ref="form" v-model="valid" lazy-validation>
-                <v-autocomplete
-                  class="v-step-0"
-                  v-model="place"
-                  :loading="isLoading"
-                  :items="items"
-                  item-text="name"
-                  flat
-                  :search-input.sync="search"
-                  cache-items
-                  hide-no-data
-                  hide-details
-                  label="Search for a place where you want to generate the before-after map (eg: Pokhara)"
-                  solo-inverted
-                  @change="selectPlace"
-                  return-object
-                  color="blue-grey lighten-2"
-                ></v-autocomplete>
+    <div class="col-md-3 p-4" style="background-color: #47889d">
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <span
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+          "
+          >Location</span
+        >
+        <br />
 
-                <v-text-field
-                  class="v-step-1"
-                  label="Enter name for this before-after map (eg: Pokhara 2019 vs Present)"
-                  v-model="instance.name"
-                  :rules="requiredRules"
-                  required
-                ></v-text-field>
+        <v-autocomplete
+          dark
+          class="v-step-0 mt-2 app-combobox"
+          v-model="place"
+          :loading="isLoading"
+          :items="items"
+          item-text="name"
+          flat
+          filled
+          :search-input.sync="search"
+          cache-items
+          hide-no-data
+          hide-details
+          label="City, country, etc."
+          solo-inverted
+          @change="selectPlace"
+          return-object
+          :required="required"
+          :rules="requiredRules"
+          color="blue-grey lighten-2"
+        ></v-autocomplete>
+        <br />
 
-                <v-select
-                  class="v-step-2"
-                  label="Select the earlier year to compare with present (eg: 2015)"
-                  :items="years"
-                  v-model="instance.beforeYear"
-                  :rules="requiredRules"
-                  required
-                ></v-select>
-                <v-row align="center" justify="space-around">
-                  <v-btn
-                    class="v-step-3 white--text"
-                    :disabled="!valid"
-                    color="#2c3e50"
-                    @click="validate"
-                  >
-                    Provision
-                  </v-btn>
-                </v-row>
-                <v-row
-                  v-if="this.instance.bbox"
-                  align="center"
-                  justify="space-around"
-                >
-                  <small align="center">
-                    <v-icon>mdi-information</v-icon> Selected bounding box:
-                    {{ this.instance.bbox }}
-                  </small>
-                </v-row>
-              </v-form>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-container>
+        <span
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+          "
+          >MAP DETAILS</span
+        >
+        <br />
+        <v-text-field
+          dark
+          outlined
+          class="v-step-1 mt-3"
+          color="white"
+          label="Name of this map"
+          v-model="instance.name"
+          :rules="requiredRules"
+          required
+        ></v-text-field>
+
+        <v-select
+          dark
+          class="v-step-2 mt-4"
+          outlined
+          label="Compare against (year)"
+          :items="years"
+          color="white"
+          v-model="instance.beforeYear"
+          :rules="requiredRules"
+          required
+        ></v-select>
+
+        <v-btn
+          x-large
+          class="v-step-3 white--text float-right"
+          :disabled="!valid"
+          color="#2c3e50"
+          @click="validate"
+          style="padding: 10px"
+        >
+          GENERATE MAP
+        </v-btn>
+      </v-form>
+    </div>
+    <div class="col-md-9 p-0" style="">
+      <MapView ref="mapView" :theme="theme" />
+    </div>
+    <!-- <div class="col-md-12" style="background-color: #fff; min-height: 400px">
+      Holla
+    </div> -->
   </div>
 </template>
+
+
+
 
 <script>
 import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
@@ -91,23 +117,17 @@ import { uuid } from "vue-uuid";
 import { generateYears } from "../utils/helpers.js";
 
 export default {
-  name: "ProvisionInstance",
+  name: "Test",
   components: {
+    MapView,
     Loader,
     SuccessfullyProvisioned,
-    MapView,
   },
-
   watch: {
     search(val) {
       val && val !== this.place && this.querySelections(val);
     },
   },
-
-  props: {
-    theme: Boolean,
-  },
-
   data: () => ({
     instance: {
       style: "retro",
@@ -229,5 +249,9 @@ export default {
       if (isFormValid) this.submitForm();
     },
   },
+  props: {
+    theme: Boolean,
+  },
 };
 </script>
+

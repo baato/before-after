@@ -13,7 +13,7 @@
           color: rgba(0, 0, 0, 0.7);
         "
         >GENERATE<br />
-        <span style="color: #47889D"> BEFORE-AFTER MAPS</span> <br />
+        <span style="color: #47889d"> BEFORE-AFTER MAPS</span> <br />
         WITH EASE</v-toolbar-title
       >
       <!-- Provision before-after map with ease -->
@@ -25,7 +25,7 @@
     </v-app-bar>
     <About :aboutDialog="aboutDialog" :closeAboutDialog="closeAboutDialog" />
     <v-main>
-      <Test  :theme="$vuetify.theme.dark"/>
+      <ProvisionInstance :theme="$vuetify.theme.dark" />
       <!-- <ProvisionInstance :theme="$vuetify.theme.dark" /> -->
     </v-main>
     <v-footer padless>
@@ -39,32 +39,30 @@
       <v-col class="text-right">
         <strong
           >Powered by
-          <a  rel="noreferrer noopener" href="https://baato.io" target="_blank">
-          <img
-                    src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
-                    width="80px"/>
-          </a></strong
-        >
-        
+          <a rel="noreferrer noopener" href="https://baato.io" target="_blank">
+            <img
+              src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg"
+              alt="Baato"
+              width="80px"
+            /> </a
+        ></strong>
       </v-col>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-// import ProvisionInstance from "./components/ProvisionInstance";
 import About from "./components/About";
-import Test from "./components/Test";
+import ProvisionInstance from "./components/ProvisionInstance";
 import Tour from "./components/Tour";
 
 export default {
   name: "App",
 
   components: {
-    // ProvisionInstance,
+    ProvisionInstance,
     About,
     Tour,
-    Test,
   },
 
   data: () => ({
