@@ -1,11 +1,11 @@
 <template>
   <div class="text-center">
-    <v-dialog persistent scrollable v-model="aboutDialog" width="700" >
-      <v-card >
-        <v-card-title class="headline  lighten-2"> About </v-card-title>
+    <v-dialog persistent scrollable v-model="aboutDialog" width="700">
+      <v-card>
+        <v-card-title class="headline lighten-2"> About </v-card-title>
         <v-divider></v-divider>
 
-        <v-card-text style="font-size:0.9rem;">
+        <v-card-text style="font-size: 0.9rem">
           <br />
           <h2 style="font-size: 0.9rem; font-weight: 600">WHY?</h2>
           <p>
@@ -41,7 +41,7 @@
             parent organization:
             <a href="http://kathmandulivinglabs.org">Kathmandu Living Labs</a>
             ) working to make map related services more contextual, and
-            responsive to Nepal’s needs. You can read more about Baato's story 
+            responsive to Nepal’s needs. You can read more about Baato's story
             <a
               href="https://baatomaps.medium.com/the-story-of-why-we-built-baato-f8666dded0af"
               >here</a
@@ -52,8 +52,8 @@
           <h2 style="font-size: 0.9rem; font-weight: 600">CONTRIBUTE</h2>
           <ul>
             <li>
-              This is an open-source project. Interested in contributing? Feel free to browse through the code
-              and submit your pull requests
+              This is an open-source project. Interested in contributing? Feel
+              free to browse through the code and submit your pull requests
               <a href="https://github.com/baato/before-after"
                 >through the project's official repository</a
               >.
@@ -94,12 +94,12 @@
               >)
             </li>
             <li>
-              The map styles for this instance are provided free of cost by
-              Baato Maps <a href="https://baato.io">(https://baato.io)</a>
+              The map styles for rendering before-after maps are provided free
+              of cost by Baato Maps
+              <a href="https://baato.io">(https://baato.io)</a>
             </li>
           </ul>
         </v-card-text>
-
 
         <v-divider></v-divider>
         <v-card-actions>
