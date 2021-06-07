@@ -26,7 +26,9 @@
       "type": "geojson"
     },
     "qvez6ula1": {
-      "tiles": ["http://_HOSTNAME_/_TILE_EPOCH_/_UUID_/{z}/{x}/{y}.pbf"],
+      "tiles": [
+        "_HOST_PROTOCOL_//_HOSTNAME_/_TILE_EPOCH_/_UUID_/{z}/{x}/{y}.pbf"
+      ],
       "maxZoom": 14,
       "maxzoom": 14,
       "minZoom": 0,
