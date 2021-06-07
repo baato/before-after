@@ -85,7 +85,7 @@
               <a href="https://github.com/komoot/photon">
                 (https://github.com/komoot/photon)</a
               >
-              to search for the places.
+              to search for the places
             </li>
             <li>
               The OSM data is used from Geofabrik (<a
