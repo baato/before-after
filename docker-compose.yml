@@ -17,7 +17,8 @@ services:
     container_name: app-nginx
     build: frontend/
     ports:
-      - 5678:80
+      - 80:80
+      - 443:443
     depends_on:
       - backend
     volumes:

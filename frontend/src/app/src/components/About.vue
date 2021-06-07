@@ -94,6 +94,12 @@
               >)
             </li>
             <li>
+              The vector tiles are generated using Tilemaker (<a
+                href="https://github.com/systemed/tilemaker"
+                >https://github.com/systemed/tilemaker</a
+              >)
+            </li>
+            <li>
               The map styles for rendering before-after maps are provided free
               of cost by Baato Maps
               <a href="https://baato.io">(https://baato.io)</a>
