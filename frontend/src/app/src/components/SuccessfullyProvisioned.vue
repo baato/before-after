@@ -9,14 +9,18 @@
         Your map has been successfully generated at
         <a
           target="_blank"
-          :href="'http://' + hostName + '/provision/' + instanceName"
-          >http://{{ hostName }}/provision/{{ instanceName }}</a
+          :href="protocol + '//' + hostName + '/provision/' + instanceName"
+          >{{ protocol }}//{{ hostName }}/provision/{{ instanceName }}</a
         >
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="#47889d" class="white--text" @click="dialog = false">
+        <v-btn
+          color="#47889d"
+          class="white--text"
+          @click="closeDialogAndOpenLink"
+        >
           OK
         </v-btn>
       </v-card-actions>
@@ -31,7 +35,17 @@ export default {
     return {
       dialog: true,
       hostName: window.location.hostname,
+      protocol: window.location.protocol,
     };
+  },
+  methods: {
+    closeDialogAndOpenLink() {
+      window.open(
+        `${window.location.protocol}//${this.hostName}/provision/${this.instanceName}`,
+        "_blank"
+      );
+      this.dialog = false;
+    },
   },
   props: {
     instanceName: String,
