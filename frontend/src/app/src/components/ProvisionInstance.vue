@@ -147,7 +147,8 @@ export default {
     provisioningStateMappings: provisioningStates,
   }),
   created: function () {
-    this.ws = new WebSocket(`wss://${window.location.hostname}/ws`);
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    this.ws = new WebSocket(`${protocol}//${window.location.hostname}/ws`);
     this.ws.addEventListener("message", (e) => {
       this.provisioningState = e.data;
       if (this.provisioningState == "done") {
@@ -205,9 +206,6 @@ export default {
       this.instance.bbox = this.place.extent.join(",");
       this.instance.country =
         countryCodes[this.place.countrycode.toLowerCase()];
-    },
-    openBboxFinder() {
-      window.open("http://bboxfinder.com", "_blank");
     },
     openBaatoSite() {
       window.open("https://baato.io", "_blank");
