@@ -15,8 +15,4 @@ FROM nginx
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./siteconfig.conf /etc/nginx/conf.d/
 
-RUN mkdir -p /etc/letsencrypt/live/beforeafter.baato.io/
-
-COPY ssl_certificates/ /etc/letsencrypt/live/beforeafter.baato.io/
-
 COPY --from=frontend_app /src/app/dist/ /usr/share/nginx/html/
