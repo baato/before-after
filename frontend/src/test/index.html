@@ -3,14 +3,18 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Before-After Map - Lalala</title>
+    <title>Test Bhutan51 - Before After Map</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
             padding: 0;
+            font-family: 'Roboto';
         }
 
         #map {
@@ -45,47 +49,71 @@
 
         .before-label {
             position: absolute;
-            top: 50px;
+            top: 15px;
             left: 0;
-            border: 3px solid #73AD21;
-            padding: 5px;
+            /* border: 3px solid #73AD21; */
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom-right-radius: 5px;
+            border-top-right-radius: 5px;
+            padding: 10px;
+            z-index: 120;
         }
 
         .after-label {
             position: absolute;
-            top: 50px;
+            top: 15px;
             right: 0;
-            border: 3px solid #73AD21;
-            padding: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom-left-radius: 5px;
+            border-top-left-radius: 5px;
+            padding: 10px;
+            z-index: 120;
+        }
 
+        .loading-label {
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: 55%;
+            margin-left: auto;
+            margin-right: auto;
+            width: 130px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 120;
         }
 
         .style-selector {
             position: absolute;
-            top: 50px;
+            bottom: 10px;
             text-align: center;
             width: 100%;
+            z-index: 100;
         }
 
         .name-label {
             position: absolute;
-            top: 15px;
+            top: 0px;
+            padding: 10px 0;
             text-align: center;
             width: 100%;
-
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.4);
         }
     </style>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
     <link rel="stylesheet"
         href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css"
         type="text/css" />
-    <div id="comparison-container" style="position: absolute; top: 0; bottom: 0; width: 100%;">
+    <div id="comparison-container" style="position: absolute; top: 0; bottom: 0; width: 100%; ">
         <div id="before" class="map"></div>
         <div id="after" class="map"></div>
         <div
-            style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
-            © <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
-                target="_blank">OpenStreetMap contributors</a></div>
+            style="z-index: 10; padding: 10px; background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; font-size: 0.8rem; right: 0px">
+            Map data: <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
+                target="_blank">© OpenStreetMap contributors</a></div>
         <div
             style="z-index: 100; padding: 1px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; left: 0px">
             <a href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
@@ -94,60 +122,87 @@
         </div>
 
     </div>
+    <div class="loading-label">
+        <strong>Rendering tiles...</strong>
+    </div>
     <div class="before-label">
-        <strong>BEFORE MAP at 2018</strong>
+        <strong>BEFORE MAP at 2019</strong>
     </div>
 
     <div class="style-selector">
-        <label for="cars">Choose a style</label>
+        <label for="style">Choose map style</label>
         <select name="style" id="style" onchange="styleChangeHandler()">
             <option value="retro">Retro</option>
             <option value="breeze">Breeze</option>
-            <option value="dark">Dark</option>
             <option value="monochrome">Monochrome</option>
         </select>
 
     </div>
 
+
     <div class="after-label">
         <strong>AFTER MAP at Present</strong>
     </div>
     <div class="name-label">
-        <strong>BEFORE AFTER MAP - Lalala</strong>
+        <span style="font-size: 0.7rem">BEFORE AFTER MAP</span>
+        <br />
+        <strong style="font-size: 1.8rem">Test Bhutan51</strong>
     </div>
     <script>
         const defaultStyle = "retro";
         let selectedStyle = defaultStyle;
         let beforeMap;
         let afterMap;
+        let beforeMapSourceLoaded = false;
+        let afterMapSourceLoaded = false;
+
+        function areAllSourcesLoaded() {
+            if (beforeMapSourceLoaded && afterMapSourceLoaded) {
+                document.getElementsByClassName('loading-label')[0].style.visibility = 'hidden';
+            }
+        }
 
         function styleChangeHandler() {
             selectedStyle = document.getElementById("style").value;
-            beforeMap.setStyle(`http://localhost:5678/beforestyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`);
-            afterMap.setStyle(`http://localhost:5678/afterstyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`);
+            beforeMap.setStyle(`https://beforeafter.baato.io/beforestyles/abc-bhutan58/${selectedStyle}.json`);
+            afterMap.setStyle(`https://beforeafter.baato.io/afterstyles/abc-bhutan58/${selectedStyle}.json`);
         }
 
         function initMapView(data) {
             const bounds = [
-                [89.6104685, 27.5478857],
-                [89.6818368, 27.4077718]
+                [89.432831, 27.258292],
+                [89.891510, 27.553329]
             ];
             beforeMap = new mapboxgl.Map({
                 container: "before",
-                style: `http://localhost:5678/beforestyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`,
+                style: `https://beforeafter.baato.io/beforestyles/abc-bhutan58/${selectedStyle}.json`,
                 // maxBounds: bounds,
-                // center: [(89.6818368 + 89.6104685) / 2, (27.4077718 + 27.5478857) / 2], // starting position [lng, lat]
+                // center: [(89.891510 + 89.432831) / 2, (27.553329 + 27.258292) / 2], // starting position [lng, lat]
 
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
+
+            beforeMap.on('sourcedata', function (e) {
+                if (e.isSourceLoaded) {
+                    beforeMapSourceLoaded = true;
+                    areAllSourcesLoaded();
+                }
+            });
 
             afterMap = new mapboxgl.Map({
                 container: "after",
-                style: `http://localhost:5678/afterstyles/64a4ce7b-3972-4b0e-956f-c849d0c438c4/${selectedStyle}.json`,
+                style: `https://beforeafter.baato.io/afterstyles/abc-bhutan58/${selectedStyle}.json`,
                 // maxBounds: bounds,
-                // center: [(89.6818368 + 89.6104685) / 2, (27.4077718 + 27.5478857) / 2], // starting position [lng, lat]
+                // center: [(89.891510 + 89.432831) / 2, (27.553329 + 27.258292) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
+
+            afterMap.on('sourcedata', function (e) {
+                if (e.isSourceLoaded) {
+                    afterMapSourceLoaded = true;
+                    areAllSourcesLoaded();
+                }
+            });
 
             const container = "#comparison-container";
             const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
