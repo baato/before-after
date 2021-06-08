@@ -68,8 +68,21 @@
             border-top-left-radius: 5px;
             padding: 10px;
             z-index: 120;
+        }
 
-
+        .loading-label {
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: 55%;
+            margin-left: auto;
+            margin-right: auto;
+            width: 130px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 120;
         }
 
         .style-selector {
@@ -109,6 +122,11 @@
         </div>
 
     </div>
+
+    <div class="loading-label">
+        <strong>Rendering tiles...</strong>
+    </div>
+
     <div class="before-label">
         <strong>BEFORE MAP at _BEFORE_YEAR_</strong>
     </div>
@@ -137,6 +155,14 @@
         let selectedStyle = defaultStyle;
         let beforeMap;
         let afterMap;
+        let beforeMapSourceLoaded = false;
+        let afterMapSourceLoaded = false;
+
+        function areAllSourcesLoaded() {
+            if (beforeMapSourceLoaded && afterMapSourceLoaded) {
+                document.getElementsByClassName('loading-label')[0].style.visibility = 'hidden';
+            }
+        }
 
         function styleChangeHandler() {
             selectedStyle = document.getElementById("style").value;
@@ -157,6 +183,12 @@
 
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
+            beforeMap.on('sourcedata', function (e) {
+                if (e.isSourceLoaded) {
+                    beforeMapSourceLoaded = true;
+                    areAllSourcesLoaded();
+                }
+            });
 
             afterMap = new mapboxgl.Map({
                 container: "after",
@@ -165,6 +197,12 @@
                 // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
                 zoom: 11, // starting zoom
             }).fitBounds(bounds);
+            afterMap.on('sourcedata', function (e) {
+                if (e.isSourceLoaded) {
+                    afterMapSourceLoaded = true;
+                    areAllSourcesLoaded();
+                }
+            });
 
             const container = "#comparison-container";
             const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
