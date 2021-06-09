@@ -18,10 +18,6 @@ RUN apt-get install -y golang
 
 RUN go get github.com/gorilla/websocket
 
-RUN mkdir -p /usr/share/man/man1
-RUN apt-get install -y default-jre
-RUN apt-get install -y osmosis
-
 COPY tilemaker-configs/config.json /
 COPY tilemaker-configs/process.lua /
 
