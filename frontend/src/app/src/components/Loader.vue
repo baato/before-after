@@ -3,9 +3,9 @@
     <v-card color="#47889d" class="pt-2" dark>
       <v-card-text>
         <span v-if="progressMessage">{{ progressMessage }}</span>
-        <span v-if="!progressMessage && country"
-          >Provisioning a new instance for the selected place</span
-        >
+        <span v-if="!progressMessage && country">
+          Processing request to generate before-after maps
+        </span>
         <v-progress-linear
           indeterminate
           color="white"
