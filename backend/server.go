@@ -136,9 +136,9 @@ func (w Worker) start() {
 
 				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.ws)
 
-				// fmt.Printf("worker%d: started %s, blocking for %f seconds\n", w.id, job.Name, job.Delay.Seconds())
-				// time.Sleep(job.Delay)
-				// fmt.Printf("worker%d: completed %s!\n", w.id, job.Name)
+				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
+				// time.Sleep(5 * time.Second)
+				// fmt.Printf("TALA\n", job.Uuid, job.Name)
 			case <-w.quitChan:
 				// We have been asked to stop.
 				fmt.Printf("worker%d stopping\n", w.id)
@@ -205,7 +205,7 @@ func requestHandler(msg Message, ws *websocket.Conn, jobQueue chan Job) {
 func main() {
 	s := &server{}
 	var maxWorkers int = 2
-	var maxQueueSize int = 10
+	var maxQueueSize int = 50
 
 	// Create the job queue.
 	jobQueue := make(chan Job, maxQueueSize)
