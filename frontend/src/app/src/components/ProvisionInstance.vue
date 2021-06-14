@@ -145,6 +145,7 @@ export default {
     provisioningState: null,
     requiredRules: [(v) => !!v || "This field is required"],
     provisioningStateMappings: provisioningStates,
+    keepAliveCounter: null,
   }),
   methods: {
     connectToWebsocket() {
@@ -156,8 +157,19 @@ export default {
           this.showLoading = false;
           this.successfullyProvisioned = true;
           this.disableNavigationPrompt();
+          clearInterval(this.keepAliveCounter);
         }
       });
+    },
+
+    keepSocketConectionAlive() {
+      this.ws.onopen = () => {
+        this.ws.send(
+          JSON.stringify({
+            message: "keepalive",
+          })
+        );
+      };
     },
 
     querySelections(query) {
@@ -225,6 +237,12 @@ export default {
       this.showLoading = true;
       this.enableNavigationPrompt();
       this.ws.onopen = () => this.ws.send(JSON.stringify(signalToSendToSocket));
+
+      const self = this;
+      this.keepAliveCounter = setInterval(
+        self.keepSocketConectionAlive,
+        15 * 1000
+      );
     },
     enableNavigationPrompt() {
       // Enable navigation prompt
