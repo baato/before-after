@@ -43,12 +43,9 @@ func provision(year, bbox, style, name, uuid, country string, ws *websocket.Conn
 	for i, s := range scripts_to_run {
 		NotifyClient(s, ws)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name)
-		stdout, err := cmd.Output()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		cmd.Output()
 		// Print the output
-		fmt.Println(i, s, string(stdout))
+		fmt.Println(i, s)
 	}
 	NotifyClient("done", ws)
 }
@@ -239,7 +236,10 @@ func main() {
 			}
 			if msg.Message == "provision" {
 				requestHandler(msg, ws, jobQueue)
+			}
 
+			if msg.Message == "keepalive" {
+				NotifyClient("pong", ws)
 			}
 		}
 	})
