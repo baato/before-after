@@ -4,13 +4,14 @@ import "github.com/gorilla/websocket"
 
 // Define our message object
 type Message struct {
-	Message string `json:"message"`
-	Name    string `json:"name"`
-	Uuid    string `json:"uuid"`
-	Year    string `json:"year"`
-	Bbox    string `json:"bbox"`
-	Style   string `json:"style"`
-	Country string `json:"country"`
+	Message   string `json:"message"`
+	Name      string `json:"name"`
+	Uuid      string `json:"uuid"`
+	Year      string `json:"year"`
+	Bbox      string `json:"bbox"`
+	Style     string `json:"style"`
+	Country   string `json:"country"`
+	Continent string `json:"continent"`
 }
 
 func NotifyClient(msg string, ws *websocket.Conn) {

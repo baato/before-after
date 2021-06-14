@@ -112,6 +112,7 @@ import MapView from "./MapView";
 import Loader from "./Loader";
 import axios from "axios";
 import countryCodes from "../configs/countryCodes.json";
+import countryContinents from "../configs/countryContinents.json";
 import provisioningStates from "../configs/provisioningStates.json";
 import { uuid } from "vue-uuid";
 import { generateYears } from "../utils/helpers.js";
@@ -232,9 +233,11 @@ export default {
         bbox: this.instance.bbox,
         style: this.instance.style,
         country: this.instance.country,
+        continent: countryContinents[this.instance.country],
       };
       this.connectToWebsocket();
       this.showLoading = true;
+      this.successfullyProvisioned = false;
       this.enableNavigationPrompt();
       this.ws.onopen = () => this.ws.send(JSON.stringify(signalToSendToSocket));
 
