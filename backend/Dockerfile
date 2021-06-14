@@ -27,8 +27,9 @@ COPY tilemaker-configs/process.lua /
 
 COPY index.html /index.html
 
-COPY server.go /
-RUN chmod +x /server.go
+RUN mkdir -p /server
+COPY server/ /server/
+RUN chmod +x /server/main.go
 
 COPY start.sh /start.sh
 
