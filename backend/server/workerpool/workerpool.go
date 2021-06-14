@@ -11,21 +11,22 @@ import (
 // Job holds the attributes needed to perform unit of work.
 
 type Job struct {
-	Year    string
-	Bbox    string
-	Style   string
-	Name    string
-	Uuid    string
-	Country string
-	ws      *websocket.Conn
+	Year      string
+	Bbox      string
+	Style     string
+	Name      string
+	Uuid      string
+	Country   string
+	Continent string
+	ws        *websocket.Conn
 }
 
-func provision(year, bbox, style, name, uuid, country string, ws *websocket.Conn) {
+func provision(year, bbox, style, name, uuid, country, continent string, ws *websocket.Conn) {
 	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
 
 	for i, s := range scripts_to_run {
 		Websocket.NotifyClient(s, ws)
-		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name)
+		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
 		cmd.Output()
 		// Print the output
 		fmt.Println(i, s)
@@ -60,7 +61,7 @@ func (w Worker) start() {
 			case job := <-w.jobQueue:
 				// Dispatcher has added a job to my jobQueue.
 
-				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.ws)
+				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.ws)
 
 				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
 				// time.Sleep(5 * time.Second)
@@ -121,9 +122,7 @@ func (d *Dispatcher) dispatch() {
 }
 
 func RequestHandler(msg Websocket.Message, ws *websocket.Conn, jobQueue chan Job) {
-	// go provision(msg.Year, msg.Bbox, msg.Style, msg.Name, msg.Uuid, msg.Country, ws)
 	// Create Job and push the work onto the jobQueue.
-	job := Job{Year: msg.Year, Bbox: msg.Bbox, Style: msg.Style, Name: msg.Name, Uuid: msg.Uuid, Country: msg.Country, ws: ws}
-
+	job := Job{Year: msg.Year, Bbox: msg.Bbox, Style: msg.Style, Name: msg.Name, Uuid: msg.Uuid, Country: msg.Country, Continent: msg.Continent, ws: ws}
 	jobQueue <- job
 }
