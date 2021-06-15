@@ -20,7 +20,7 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 	//specify number of concurrent workers and max queue size
-	var maxWorkers int = 2
+	var maxWorkers int = 1
 	var maxQueueSize int = 50
 
 	// Create the job queue.
