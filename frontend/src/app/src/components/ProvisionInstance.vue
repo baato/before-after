@@ -181,7 +181,7 @@ export default {
         "district",
         "county",
         "suburb",
-        "country",
+        // "country",
       ];
       axios
         .get("https://photon.komoot.io/api/", {
