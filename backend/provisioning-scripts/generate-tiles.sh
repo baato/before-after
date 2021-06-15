@@ -6,12 +6,16 @@ declare -a arr=("highway=trunk" "highway=primary" "highway=secondary" "highway=t
 ## now loop through the above array
 for i in "${arr[@]}"
 do
-   osmium tags-filter -o /extracts/before_$4_$i.osm.pbf /extracts/before_${4}.osm.pbf nwr/$i
+   osmium tags-filter -o /extracts/temp_before_$4_$i.osm.pbf /extracts/before_${4}.osm.pbf nwr/$i
+   osmium renumber -o /extracts/before_$4_$i.osm.pbf  /extracts/temp_before_$4_$i.osm.pbf
+   rm /extracts/temp_before_$4_$i.osm.pbf
 done
 
 for i in "${arr[@]}"
 do
-   osmium tags-filter -o /extracts/after_$4_$i.osm.pbf /extracts/after_${4}.osm.pbf nwr/$i
+   osmium tags-filter -o /extracts/temp_after_$4_$i.osm.pbf /extracts/after_${4}.osm.pbf nwr/$i
+   osmium renumber -o /extracts/after_$4_$i.osm.pbf  /extracts/temp_after_$4_$i.osm.pbf
+   rm /extracts/temp_after_$4_$i.osm.pbf
 done
 
 cd /
@@ -19,7 +23,7 @@ cd /
 # merge layers one by one
 for i in "${arr[@]}"
 do
-   tilemaker /extracts/before_$4_$i.osm.pbf --merge    --output=/appdata/beforetiles/${4}.mbtiles
+   tilemaker /extracts/before_$4_$i.osm.pbf --merge --compact  --output=/appdata/beforetiles/${4}.mbtiles
 done
 
 # generate tiles from mbtiles
@@ -28,7 +32,7 @@ mb-util --image_format=pbf /appdata/beforetiles/${4}.mbtiles /appdata/beforetile
 
 for i in "${arr[@]}"
 do
-   tilemaker /extracts/after_$4_$i.osm.pbf --merge    --output=/appdata/aftertiles/${4}.mbtiles
+   tilemaker /extracts/after_$4_$i.osm.pbf --merge --compact   --output=/appdata/aftertiles/${4}.mbtiles
 done
 
 mb-util --image_format=pbf /appdata/aftertiles/${4}.mbtiles /appdata/aftertiles/${4} 
