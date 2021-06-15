@@ -22,6 +22,10 @@ RUN mkdir -p /usr/share/man/man1
 RUN apt-get install -y default-jre
 RUN apt-get install -y osmosis
 
+RUN apt-get install -y python-pip
+RUN pip install mbutil
+
+
 COPY tilemaker-configs/config.json /
 COPY tilemaker-configs/process.lua /
 
