@@ -2,8 +2,9 @@
   <div class="text-center">
     <v-dialog persistent scrollable v-model="aboutDialog" width="700">
       <v-card>
-        <v-card-title class="headline lighten-2"> About </v-card-title>
-        <v-divider></v-divider>
+        <v-card-title style="background-color: #47889d; color: #ffffff">
+          About
+        </v-card-title>
 
         <v-card-text style="font-size: 0.9rem">
           <br />
@@ -110,7 +111,9 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="closeAboutDialog"> Ok </v-btn>
+          <v-btn color="#47889d" class="text-white" @click="closeAboutDialog">
+            Ok
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

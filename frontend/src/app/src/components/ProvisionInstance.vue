@@ -7,6 +7,14 @@
       v-if="successfullyProvisioned"
       :instanceName="instance.uuid"
     />
+    <WhyPersonalDetails
+      :showDialog="showPersonalDetailsRequirement"
+      :closeDialogHandler="closePersonalDetailsRequirement"
+    />
+    <InstanceRequested
+      :showDialog="showInstanceRequested"
+      :closeDialogHandler="closeInstanceRequestedDialog"
+    />
     <Loader
       :showLoading="showLoading"
       :country="instance.country"
@@ -39,7 +47,7 @@
           cache-items
           hide-no-data
           hide-details
-          label="City, country, etc."
+          label="City, state, county, etc."
           solo-inverted
           @change="selectPlace"
           return-object
@@ -82,6 +90,43 @@
           required
         ></v-select>
 
+        <v-divider style="color: white"></v-divider>
+        <p class="font-weight-light text-white">
+          Personal details
+
+          <a @click="giveReasonForAskingPersonalDetails"
+            ><small
+              class="
+                font-weight-light
+                text-white text-decoration-underline
+                float-right
+              "
+              >Why personal details?</small
+            ></a
+          >
+        </p>
+
+        <v-text-field
+          dark
+          outlined
+          class="v-step-1 mt-3"
+          color="white"
+          label="Enter your full name"
+          v-model="instance.fullName"
+          :rules="requiredRules"
+          required
+        ></v-text-field>
+        <v-text-field
+          dark
+          outlined
+          class="v-step-1 mt-3"
+          color="white"
+          label="Enter your email address"
+          v-model="instance.email"
+          :rules="emailRules.concat(requiredRules)"
+          required
+        ></v-text-field>
+
         <v-btn
           x-large
           class="v-step-3 white--text float-right"
@@ -108,6 +153,8 @@
 
 <script>
 import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
+import WhyPersonalDetails from "./WhyPersonalDetails.vue";
+import InstanceRequested from "./InstanceRequested.vue";
 import MapView from "./MapView";
 import Loader from "./Loader";
 import axios from "axios";
@@ -123,6 +170,8 @@ export default {
     MapView,
     Loader,
     SuccessfullyProvisioned,
+    WhyPersonalDetails,
+    InstanceRequested,
   },
   watch: {
     search(val) {
@@ -145,10 +194,27 @@ export default {
     ws: null,
     provisioningState: null,
     requiredRules: [(v) => !!v || "This field is required"],
+    emailRules: [
+      (v) =>
+        !v ||
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+        "E-mail must be valid",
+    ],
     provisioningStateMappings: provisioningStates,
     keepAliveCounter: null,
+    showPersonalDetailsRequirement: false,
+    showInstanceRequested: false,
   }),
   methods: {
+    giveReasonForAskingPersonalDetails() {
+      this.showPersonalDetailsRequirement = true;
+    },
+    closePersonalDetailsRequirement() {
+      this.showPersonalDetailsRequirement = false;
+    },
+    closeInstanceRequestedDialog() {
+      this.showInstanceRequested = false;
+    },
     connectToWebsocket() {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       this.ws = new WebSocket(`${protocol}//${window.location.hostname}/ws`);
@@ -247,6 +313,36 @@ export default {
         15 * 1000
       );
     },
+    invokeAPI() {
+      const protocol =
+        window.location.protocol === "https:" ? "https:" : "http:";
+      const data = {
+        name: this.instance.name,
+        uuid: this.instance.uuid,
+        year: this.instance.year.toString(),
+        bbox: this.instance.bbox,
+        style: this.instance.style,
+        country: this.instance.country,
+        continent: countryContinents[this.instance.country],
+        fullName: this.instance.fullName,
+        email: this.instance.email,
+      };
+      this.showLoading = true;
+      axios
+        .get(`${protocol}//${window.location.hostname}:8848/api/v1/instance`, {
+          params: data,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            this.showInstanceRequested = true;
+            this.showLoading = false;
+          }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          console.log(error);
+        });
+    },
     enableNavigationPrompt() {
       // Enable navigation prompt
       window.onbeforeunload = function () {
@@ -261,7 +357,7 @@ export default {
       this.instance.year = this.instance.beforeYear.toString().substring(2);
       this.instance.uuid = uuid.v4();
 
-      this.invokeSocket();
+      this.invokeAPI();
     },
     submitForm() {
       this.provisionInstanceAPICall();

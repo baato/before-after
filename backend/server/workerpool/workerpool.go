@@ -2,8 +2,11 @@ package workerpool
 
 import (
 	"fmt"
+	"net/http"
+	"os"
 	"os/exec"
 
+	Mailer "../mailer"
 	Websocket "../websocket"
 	"github.com/gorilla/websocket"
 )
@@ -18,20 +21,22 @@ type Job struct {
 	Uuid      string
 	Country   string
 	Continent string
-	ws        *websocket.Conn
+	FullName  string
+	Email     string
+	// ws        *websocket.Conn
 }
 
-func provision(year, bbox, style, name, uuid, country, continent string, ws *websocket.Conn) {
+func provision(year, bbox, style, name, uuid, country, continent, fullName, email string) {
 	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
 
 	for i, s := range scripts_to_run {
-		Websocket.NotifyClient(s, ws)
+		// Websocket.NotifyClient(s, ws)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
 		cmd.Output()
 		// Print the output
 		fmt.Println(i, s)
 	}
-	Websocket.NotifyClient("done", ws)
+	// Websocket.NotifyClient("done", ws)
 }
 
 // NewWorker creates takes a numeric id and a channel w/ worker pool.
@@ -60,9 +65,8 @@ func (w Worker) start() {
 			select {
 			case job := <-w.jobQueue:
 				// Dispatcher has added a job to my jobQueue.
-
-				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.ws)
-
+				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
+				Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid)
 				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
 				// time.Sleep(5 * time.Second)
 				// fmt.Printf("TALA\n", job.Uuid, job.Name)
@@ -121,8 +125,24 @@ func (d *Dispatcher) dispatch() {
 	}
 }
 
-func RequestHandler(msg Websocket.Message, ws *websocket.Conn, jobQueue chan Job) {
+func RequestHandlerForSocket(msg Websocket.Message, ws *websocket.Conn, jobQueue chan Job) {
 	// Create Job and push the work onto the jobQueue.
-	job := Job{Year: msg.Year, Bbox: msg.Bbox, Style: msg.Style, Name: msg.Name, Uuid: msg.Uuid, Country: msg.Country, Continent: msg.Continent, ws: ws}
+	job := Job{Year: msg.Year, Bbox: msg.Bbox, Style: msg.Style, Name: msg.Name, Uuid: msg.Uuid, Country: msg.Country, Continent: msg.Continent}
+	jobQueue <- job
+}
+
+func RequestHandlerForAPI(r *http.Request, jobQueue chan Job) {
+	// Create Job and push the work onto the jobQueue.
+	job := Job{
+		Year:      r.URL.Query().Get("year"),
+		Bbox:      r.URL.Query().Get("bbox"),
+		Style:     r.URL.Query().Get("style"),
+		Name:      r.URL.Query().Get("name"),
+		Uuid:      r.URL.Query().Get("uuid"),
+		Country:   r.URL.Query().Get("country"),
+		Continent: r.URL.Query().Get("continent"),
+		FullName:  r.URL.Query().Get("fullName"),
+		Email:     r.URL.Query().Get("email"),
+	}
 	jobQueue <- job
 }
