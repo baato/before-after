@@ -31,9 +31,9 @@ COPY tilemaker-configs/process.lua /
 
 COPY index.html /index.html
 
-RUN mkdir -p /server
-COPY server/ /server/
-RUN chmod +x /server/main.go
+RUN mkdir -p /server/backend/server
+COPY server/ /server/backend/server
+RUN chmod +x /server/backend/server/main.go
 
 COPY start.sh /start.sh
 
@@ -45,5 +45,7 @@ COPY map-styles/ /map-styles
 
 RUN chmod +x /start.sh
 RUN chmod +x /provisioning-scripts/*.sh
+
+WORKDIR /server
 
 ENTRYPOINT ["/start.sh"]
