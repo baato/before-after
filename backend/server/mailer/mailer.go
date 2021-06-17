@@ -13,7 +13,7 @@ var GMAIL_USERNAME = os.Getenv("GMAIL_USERNAME")
 var GMAIL_PASSWORD = os.Getenv("GMAIL_PASSWORD")
 var gmailAuth = smtp.PlainAuth("", GMAIL_USERNAME, GMAIL_PASSWORD, "smtp.gmail.com")
 
-func SendMail(receiver []string, FullName string, Uuid string) {
+func SendMail(receiver []string, FullName string, Uuid string, Name string) {
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -27,11 +27,13 @@ func SendMail(receiver []string, FullName string, Uuid string) {
 	body.Write([]byte(fmt.Sprintf("Subject: Before after maps generated\n%s\n\n", headers)))
 
 	t.Execute(&body, struct {
-		Name string
-		URL  string
+		FullName string
+		Name     string
+		URL      string
 	}{
-		Name: FullName,
-		URL:  os.Getenv("HOST_PROTOCOL") + "//" + os.Getenv("HOST_IP") + "/provision/" + Uuid,
+		FullName: FullName,
+		Name:     Name,
+		URL:      os.Getenv("HOST_PROTOCOL") + "//" + os.Getenv("HOST_IP") + "/provision/" + Uuid,
 	})
 
 	smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body.Bytes())
