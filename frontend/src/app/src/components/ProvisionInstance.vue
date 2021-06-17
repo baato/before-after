@@ -329,7 +329,7 @@ export default {
       };
       this.showLoading = true;
       axios
-        .get(`${protocol}//${window.location.hostname}:8848/api/v1/instance`, {
+        .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
           params: data,
         })
         .then((res) => {

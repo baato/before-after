@@ -66,7 +66,7 @@ func (w Worker) start() {
 			case job := <-w.jobQueue:
 				// Dispatcher has added a job to my jobQueue.
 				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
-				Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid)
+				Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
 				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
 				// time.Sleep(5 * time.Second)
 				// fmt.Printf("TALA\n", job.Uuid, job.Name)
