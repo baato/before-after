@@ -1,0 +1,60 @@
+<html>
+
+<head></head>
+
+<body style="font-family:'Courier New'">
+
+
+
+    <section style="text-align: center;height: 100px;margin-bottom: 70px;">
+        <div class="one">
+            <img src="https://raw.githubusercontent.com/baato/before-after/main/frontend/src/app/public/logo.png"
+                alt="Logo" width="100">
+        </div>
+        <div class="two">
+
+            <strong style="color: #4C4C4C;"> GENERATE </strong>
+            <br>
+            <strong style="color:#659BAD;"> BEFORE-AFTER MAPS </strong>
+            <br>
+            <strong style="color: #4C4C4C;"> WITH EASE </strong>
+        </div>
+    </section>
+
+    <div style=" background-color: #F5F5F5;padding: 30px;">
+        <div style=" background-color:#659BAD; color: #ecf0f1; padding: 20px; width: 70%; margin: auto; ">
+            <p>Hi {{.FullName}},</p>
+
+            <p>We are sorry to inform you that there was an error generating the before-after maps named {{.Name}} as
+                per your request. The support team is already informed about this and they will try their best to get
+                this sorted.
+            </p>
+
+            <p>For making the error diagnostics easier, support team will use the following details:</p>
+            <ul>
+                <li>Provisioning ID: {{.Uuid}}</li>
+                <li>Error at stage: {{.ErrorAt}}</li>
+                <li>User's name: {{.FullName}}</li>
+                <li>User's mail: {{.Email}}</li>
+                <li>Compared with year: 20{{.Year}}</li>
+                <li>Bbox: {{.Bbox}}</li>
+                <li>Country: {{.Country}}</li>
+                <li>Continent: {{.Continent}}</li>
+            </ul>
+
+            <p>Thank you for using this service. We will try to get back to you ASAP with this issue fixed.
+            </p>
+
+        </div>
+
+        <div style="margin-top: 20px;bottom: 0px; width: 100%; text-align: center; ">
+            Powered by <a href="https://baato.io">baato.io</a>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>

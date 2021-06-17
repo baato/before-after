@@ -26,16 +26,23 @@ type Job struct {
 	// ws        *websocket.Conn
 }
 
-func provision(year, bbox, style, name, uuid, country, continent, fullName, email string) {
+type JobStatus struct{ status, err string }
+
+func provision(year, bbox, style, name, uuid, country, continent, fullName, email string) JobStatus {
 	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
 
 	for i, s := range scripts_to_run {
 		// Websocket.NotifyClient(s, ws)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
-		cmd.Output()
+		_, err := cmd.Output()
+		if err != nil {
+			fmt.Println(fmt.Sprint(err))
+			return JobStatus{"error", s}
+		}
 		// Print the output
 		fmt.Println(i, s)
 	}
+	return JobStatus{"done", "nil"}
 	// Websocket.NotifyClient("done", ws)
 }
 
@@ -65,8 +72,13 @@ func (w Worker) start() {
 			select {
 			case job := <-w.jobQueue:
 				// Dispatcher has added a job to my jobQueue.
-				provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
-				Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
+				var jobstatus JobStatus = provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
+				if jobstatus.status == "done" {
+					Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
+				} else if jobstatus.status == "error" {
+					Mailer.SendErrorMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
+				}
+
 				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
 				// time.Sleep(5 * time.Second)
 				// fmt.Printf("TALA\n", job.Uuid, job.Name)
