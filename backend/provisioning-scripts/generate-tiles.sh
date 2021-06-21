@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 ## declare an array variable for themes you want to include in data
-declare -a arr=("highway=trunk" "highway=primary" "highway=secondary" "highway=tertiary" "highway=unclassifed" "building" "amenity" "landuse" "waterway" "water" "landcover")
+declare -a arr=("highway=trunk" "highway=primary" "highway=secondary" "highway=tertiary" "highway=unclassifed" "highway=residential" "highway=path" "building" "amenity" "landuse" "waterway" "water" "landcover" "aeroway" "healthcare" "leisure" "military" "natural" "place")
 
 ## now loop through the above array
 for i in "${arr[@]}"
@@ -51,5 +51,9 @@ do
    rm /extracts/after_$4_$i.osm.pbf 
 done
 
+# remove intemediate mbtiles and extracts
 rm /appdata/beforetiles/${4}.mbtiles
 rm /appdata/aftertiles/${4}.mbtiles
+
+rm /extracts/before_${4}.osm.pbf
+rm /extracts/after_${4}.osm.pbf
