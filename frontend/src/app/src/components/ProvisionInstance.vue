@@ -52,6 +52,7 @@
           @change="selectPlace"
           return-object
           required
+          dense
           :rules="requiredRules"
           color="blue-grey lighten-2"
         ></v-autocomplete>
@@ -70,6 +71,7 @@
         <v-text-field
           dark
           outlined
+          dense
           class="v-step-1 mt-3"
           color="white"
           label="Name of this map"
@@ -80,8 +82,9 @@
 
         <v-select
           dark
-          class="v-step-2 mt-4"
+          class="v-step-2 mt-0"
           outlined
+          dense
           label="Compare against (year)"
           :items="years"
           color="white"
@@ -89,26 +92,31 @@
           :rules="requiredRules"
           required
         ></v-select>
-
-        <v-divider style="color: white"></v-divider>
-        <p class="font-weight-light text-white">
-          Personal details
-
-          <a @click="giveReasonForAskingPersonalDetails"
-            ><small
-              class="
-                font-weight-light
-                text-white text-decoration-underline
-                float-right
-              "
-              >Why personal details?</small
-            ></a
-          >
-        </p>
+        <br />
+        
+        
+        <div style="line-height: 1rem">
+        <span
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+          "
+          >PERSONAL DETAILS
+          <a
+            @click="giveReasonForAskingPersonalDetails"
+            class="font-weight-light float-right"
+            style="text-transform: lowercase; color: rgba(255,255,255,0.7);"
+            ><i> Why personal info? </i>
+          </a>
+        </span>
+        </div>
 
         <v-text-field
           dark
           outlined
+          dense
           class="v-step-1 mt-3"
           color="white"
           label="Enter your full name"
@@ -119,16 +127,18 @@
         <v-text-field
           dark
           outlined
-          class="v-step-1 mt-3"
+          class="v-step-1 mt-0"
           color="white"
           label="Enter your email address"
           v-model="instance.email"
           :rules="emailRules.concat(requiredRules)"
           required
+          dense
         ></v-text-field>
 
+        <br />
         <v-btn
-          x-large
+          large
           class="v-step-3 white--text float-right"
           :disabled="!valid"
           color="#2c3e50"

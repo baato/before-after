@@ -6,6 +6,7 @@
       </v-card-title>
 
       <v-card-text>
+        <br/>
         The process of generating before-after maps can take a while because of
         limited server resources and also that the request might be queued. And
         we don't want to keep you waiting on this site while that happens. So,

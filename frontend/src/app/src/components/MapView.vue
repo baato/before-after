@@ -7,7 +7,7 @@
   // position: absolute;
   // top: 0;
   // bottom: 0;
-  height: 82vh;
+  height: 81vh;
   width: 100%;
   // border-radius: 5px;
   // box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
