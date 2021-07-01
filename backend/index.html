@@ -1,212 +1,366 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+<!-- Based on examples by Mike Bostock, MapBox, etc. (see README.md) -->
+<!--
+  https://www.mapbox.com/mapbox-gl-js/example/image-on-a-map/,
+  http://bl.ocks.org/anandthakker/69afa4bfb0c4f5778785,
+  http://bl.ocks.org/anandthakker/52d26ae7b71b7e23c279,
+  http://bl.ocks.org/AlanPew/ac2f7753e488d8ac66d5
+-->
+<!-- Author: Bo Ericsson, https://www.linkedin.com/in/boeric00/ -->
 
 <head>
-    <meta charset="utf-8" />
     <title>_NAME_ - Before After Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta charset="UTF-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;400;600&display=swap" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.js" type="text/JavaScript"></script>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto';
+            margin: 0px;
+            font-family: Roboto;
         }
 
-        #map {
+        p,
+        a {
+            font-size: 12px;
+            line-height: 12px;
+            margin: 0px;
+        }
+
+        a {
+            margin-left: 10px;
+        }
+
+        h4 {
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        label {
+            font-size: 12px;
+        }
+
+        #overlay {
+            padding: 5px;
             position: absolute;
-            top: 0;
-            bottom: 0;
+            min-width: 200px;
+            max-width: 400px;
+            top: 10px;
+            left: 10px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            background-color: white;
+            opacity: 0.8;
+            display: none;
+            z-index: 10000;
+        }
+
+        #overlay p {
+            margin: 5px;
+        }
+
+        #controls {
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+
+        #controls p {
+            margin: 5px;
+            margin-left: 0px;
+        }
+
+        #main {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            opacity: 0.85;
+            background-color: white;
+            border-radius: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            z-index: 10000;
+            width: 300px;
+            border: 1px solid gray;
+        }
+
+        ul {
+            font-size: 12px;
+            padding-left: 15px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        li {
+            font-style: italic;
+        }
+
+        #howToUse:hover {
+            color: red;
+        }
+
+        #map,
+        #map2 {
+            position: absolute;
+            top: 140px;
+            bottom: 50px;
             width: 100%;
+            border: 1px solid black;
+        }
+
+        #map2 {
+            right: 0px;
+        }
+
+        #divider {
+            background-color: gray;
+            width: 8px;
+        }
+
+        #title {
+            font-weight: 400;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        h1,
+        h2 {
+            font-family: Roboto;
+            margin: 0;
+        }
+
+        #map-title {
+            z-index: 100;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            max-width: 100;
+        }
+
+        #footer {
+            position: absolute;
+            bottom: 15px;
+            text-align: center;
+            width: 100%;
+            font-family: Roboto;
+        }
+
+        #footer a {
+            padding: 0;
+            margin: 0;
+            font-size: unset;
+            line-height: unset;
+        }
+
+        #style-selector {
+            padding-top: 10px;
+        }
+
+        #style-selector a {
+            padding: 0;
+            margin: 0;
+            font-size: unset;
+            line-height: unset;
+        }
+
+        #style-selector label {
+            padding: 0;
+            margin: 0;
+            font-size: 1rem;
+            line-height: unset;
+        }
+
+        #style-selector option {
+            padding: 0;
+            margin: 0;
+            font-size: 1rem;
+            line-height: unset;
         }
     </style>
 </head>
 
 <body>
-    <style>
-
-
-        body * {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            overflow: hidden !important;
-        }
-
-        .map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100%;
-        }
-
-        .before-label {
-            position: absolute;
-            top: 15px;
-            left: 0;
-            /* border: 3px solid #73AD21; */
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom-right-radius: 5px;
-            border-top-right-radius: 5px;
-            padding: 10px;
-            z-index: 120;
-        }
-
-        .after-label {
-            position: absolute;
-            top: 15px;
-            right: 0;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom-left-radius: 5px;
-            border-top-left-radius: 5px;
-            padding: 10px;
-            z-index: 120;
-        }
-
-        .loading-label {
-            position: absolute;
-            right: 0;
-            left: 0;
-            top: 55%;
-            margin-left: auto;
-            margin-right: auto;
-            width: 130px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #ffffff;
-            border-radius: 5px;
-            padding: 10px;
-            z-index: 120;
-        }
-
-        .style-selector {
-            position: absolute;
-            bottom: 10px;
-            text-align: center;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .name-label {
-            position: absolute;
-            top: 0px;
-            padding: 10px 0;
-            text-align: center;
-            width: 100%;
-            z-index: 100;
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-    </style>
-    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
-    <link rel="stylesheet"
-        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css"
-        type="text/css" />
-    <div id="comparison-container" style="position: absolute; top: 0; bottom: 0; width: 100%;">
-        <div id="before" class="map"></div>
-        <div id="after" class="map"></div>
-        <div
-            style="z-index: 10; padding: 10px; background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; font-size: 0.8rem; right: 0px">
-            Map data: <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer no follow"
-                target="_blank">© OpenStreetMap contributors</a></div>
-        <div
-            style="z-index: 100; padding: 1px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; left: 0px">
-            <a href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
-                    src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
-                    width="80px"></img></a>
+    <div id="container">
+        <div id="title">
+            <span>BEFORE AFTER MAP</span>
+            <h1>_NAME_</h1>
+            <div id="style-selector">
+                <label for="style">Choose map style:</label>
+                <select name="style" id="style" onchange="styleChangeHandler()">
+                    <option value="retro">Retro</option>
+                    <option value="breeze">Breeze</option>
+                    <option value="monochrome">Monochrome</option>
+                </select>
+            </div>
         </div>
-
+        <div id="map">
+            <div id="map-title">
+                <h2>_BEFORE_YEAR_</h2>
+            </div>
+            <div
+                style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
+                © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
+                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a></div>
+            <div style="z-index: 100; padding: 0 5px;margin: 0; position:absolute; bottom:-5px; left: -5px">
+                <a style="margin:0;" href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
+                        src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
+                        width="80px"></img></a>
+            </div>
+        </div>
+        <div id="divider"></div>
+        <div id="map2">
+            <div id="map-title">
+                <h2>_AFTER_YEAR_</h2>
+            </div>
+            <div
+                style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
+                © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
+                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a></div>
+            <div style="z-index: 100; padding: 0 5px;margin: 0; position:absolute; bottom:-5px; left: -5px">
+                <a style="margin:0;" href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
+                        src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
+                        width="80px"></img></a>
+            </div>
+        </div>
+        <div id="footer">
+            This map was generated using the <span><a rel="noopener noreferrer no follow" target="_blank"
+                    href="https://beforeafter.baato.io">Before After Map Tool</a></span>
+            from <a rel="noopener noreferrer no follow" target="_blank" href="https://baato.io">Baato</a>.
+        </div>
     </div>
-
-    <div class="loading-label">
-        <strong>Rendering tiles...</strong>
+    <!-- <div style="position: relative; display: block">
+    <div id="main">
+      <h4 style="margin-bottom: 0px">Driver License Suspensions in</h4>
+      <h4 style="margin-top: 0px">California by Zip Code</h4>
+      <p style="margin-top: 0px; font-weight: bold">Due to "Failure to Pay" or "Failure to Appear"</p>
+      <div id="controls">
+        <p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;
+      </div>
+      <p style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">Sources</p>
+      <ul>
+        <li>East Bay Community Law Center</li>
+        <li>CA Deparment of Motor Vehicles</li>
+        <li>US Census Bureau (for geo data)</li>
+      </ul>
+      <p style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">Map tilt</p>
+      <input id="tiltSlider" style="width: 100%" type="range" min="0" max="60" value="0" step="1">
+      <p id="howToUse" style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">How to use...</p>
+      <ul id="instructions" style="display: none">
+        <li>Move the mouse to see the specifics for the zip code</li>
+        <li>The zip code boundaries are shown for each county</li>
+        <li>The darker the zip code areas, the higher suspension rate</li>
+        <li>Zoom in/out by rolling the mouse wheel, or by using the plus/minus buttons</li>
+        <li>Pan around the map by dragging the mouse</li>
+        <li>To tilt the map, use the slider above</li>
+        <li>Rotate the map, drag the compass icon in upper right</li>
+        <li>To reset the rotation, click the compass icon</li>
+      </ul>
     </div>
-
-    <div class="before-label">
-        <strong>BEFORE MAP at _BEFORE_YEAR_</strong>
-    </div>
-
-    <div class="style-selector">
-        <label for="style">Choose map style</label>
-        <select name="style" id="style" onchange="styleChangeHandler()">
-            <option value="retro">Retro</option>
-            <option value="breeze">Breeze</option>
-            <option value="monochrome">Monochrome</option>
-        </select>
-
-    </div>
-
-
-    <div class="after-label">
-        <strong>AFTER MAP at _AFTER_YEAR_</strong>
-    </div>
-    <div class="name-label">
-        <span style="font-size: 0.7rem">BEFORE AFTER MAP</span>
-        <br />
-        <strong style="font-size: 1.8rem">_NAME_</strong>
-    </div>
+  </div> -->
     <script>
-        const defaultStyle = "retro";
+        "use strict";
+        var povDist;
+        var counties,
+            zipcodes,
+            data,
+            zipGeo,
+            countyZips,
+            zipData;
+        var defaultStyle = "retro";
         let selectedStyle = defaultStyle;
-        let beforeMap;
-        let afterMap;
-        let beforeMapSourceLoaded = false;
-        let afterMapSourceLoaded = false;
-
-        function areAllSourcesLoaded() {
-            if (beforeMapSourceLoaded && afterMapSourceLoaded) {
-                document.getElementsByClassName('loading-label')[0].style.visibility = 'hidden';
-            }
-        }
-
         function styleChangeHandler() {
             selectedStyle = document.getElementById("style").value;
-            beforeMap.setStyle(`${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`);
-            afterMap.setStyle(`${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`);
+            map.setStyle(`${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`);
+            map2.setStyle(`${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`);
+            // window.map.setStyle(`https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`);
+            // window.map2.setStyle(`https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`);
         }
-
-        function initMapView(data) {
+        window.onload = function () { mapBoxInit(); }
+        window.onresize = function () {
+            setWindowSize();
+        }
+        function setWindowSize() {
+            var padding = 10
+            var width = (window.innerWidth - 6) / 2;
+            d3.select("#map").style("width", width + "px")
+            d3.select("#map2").style("width", width + "px")
+        }
+        setWindowSize();
+        function mapBoxInit() {
             const bounds = [
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ];
-            beforeMap = new mapboxgl.Map({
-                container: "before",
+            // mapbox access token
+            // mapboxgl.accessToken = 'pk.eyJ1IjoiYm9lcmljIiwiYSI6IkZEU3BSTjQifQ.XDXwKy2vBdzFEjndnE4N7Q';
+            // define the first map
+            var map = new mapboxgl.Map({
+                container: 'map',
+                zoom: 11,
+                // style: `https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`,
                 style: `${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`,
-                // maxBounds: bounds,
-                // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
-
-                zoom: 11, // starting zoom
+                attributionControl: false
             }).fitBounds(bounds);
-            beforeMap.on('sourcedata', function (e) {
-                if (e.isSourceLoaded) {
-                    beforeMapSourceLoaded = true;
-                    areAllSourcesLoaded();
-                }
-            });
-
-            afterMap = new mapboxgl.Map({
-                container: "after",
+            window.map = map;
+            // Add zoom and rotation controls to the map.
+            map.addControl(new mapboxgl.NavigationControl());
+            // define the second map
+            // define the second map
+            var map2 = new mapboxgl.Map({
+                container: 'map2',
+                zoom: 11,
+                // style: `https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`,
                 style: `${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`,
-                // maxBounds: bounds,
-                // center: [(_CENTERLNG_MAX_ + _CENTERLNG_MIN_) / 2, (_CENTERLAT_MAX_ + _CENTERLAT_MIN_) / 2], // starting position [lng, lat]
-                zoom: 11, // starting zoom
+                attributionControl: false
             }).fitBounds(bounds);
-            afterMap.on('sourcedata', function (e) {
-                if (e.isSourceLoaded) {
-                    afterMapSourceLoaded = true;
-                    areAllSourcesLoaded();
-                }
+            window.map2 = map2;
+            // Add zoom and rotation controls to the map.
+            map2.addControl(new mapboxgl.NavigationControl());
+            // remove zip code area border when zoomed out
+            map.on('zoom', function () {
+                var zoom = map.getZoom();
             });
-
-            const container = "#comparison-container";
-            const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
+            // remove zip code area border when zoomed out
+            map2.on('zoom', function () {
+                var zoom = map2.getZoom();
+            });
+            // coordination between the two maps
+            var disable = false;
+            map.on("move", function () {
+                if (!disable) {
+                    var center = map.getCenter();
+                    var zoom = map.getZoom();
+                    var pitch = map.getPitch();
+                    var bearing = map.getBearing();
+                    disable = true;
+                    map2.setCenter(center);
+                    map2.setZoom(zoom);
+                    map2.setPitch(pitch);
+                    map2.setBearing(bearing);
+                    disable = false;
+                }
+            })
+            map2.on("move", function () {
+                if (!disable) {
+                    var center = map2.getCenter();
+                    var zoom = map2.getZoom();
+                    var pitch = map2.getPitch();
+                    var bearing = map2.getBearing();
+                    disable = true;
+                    map.setCenter(center);
+                    map.setZoom(zoom);
+                    map.setPitch(pitch);
+                    map.setBearing(bearing);
+                    disable = false;
+                }
+            })
         }
-        initMapView();
     </script>
 </body>
 
