@@ -1,13 +1,5 @@
 <!doctype html>
 <html lang="en">
-<!-- Based on examples by Mike Bostock, MapBox, etc. (see README.md) -->
-<!--
-  https://www.mapbox.com/mapbox-gl-js/example/image-on-a-map/,
-  http://bl.ocks.org/anandthakker/69afa4bfb0c4f5778785,
-  http://bl.ocks.org/anandthakker/52d26ae7b71b7e23c279,
-  http://bl.ocks.org/AlanPew/ac2f7753e488d8ac66d5
--->
-<!-- Author: Bo Ericsson, https://www.linkedin.com/in/boeric00/ -->
 
 <head>
     <title>_NAME_ - Before After Map</title>
@@ -63,6 +55,12 @@
 
         #overlay p {
             margin: 5px;
+        }
+
+        #sharing {
+            position: absolute;
+            top: 10px;
+            left: 10px;
         }
 
         #controls {
@@ -182,6 +180,87 @@
             font-size: 1rem;
             line-height: unset;
         }
+
+        .resp-sharing-button__link,
+        .resp-sharing-button__icon {
+            display: inline-block
+        }
+
+        .resp-sharing-button__link {
+            text-decoration: none;
+            color: #fff;
+            margin: 0.5em
+        }
+
+        .resp-sharing-button {
+            border-radius: 5px;
+            transition: 25ms ease-out;
+            padding: 0.5em 0.75em;
+            font-family: Helvetica Neue, Helvetica, Arial, sans-serif
+        }
+
+        .resp-sharing-button__icon svg {
+            width: 1em;
+            height: 1em;
+            margin-right: 0.4em;
+            vertical-align: top
+        }
+
+        .resp-sharing-button--small svg {
+            margin: 0;
+            vertical-align: middle
+        }
+
+        /* Non solid icons get a stroke */
+        .resp-sharing-button__icon {
+            stroke: #fff;
+            fill: none
+        }
+
+        /* Solid icons get a fill */
+        .resp-sharing-button__icon--solid,
+        .resp-sharing-button__icon--solidcircle {
+            fill: #fff;
+            stroke: none
+        }
+
+        .resp-sharing-button--twitter {
+            background-color: #55acee
+        }
+
+        .resp-sharing-button--twitter:hover {
+            background-color: #2795e9
+        }
+
+        .resp-sharing-button--facebook {
+            background-color: #3b5998
+        }
+
+        .resp-sharing-button--facebook:hover {
+            background-color: #2d4373
+        }
+
+        .resp-sharing-button--facebook {
+            background-color: #3b5998;
+            border-color: #3b5998;
+        }
+
+        .resp-sharing-button--facebook:hover,
+        .resp-sharing-button--facebook:active {
+            background-color: #2d4373;
+            border-color: #2d4373;
+        }
+
+        .resp-sharing-button--twitter {
+            background-color: #55acee;
+            border-color: #55acee;
+        }
+
+        .resp-sharing-button--twitter:hover,
+        .resp-sharing-button--twitter:active {
+            background-color: #2795e9;
+            border-color: #2795e9;
+        }
     </style>
 </head>
 
@@ -233,36 +312,39 @@
                     href="https://beforeafter.baato.io">Before After Map Tool</a></span>
             from <a rel="noopener noreferrer no follow" target="_blank" href="https://baato.io">Baato</a>.
         </div>
+
+        <div id="sharing">
+            Share this on
+            <br />
+            <!-- Sharingbutton Facebook -->
+            <a class="resp-sharing-button__link"
+                href="https://facebook.com/sharer/sharer.php?u=https://beforeafter.baato.io/provision/_UUID_"
+                target="_blank" rel="noopener" aria-label="">
+                <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small">
+                    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solidcircle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 0C5.38 0 0 5.38 0 12s5.38 12 12 12 12-5.38 12-12S18.62 0 12 0zm3.6 11.5h-2.1v7h-3v-7h-2v-2h2V8.34c0-1.1.35-2.82 2.65-2.82h2.35v2.3h-1.4c-.25 0-.6.13-.6.66V9.5h2.34l-.24 2z" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Sharingbutton Twitter -->
+            <a class="resp-sharing-button__link"
+                href="https://twitter.com/intent/tweet/?text=https://beforeafter.baato.io/provision/_UUID_"
+                target="_blank" rel="noopener" aria-label="">
+                <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+                    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solidcircle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 0C5.38 0 0 5.38 0 12s5.38 12 12 12 12-5.38 12-12S18.62 0 12 0zm5.26 9.38v.34c0 3.48-2.64 7.5-7.48 7.5-1.48 0-2.87-.44-4.03-1.2 1.37.17 2.77-.2 3.9-1.08-1.16-.02-2.13-.78-2.46-1.83.38.1.8.07 1.17-.03-1.2-.24-2.1-1.3-2.1-2.58v-.05c.35.2.75.32 1.18.33-.7-.47-1.17-1.28-1.17-2.2 0-.47.13-.92.36-1.3C7.94 8.85 9.88 9.9 12.06 10c-.04-.2-.06-.4-.06-.6 0-1.46 1.18-2.63 2.63-2.63.76 0 1.44.3 1.92.82.6-.12 1.95-.27 1.95-.27-.35.53-.72 1.66-1.24 2.04z" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
-    <!-- <div style="position: relative; display: block">
-    <div id="main">
-      <h4 style="margin-bottom: 0px">Driver License Suspensions in</h4>
-      <h4 style="margin-top: 0px">California by Zip Code</h4>
-      <p style="margin-top: 0px; font-weight: bold">Due to "Failure to Pay" or "Failure to Appear"</p>
-      <div id="controls">
-        <p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp;
-      </div>
-      <p style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">Sources</p>
-      <ul>
-        <li>East Bay Community Law Center</li>
-        <li>CA Deparment of Motor Vehicles</li>
-        <li>US Census Bureau (for geo data)</li>
-      </ul>
-      <p style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">Map tilt</p>
-      <input id="tiltSlider" style="width: 100%" type="range" min="0" max="60" value="0" step="1">
-      <p id="howToUse" style="margin-top: 10px; margin-bottom: 0px; font-weight: bold">How to use...</p>
-      <ul id="instructions" style="display: none">
-        <li>Move the mouse to see the specifics for the zip code</li>
-        <li>The zip code boundaries are shown for each county</li>
-        <li>The darker the zip code areas, the higher suspension rate</li>
-        <li>Zoom in/out by rolling the mouse wheel, or by using the plus/minus buttons</li>
-        <li>Pan around the map by dragging the mouse</li>
-        <li>To tilt the map, use the slider above</li>
-        <li>Rotate the map, drag the compass icon in upper right</li>
-        <li>To reset the rotation, click the compass icon</li>
-      </ul>
-    </div>
-  </div> -->
     <script>
         "use strict";
         var povDist;
@@ -278,8 +360,6 @@
             selectedStyle = document.getElementById("style").value;
             map.setStyle(`${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`);
             map2.setStyle(`${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`);
-            // window.map.setStyle(`https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`);
-            // window.map2.setStyle(`https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`);
         }
         window.onload = function () { mapBoxInit(); }
         window.onresize = function () {
@@ -297,13 +377,10 @@
                 [_CENTERLNG_MIN_, _CENTERLAT_MIN_],
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ];
-            // mapbox access token
-            // mapboxgl.accessToken = 'pk.eyJ1IjoiYm9lcmljIiwiYSI6IkZEU3BSTjQifQ.XDXwKy2vBdzFEjndnE4N7Q';
             // define the first map
             var map = new mapboxgl.Map({
                 container: 'map',
                 zoom: 11,
-                // style: `https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`,
                 style: `${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`,
                 attributionControl: false
             }).fitBounds(bounds);
@@ -311,11 +388,9 @@
             // Add zoom and rotation controls to the map.
             map.addControl(new mapboxgl.NavigationControl());
             // define the second map
-            // define the second map
             var map2 = new mapboxgl.Map({
                 container: 'map2',
                 zoom: 11,
-                // style: `https://api.baato.io/api/v1/styles/${selectedStyle}?key=bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ`,
                 style: `${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`,
                 attributionControl: false
             }).fitBounds(bounds);
