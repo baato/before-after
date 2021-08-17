@@ -4,13 +4,21 @@ import vuetify from './plugins/vuetify'
 import VueTour from 'vue-tour'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import VueAnalytics from 'vue-analytics'
+
 // import VueFbCustomerChat from 'vue-fb-customer-chat'
 require('vue-tour/dist/vue-tour.css')
+
 
 Vue.config.productionTip = false
 
 // use vue-tour
 Vue.use(VueTour)
+
+// Configuration VueAnalytics
+Vue.use(VueAnalytics, {
+  id: 'UA-205113572-1'
+});
 
 // // use FB messenger 
 // Vue.use(VueFbCustomerChat, {
