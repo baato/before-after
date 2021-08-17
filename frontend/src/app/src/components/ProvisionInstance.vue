@@ -323,6 +323,11 @@ export default {
       );
     },
     invokeAPI() {
+      this.$gtag.event("click", {
+        event_category: "New Instance",
+        event_label: "New instance was requested",
+        value: "new",
+      });
       const protocol =
         window.location.protocol === "https:" ? "https:" : "http:";
       const data = {
