@@ -9748,6 +9748,11 @@ vue-fb-customer-chat@^0.2.0:
   resolved "https://registry.yarnpkg.com/vue-fb-customer-chat/-/vue-fb-customer-chat-0.2.0.tgz#26384b0db646f38d9e26b1d2d40adf73bbd46999"
   integrity sha512-Nk51oAGgBFHYRakUQCw9Un64Y4qY4SAX2mQLpXCrCFQseVA9OOI9K/KLhmYRhd33Ar/maZeZh/0ziHilStHZkQ==
 
+vue-gtag@^1.16.1:
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/vue-gtag/-/vue-gtag-1.16.1.tgz#edb2f20ab4f6c4d4d372dfecf8c1fcc8ab890181"
+  integrity sha512-5vs0pSGxdqrfXqN1Qwt0ZFXG0iTYjRMu/saddc7QIC5yp+DKgjWQRpGYVa7Pq+KbThxwzzMfo0sGi7ISa6NowA==
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
