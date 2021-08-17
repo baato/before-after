@@ -69,8 +69,7 @@ export default {
     aboutDialog: false,
   }),
   created() {
-    console.log(this.$gtag);
-    this.$gtag.event("login", { method: "Google" });
+    this.$gtag.pageview("/");
   },
   methods: {
     closeAboutDialog() {
