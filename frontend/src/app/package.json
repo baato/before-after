@@ -19,6 +19,7 @@
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
     "vue-fb-customer-chat": "^0.2.0",
+    "vue-gtag": "^1.16.1",
     "vue-router": "^3.5.2",
     "vue-tour": "^2.0.0",
     "vue-uuid": "^2.0.2",

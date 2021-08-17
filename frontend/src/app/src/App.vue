@@ -69,19 +69,10 @@ export default {
     aboutDialog: false,
   }),
   created() {
-    this.$ga.event({
-      eventCategory: "Events",
-      eventAction: "Site load",
-      eventLabel: "Site was loaded",
-    });
+    console.log(this.$gtag);
+    this.$gtag.event("login", { method: "Google" });
   },
   methods: {
-    created() {
-      alert(777);
-    },
-    track() {
-      alert(8);
-    },
     closeAboutDialog() {
       this.aboutDialog = false;
     },
