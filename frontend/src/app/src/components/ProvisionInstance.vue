@@ -93,24 +93,23 @@
           required
         ></v-select>
         <br />
-        
-        
+
         <div style="line-height: 1rem">
-        <span
-          style="
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            font-weight: 600;
-          "
-          >PERSONAL DETAILS
-          <a
-            @click="giveReasonForAskingPersonalDetails"
-            class="font-weight-light float-right"
-            style="text-transform: lowercase; color: rgba(255,255,255,0.7);"
-            ><i> Why personal info? </i>
-          </a>
-        </span>
+          <span
+            style="
+              color: rgba(255, 255, 255, 0.7);
+              text-transform: uppercase;
+              font-size: 0.8rem;
+              font-weight: 600;
+            "
+            >PERSONAL DETAILS
+            <a
+              @click="giveReasonForAskingPersonalDetails"
+              class="font-weight-light float-right"
+              style="text-transform: lowercase; color: rgba(255, 255, 255, 0.7)"
+              ><i> Why personal info? </i>
+            </a>
+          </span>
         </div>
 
         <v-text-field

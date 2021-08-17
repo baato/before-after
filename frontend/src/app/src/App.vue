@@ -68,7 +68,20 @@ export default {
   data: () => ({
     aboutDialog: false,
   }),
+  created() {
+    this.$ga.event({
+      eventCategory: "Events",
+      eventAction: "Site load",
+      eventLabel: "Site was loaded",
+    });
+  },
   methods: {
+    created() {
+      alert(777);
+    },
+    track() {
+      alert(8);
+    },
     closeAboutDialog() {
       this.aboutDialog = false;
     },
