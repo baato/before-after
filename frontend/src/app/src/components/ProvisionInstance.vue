@@ -149,7 +149,7 @@
       </v-form>
     </div>
     <div class="col-md-9 p-0" style="">
-      <MapView ref="mapView" :theme="theme" />
+      <MapView ref="mapView" :theme="theme" :updateBbox="updateBbox" />
     </div>
     <!-- <div class="col-md-12" style="background-color: #fff; min-height: 400px">
       Holla
@@ -300,6 +300,9 @@ export default {
       this.instance.bbox = this.place.extent.join(",");
       this.instance.country =
         countryCodes[this.place.countrycode.toLowerCase()];
+    },
+    updateBbox(bbox) {
+      this.instance.bbox = bbox.join(",");
     },
     openBaatoSite() {
       window.open("https://baato.io", "_blank");

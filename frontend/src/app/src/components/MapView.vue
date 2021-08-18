@@ -18,8 +18,9 @@
 
 <script>
 import mapboxgl from "mapbox-gl";
-// import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { bboxPolygon } from "@turf/turf";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { bboxPolygon, bbox } from "@turf/turf";
+import ScaleMode from "mapbox-gl-draw-scale-mode";
 
 export default {
   name: "BaseMap",
@@ -33,47 +34,45 @@ export default {
   },
   methods: {
     applySource(geometry, extent) {
-      console.log("Extent", extent);
-
-      this.mapView.fitBounds([
-        [extent[0], extent[1]], // southwestern corner of the bounds
-        [extent[2], extent[3]], // northeastern corner of the bounds
-      ], {padding: 200});
-
-      // this.mapView.flyTo({
-      //   center: geometry.coordinates,
-      //   zoom: 10,
-      //   offset: [0, 200],
-      // });
+      this.mapView.fitBounds(
+        [
+          [extent[0], extent[1]], // southwestern corner of the bounds
+          [extent[2], extent[3]], // northeastern corner of the bounds
+        ],
+        { padding: 200 }
+      );
 
       if (this.mapView.getSource("bbox")) {
         this.mapView.removeLayer("bbox").removeSource("bbox");
       }
 
-      this.mapView.addSource("bbox", {
-        type: "geojson",
-        data: bboxPolygon(extent),
-      });
+      // this.mapView.addSource("bbox", {
+      //   type: "geojson",
+      //   data: bboxPolygon(extent),
+      // });
 
-      // Add a new layer to visualize the polygon.
-      this.mapView.addLayer({
-        id: "bbox",
-        type: "line",
-        source: "bbox", // reference the data source
-        layout: {},
-        paint: {
-          "line-color": "#000000", // blue color fill
-          "line-width": 2.5,
-          "line-dasharray": [2, 1],
-        },
-      });
-      // this.drawView.deleteAll().getAll();
-      // this.drawView.add(bboxPolygon(extent));
+      // // Add a new layer to visualize the polygon.
+      // this.mapView.addLayer({
+      //   id: "bbox",
+      //   type: "line",
+      //   source: "bbox", // reference the data source
+      //   layout: {},
+      //   paint: {
+      //     "line-color": "#000000", // blue color fill
+      //     "line-width": 2.5,
+      //     "line-dasharray": [2, 1],
+      //   },
+      // });
+
+      this.drawView.deleteAll().getAll();
+      console.log("extent", extent);
+      this.drawView.add(bboxPolygon(extent));
     },
   },
 
   props: {
     theme: Boolean,
+    updateBbox: Function,
   },
 
   watch: {
@@ -105,17 +104,29 @@ export default {
       attributionControl: false,
     });
 
-    // this.drawView = new MapboxDraw({
-    //   displayControlsDefault: false,
-    //   controls: {
-    //     polygon: true,
-    //     trash: true,
-    //   },
-    // });
+    this.drawView = new MapboxDraw({
+      displayControlsDefault: false,
+      modes: Object.assign({ ScaleMode: ScaleMode }, MapboxDraw.modes),
+    });
 
-    // this.mapView.on("load", () => {
-    //   this.mapView.addControl(this.drawView, "top-left");
-    // });
+    this.mapView.addControl(this.drawView);
+
+    // this.drawView.changeMode("simple_select");
+    // this.drawView.changeMode("ScaleMode");
+
+    this.mapView.on("draw.update", (e) => {
+      console.log(bbox, e);
+      // this.drawView.deleteAll().getAll();
+      // this.updateBbox(bbox(e.features[0]));
+    });
+
+    this.mapView.on("draw.selectionchange", () => {
+      if (this.drawView.getMode() === "ScaleMode") {
+        this.drawView.changeMode("simple_select");
+      } else if (this.drawView.getMode() === "simple_select") {
+        this.drawView.changeMode("ScaleMode");
+      }
+    });
   },
 };
 </script>
