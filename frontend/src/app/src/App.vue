@@ -29,7 +29,7 @@
       <!-- <ProvisionInstance :theme="$vuetify.theme.dark" /> -->
     </v-main>
     <v-footer padless>
-      <v-btn class="v-step-5" @click="aboutDialog = true" text
+      <v-btn class="v-step-5" @click="openAboutDialog" text
         >About <v-icon right dark> mdi-information-outline </v-icon></v-btn
       >
       <span> | </span>
@@ -75,10 +75,23 @@ export default {
     closeAboutDialog() {
       this.aboutDialog = false;
     },
+    openAboutDialog() {
+      this.aboutDialog = true;
+      this.$gtag.event("click", {
+        event_category: "Viewed about",
+        event_label: "User viewed app about ",
+        value: 13,
+      });
+    },
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     },
     toggleTour() {
+      this.$gtag.event("click", {
+        event_category: "Viewed tour",
+        event_label: "User viewed app tour ",
+        value: 13,
+      });
       this.$refs.tour.$tours["myTour"].start();
     },
   },

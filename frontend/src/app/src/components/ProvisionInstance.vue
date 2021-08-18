@@ -216,6 +216,11 @@ export default {
   }),
   methods: {
     giveReasonForAskingPersonalDetails() {
+      this.$gtag.event("click", {
+        event_category: "Viewed personal details info",
+        event_label: "User viewed personal details",
+        value: 12,
+      });
       this.showPersonalDetailsRequirement = true;
     },
     closePersonalDetailsRequirement() {
@@ -325,8 +330,10 @@ export default {
     invokeAPI() {
       this.$gtag.event("click", {
         event_category: "New Instance",
-        event_label: "New instance was requested",
-        value: "new",
+        event_label: `New instance was requested for ${
+          this.instance.country
+        },${this.instance.year.toString()}`,
+        value: 11,
       });
       const protocol =
         window.location.protocol === "https:" ? "https:" : "http:";
