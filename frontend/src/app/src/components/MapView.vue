@@ -22,6 +22,50 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { bboxPolygon, bbox } from "@turf/turf";
 import ScaleMode from "mapbox-gl-draw-scale-mode";
 
+class extendDrawBar {
+  constructor(opt) {
+    let ctrl = this;
+    ctrl.draw = opt.draw;
+    ctrl.buttons = opt.buttons || [];
+    ctrl.onAddOrig = opt.draw.onAdd;
+    ctrl.onRemoveOrig = opt.draw.onRemove;
+  }
+  onAdd(map) {
+    let ctrl = this;
+    ctrl.map = map;
+    ctrl.elContainer = ctrl.onAddOrig(map);
+    ctrl.buttons.forEach((b) => {
+      ctrl.addButton(b);
+    });
+    return ctrl.elContainer;
+  }
+  onRemove(map) {
+    let ctrl = this;
+    ctrl.buttons.forEach((b) => {
+      ctrl.removeButton(b);
+    });
+    ctrl.onRemoveOrig(map);
+  }
+  addButton(opt) {
+    let ctrl = this;
+    var elButton = document.createElement("button");
+    elButton.className = "mapbox-gl-draw_ctrl-draw-btn";
+    elButton.title = opt.title || "";
+    if (opt.classes instanceof Array) {
+      opt.classes.forEach((c) => {
+        elButton.classList.add(c);
+      });
+    }
+    elButton.addEventListener(opt.on, opt.action);
+    ctrl.elContainer.appendChild(elButton);
+    opt.elButton = elButton;
+  }
+  removeButton(opt) {
+    opt.elButton.removeEventListener(opt.on, opt.action);
+    opt.elButton.remove();
+  }
+}
+
 export default {
   name: "BaseMap",
   data() {
@@ -68,6 +112,12 @@ export default {
       console.log("extent", extent);
       this.drawView.add(bboxPolygon(extent));
     },
+    activateSelectMode() {
+      this.drawView.changeMode("simple_select");
+    },
+    activateScaleMode() {
+      this.drawView.changeMode("ScaleMode");
+    },
   },
 
   props: {
@@ -105,11 +155,36 @@ export default {
     });
 
     this.drawView = new MapboxDraw({
-      displayControlsDefault: false,
       modes: Object.assign({ ScaleMode: ScaleMode }, MapboxDraw.modes),
+      controls: {
+        point: false,
+        combine_features: false,
+        uncombine_features: false,
+        line_string: false,
+        trash: false,
+        polygon: false,
+      },
     });
 
-    this.mapView.addControl(this.drawView);
+    this.drawBar = new extendDrawBar({
+      draw: this.drawView,
+      buttons: [
+        {
+          on: "click",
+          action: this.activateSelectMode,
+          classes: ["fa", "fa-hand-pointer"],
+          title: "Select mode",
+        },
+        {
+          on: "click",
+          action: this.activateScaleMode,
+          classes: ["fa", "fa-expand"],
+          title: "Scale mode",
+        },
+      ],
+    });
+
+    this.mapView.addControl(this.drawBar);
 
     // this.drawView.changeMode("simple_select");
     // this.drawView.changeMode("ScaleMode");
@@ -118,14 +193,6 @@ export default {
       console.log(bbox, e);
       // this.drawView.deleteAll().getAll();
       // this.updateBbox(bbox(e.features[0]));
-    });
-
-    this.mapView.on("draw.selectionchange", () => {
-      if (this.drawView.getMode() === "ScaleMode") {
-        this.drawView.changeMode("simple_select");
-      } else if (this.drawView.getMode() === "simple_select") {
-        this.drawView.changeMode("ScaleMode");
-      }
     });
   },
 };
