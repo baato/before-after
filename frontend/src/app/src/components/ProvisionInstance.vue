@@ -356,7 +356,8 @@ export default {
         email: this.instance.email,
       };
 
-      if (data.country == "us" && data.year < 21) {
+      // handle data extracts in Geofabrik as exception for the US regions
+      if (data.country == "us") {
         const poly = bboxPolygon(data.bbox.split(","));
         const centroidPoint = centroid(poly);
 
@@ -397,7 +398,7 @@ export default {
           data.country = "us-west";
         }
       }
-      console.log(">>", data);
+
       this.showLoading = true;
       axios
         .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
