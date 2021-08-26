@@ -34,13 +34,13 @@ func provision(year, bbox, style, name, uuid, country, continent, fullName, emai
 	for i, s := range scripts_to_run {
 		// Websocket.NotifyClient(s, ws)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
-		stdout, err := cmd.Output()
+		_, err := cmd.Output()
 		if err != nil {
 			fmt.Println(fmt.Sprint(err))
 			return JobStatus{"error", s}
 		}
 		// Print the output
-		fmt.Print(string(stdout))
+		// fmt.Print(string(stdout))
 		fmt.Println(i, s)
 	}
 	return JobStatus{"done", "nil"}
