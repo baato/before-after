@@ -172,6 +172,13 @@ import countryContinents from "../configs/countryContinents.json";
 import provisioningStates from "../configs/provisioningStates.json";
 import { uuid } from "vue-uuid";
 import { generateYears } from "../utils/helpers.js";
+import { bboxPolygon, centroid, booleanPointInPolygon } from "@turf/turf";
+
+import USMidWest from "../utils/us_subregions/us-midwest.json";
+import USNorthEast from "../utils/us_subregions/us-northeast.json";
+import USPacific from "../utils/us_subregions/us-pacific.json";
+import USSouth from "../utils/us_subregions/us-south.json";
+import USWest from "../utils/us_subregions/us-west.json";
 
 export default {
   name: "Test",
@@ -348,6 +355,49 @@ export default {
         fullName: this.instance.fullName,
         email: this.instance.email,
       };
+
+      if (data.country == "us" && data.year < 21) {
+        const poly = bboxPolygon(data.bbox.split(","));
+        const centroidPoint = centroid(poly);
+
+        if (
+          booleanPointInPolygon(
+            centroidPoint.geometry,
+            USMidWest.features[0].geometry
+          )
+        ) {
+          data.country = "us-midwest";
+        } else if (
+          booleanPointInPolygon(
+            centroidPoint.geometry,
+            USNorthEast.features[0].geometry
+          )
+        ) {
+          data.country = "us-northeast";
+        } else if (
+          booleanPointInPolygon(
+            centroidPoint.geometry,
+            USPacific.features[0].geometry
+          )
+        ) {
+          data.country = "us-pacific";
+        } else if (
+          booleanPointInPolygon(
+            centroidPoint.geometry,
+            USSouth.features[0].geometry
+          )
+        ) {
+          data.country = "us-south";
+        } else if (
+          booleanPointInPolygon(
+            centroidPoint.geometry,
+            USWest.features[0].geometry
+          )
+        ) {
+          data.country = "us-west";
+        }
+      }
+      console.log(">>", data);
       this.showLoading = true;
       axios
         .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
