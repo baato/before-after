@@ -154,6 +154,12 @@ export default {
       attributionControl: false,
     });
 
+    ScaleMode.scaleend = (e) => {
+      if (e) {
+        this.updateBbox(bbox(e));
+      }
+    };
+
     this.drawView = new MapboxDraw({
       modes: Object.assign({ ScaleMode: ScaleMode }, MapboxDraw.modes),
       controls: {
@@ -186,13 +192,8 @@ export default {
 
     this.mapView.addControl(this.drawBar);
 
-    // this.drawView.changeMode("simple_select");
-    // this.drawView.changeMode("ScaleMode");
-
     this.mapView.on("draw.update", (e) => {
-      console.log(bbox, e);
-      // this.drawView.deleteAll().getAll();
-      // this.updateBbox(bbox(e.features[0]));
+      this.updateBbox(bbox(e.features[0]));
     });
   },
 };

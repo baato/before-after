@@ -331,41 +331,42 @@ export default {
       );
     },
     invokeAPI() {
-      this.$gtag.event("click", {
-        event_category: "New Instance",
-        event_label: `New instance was requested for ${
-          this.instance.country
-        },${this.instance.year.toString()}`,
-        value: 11,
-      });
-      const protocol =
-        window.location.protocol === "https:" ? "https:" : "http:";
-      const data = {
-        name: this.instance.name,
-        uuid: this.instance.uuid,
-        year: this.instance.year.toString(),
-        bbox: this.instance.bbox,
-        style: this.instance.style,
-        country: this.instance.country,
-        continent: countryContinents[this.instance.country],
-        fullName: this.instance.fullName,
-        email: this.instance.email,
-      };
-      this.showLoading = true;
-      axios
-        .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
-          params: data,
-        })
-        .then((res) => {
-          if (res.data.success) {
-            this.showInstanceRequested = true;
-            this.showLoading = false;
-          }
-        })
-        .catch((error) => {
-          this.isLoading = false;
-          console.log(error);
-        });
+      console.log("INVODE", this.instance.bbox);
+      // this.$gtag.event("click", {
+      //   event_category: "New Instance",
+      //   event_label: `New instance was requested for ${
+      //     this.instance.country
+      //   },${this.instance.year.toString()}`,
+      //   value: 11,
+      // });
+      // const protocol =
+      //   window.location.protocol === "https:" ? "https:" : "http:";
+      // const data = {
+      //   name: this.instance.name,
+      //   uuid: this.instance.uuid,
+      //   year: this.instance.year.toString(),
+      //   bbox: this.instance.bbox,
+      //   style: this.instance.style,
+      //   country: this.instance.country,
+      //   continent: countryContinents[this.instance.country],
+      //   fullName: this.instance.fullName,
+      //   email: this.instance.email,
+      // };
+      // this.showLoading = true;
+      // axios
+      //   .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
+      //     params: data,
+      //   })
+      //   .then((res) => {
+      //     if (res.data.success) {
+      //       this.showInstanceRequested = true;
+      //       this.showLoading = false;
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     this.isLoading = false;
+      //     console.log(error);
+      //   });
     },
     enableNavigationPrompt() {
       // Enable navigation prompt
