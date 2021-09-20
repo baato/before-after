@@ -25,8 +25,11 @@
     </v-app-bar>
     <About :aboutDialog="aboutDialog" :closeAboutDialog="closeAboutDialog" />
     <v-main>
-      <ProvisionInstance :theme="$vuetify.theme.dark" />
-      <!-- <ProvisionInstance :theme="$vuetify.theme.dark" /> -->
+      <SytemNotWorking v-if="systemNotWorking" :theme="$vuetify.theme.dark" />
+      <ProvisionInstance
+        v-if="!systemNotWorking"
+        :theme="$vuetify.theme.dark"
+      />
     </v-main>
     <v-footer padless>
       <v-btn class="v-step-5" @click="openAboutDialog" text
@@ -54,6 +57,7 @@
 <script>
 import About from "./components/About";
 import ProvisionInstance from "./components/ProvisionInstance";
+import SytemNotWorking from "./components/NotWorking.vue";
 import Tour from "./components/Tour";
 
 export default {
@@ -61,12 +65,14 @@ export default {
 
   components: {
     ProvisionInstance,
+    SytemNotWorking,
     About,
     Tour,
   },
 
   data: () => ({
     aboutDialog: false,
+    systemNotWorking: false,
   }),
   created() {
     this.$gtag.pageview("/");
