@@ -62,7 +62,7 @@
             <li>
               We have also already started gathering feedback and feature
               requests. Feel free to open an issue or send us a feature request
-              <a href="">through the project's official repository.</a>
+              <a href="https://github.com/baato/before-after">through the project's official repository.</a>
             </li>
             <li>
               Ideally, we want this application to remain free fo anyone to use,
