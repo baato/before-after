@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;400;600&display=swap" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.js" type="text/JavaScript"></script>
     <style>
@@ -378,7 +378,7 @@
                 [_CENTERLNG_MAX_, _CENTERLAT_MAX_]
             ];
             // define the first map
-            var map = new mapboxgl.Map({
+            var map = new maplibregl.Map({
                 container: 'map',
                 zoom: 11,
                 style: `${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`,
@@ -386,9 +386,9 @@
             }).fitBounds(bounds);
             window.map = map;
             // Add zoom and rotation controls to the map.
-            map.addControl(new mapboxgl.NavigationControl());
+            map.addControl(new maplibregl.NavigationControl());
             // define the second map
-            var map2 = new mapboxgl.Map({
+            var map2 = new maplibregl.Map({
                 container: 'map2',
                 zoom: 11,
                 style: `${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`,
@@ -396,7 +396,7 @@
             }).fitBounds(bounds);
             window.map2 = map2;
             // Add zoom and rotation controls to the map.
-            map2.addControl(new mapboxgl.NavigationControl());
+            map2.addControl(new maplibregl.NavigationControl());
             // remove zip code area border when zoomed out
             map.on('zoom', function () {
                 var zoom = map.getZoom();
