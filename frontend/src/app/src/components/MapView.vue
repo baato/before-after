@@ -105,6 +105,9 @@ export default {
       attributionControl: false,
     });
 
+    const attribution = new mapboxgl.AttributionControl();
+    this.mapView.addControl(attribution, 'bottom-right');
+
     // this.drawView = new MapboxDraw({
     //   displayControlsDefault: false,
     //   controls: {
