@@ -72,7 +72,7 @@ export default {
 
   data: () => ({
     aboutDialog: false,
-    systemNotWorking: true,
+    systemNotWorking: false,
   }),
   created() {
     this.$gtag.pageview("/");
