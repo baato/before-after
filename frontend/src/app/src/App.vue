@@ -18,10 +18,22 @@
       >
       <!-- Provision before-after map with ease -->
       <v-spacer></v-spacer>
-
-      <!-- <v-btn @click="darkMode" icon v-bind:style="{ marginRight: '15px' }">
-        <v-icon>mdi-invert-colors</v-icon>
-      </v-btn> -->
+      <v-btn
+        v-if="!userAuthenticated"
+        color="#47889d"
+        @click="loginWithOSM"
+        class="text-white"
+      >
+        Login with OSM
+      </v-btn>
+      <v-btn
+        v-if="userAuthenticated"
+        color="#47889d"
+        @click="logoutFromOSM"
+        class="text-white"
+      >
+        Logout
+      </v-btn>
     </v-app-bar>
     <About :aboutDialog="aboutDialog" :closeAboutDialog="closeAboutDialog" />
     <v-main>
@@ -59,6 +71,16 @@ import About from "./components/About";
 import ProvisionInstance from "./components/ProvisionInstance";
 import SytemNotWorking from "./components/NotWorking.vue";
 import Tour from "./components/Tour";
+import { osmAuth } from "osm-auth";
+
+const redirectPath = window.location.origin + window.location.pathname;
+const auth = osmAuth({
+  client_id: process.env.CLIENT_ID,
+  client_secret: process.env.CLIENT_SECRET,
+  redirect_uri: redirectPath + "land.html",
+  scope: "read_prefs",
+  auto: true, // show a login form if the user is not authenticated and you try to do a call
+});
 
 export default {
   name: "App",
@@ -73,9 +95,11 @@ export default {
   data: () => ({
     aboutDialog: false,
     systemNotWorking: false,
+    userAuthenticated: auth && auth.authenticated() ? true : false,
   }),
   created() {
     this.$gtag.pageview("/");
+    if (auth && auth.authenticated()) this.loginWithOSM();
   },
   methods: {
     closeAboutDialog() {
@@ -91,6 +115,15 @@ export default {
     },
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    },
+    loginWithOSM() {
+      auth.xhr({ method: "GET", path: "/api/0.6/user/details" }, () => {
+        this.userAuthenticated = true;
+      });
+    },
+    logoutFromOSM() {
+      auth.logout();
+      this.userAuthenticated = false;
     },
     toggleTour() {
       this.$gtag.event("click", {
