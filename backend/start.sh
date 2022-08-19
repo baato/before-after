@@ -7,4 +7,5 @@ chown -R www-data:www-data /extracts
 
 
 echo "The platform is available at http://${HOST_IP}"
-go run /server/backend/server/main.go
+cd /server/backend/server/
+go run main.go
