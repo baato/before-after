@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM golang:1.18
 
 # install dependencies
 RUN apt-get update && \
@@ -14,15 +14,12 @@ WORKDIR /tilemaker/src/tilemaker
 RUN make
 RUN make install
 
-RUN apt-get install -y golang
-
-RUN go get github.com/gorilla/websocket
 
 RUN mkdir -p /usr/share/man/man1
 RUN apt-get install -y default-jre
 RUN apt-get install -y osmosis
 
-RUN apt-get install -y python-pip
+RUN apt-get install -y python3-pip python-dev build-essential
 RUN pip install mbutil
 
 
@@ -45,6 +42,10 @@ COPY map-styles/ /map-styles
 
 RUN chmod +x /start.sh
 RUN chmod +x /provisioning-scripts/*.sh
+
+WORKDIR /server/backend/server
+
+RUN go build
 
 WORKDIR /server
 
