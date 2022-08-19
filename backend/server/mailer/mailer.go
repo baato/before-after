@@ -18,7 +18,7 @@ func SendMail(receiver []string, FullName string, Uuid string, Name string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	t, err := template.ParseFiles(wd + "/backend/server/mailer/email-template.html")
+	t, err := template.ParseFiles(wd + "/mailer/email-template.html")
 	fmt.Println(err)
 
 	var body bytes.Buffer
@@ -43,7 +43,7 @@ func SendErrorMail(receiver []string, FullName, Uuid, ErrorAt, Year, Bbox, Name,
 	if err != nil {
 		log.Fatal(err)
 	}
-	t, err := template.ParseFiles(wd + "/backend/server/mailer/error-email-template.html")
+	t, err := template.ParseFiles(wd + "/mailer/error-email-template.html")
 	fmt.Println(err)
 
 	var body bytes.Buffer
