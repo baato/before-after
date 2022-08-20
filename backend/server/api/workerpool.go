@@ -135,16 +135,10 @@ func (d *Dispatcher) dispatch() {
 
 func (server *Server) RequestHandlerForAPI(ctx *gin.Context) {
 	// Create Job and push the work onto the jobQueue.
-	job := Job{
-		Year:      ctx.Query("year"),
-		Bbox:      ctx.Query("bbox"),
-		Style:     ctx.Query("style"),
-		Name:      ctx.Query("name"),
-		Uuid:      ctx.Query("uuid"),
-		Country:   ctx.Query("country"),
-		Continent: ctx.Query("continent"),
-		FullName:  ctx.Query("fullName"),
-		Email:     ctx.Query("email"),
+	job := Job{}
+	if err := ctx.ShouldBindJSON(&job); err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
 	}
 	jobQueue <- job
 	ctx.JSON(http.StatusOK, "Instance is being provisioned")
