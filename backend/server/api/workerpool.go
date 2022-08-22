@@ -1,4 +1,4 @@
-package workerpool
+package api
 
 import (
 	"fmt"
@@ -6,9 +6,8 @@ import (
 	"os"
 	"os/exec"
 
-	Mailer "../mailer"
-	Websocket "../websocket"
-	"github.com/gorilla/websocket"
+	Mailer "github.com/baato/before-after/mailer"
+	"github.com/gin-gonic/gin"
 )
 
 // Job holds the attributes needed to perform unit of work.
@@ -44,7 +43,6 @@ func provision(year, bbox, style, name, uuid, country, continent, fullName, emai
 		fmt.Println(i, s)
 	}
 	return JobStatus{"done", "nil"}
-	// Websocket.NotifyClient("done", ws)
 }
 
 // NewWorker creates takes a numeric id and a channel w/ worker pool.
@@ -80,9 +78,6 @@ func (w Worker) start() {
 					Mailer.SendErrorMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
 				}
 
-				// fmt.Printf("MAATHI\n", job.Uuid, job.Name)
-				// time.Sleep(5 * time.Second)
-				// fmt.Printf("TALA\n", job.Uuid, job.Name)
 			case <-w.quitChan:
 				// We have been asked to stop.
 				fmt.Printf("worker%d stopping\n", w.id)
@@ -138,24 +133,13 @@ func (d *Dispatcher) dispatch() {
 	}
 }
 
-func RequestHandlerForSocket(msg Websocket.Message, ws *websocket.Conn, jobQueue chan Job) {
+func (server *Server) RequestHandlerForAPI(ctx *gin.Context) {
 	// Create Job and push the work onto the jobQueue.
-	job := Job{Year: msg.Year, Bbox: msg.Bbox, Style: msg.Style, Name: msg.Name, Uuid: msg.Uuid, Country: msg.Country, Continent: msg.Continent}
-	jobQueue <- job
-}
-
-func RequestHandlerForAPI(r *http.Request, jobQueue chan Job) {
-	// Create Job and push the work onto the jobQueue.
-	job := Job{
-		Year:      r.URL.Query().Get("year"),
-		Bbox:      r.URL.Query().Get("bbox"),
-		Style:     r.URL.Query().Get("style"),
-		Name:      r.URL.Query().Get("name"),
-		Uuid:      r.URL.Query().Get("uuid"),
-		Country:   r.URL.Query().Get("country"),
-		Continent: r.URL.Query().Get("continent"),
-		FullName:  r.URL.Query().Get("fullName"),
-		Email:     r.URL.Query().Get("email"),
+	job := Job{}
+	if err := ctx.ShouldBindJSON(&job); err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
 	}
 	jobQueue <- job
+	ctx.JSON(http.StatusOK, "Instance is being provisioned")
 }

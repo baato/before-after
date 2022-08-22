@@ -401,11 +401,9 @@ export default {
 
       this.showLoading = true;
       axios
-        .get(`${protocol}//${window.location.hostname}/api/v1/instance`, {
-          params: data,
-        })
+        .post(`${protocol}//${window.location.hostname}/api/v1/instance`, data)
         .then((res) => {
-          if (res.data.success) {
+          if (res.status == 200) {
             this.showInstanceRequested = true;
             this.showLoading = false;
           }
