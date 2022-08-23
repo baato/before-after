@@ -1,15 +1,13 @@
 version: "3"
 services:
   backend:
-    build: backend/
+    image: before-after_backend:latest
     restart: always
     container_name: app-docker
     ports:
       - 8848:8848
     environment:
       - HOST_IP=${HOST_IP}
-    env_file:
-      - .env
     volumes:
       - appdata:/appdata
       - downloads:/downloads

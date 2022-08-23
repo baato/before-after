@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"os/exec"
 
 	Mailer "github.com/baato/before-after/mailer"
@@ -28,19 +27,22 @@ type Job struct {
 type JobStatus struct{ status, err string }
 
 func provision(year, bbox, style, name, uuid, country, continent, fullName, email string) JobStatus {
-	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
+	scripts_to_run := [5]string{
+		"/provisioning-scripts/prepare-provision.sh",
+		"/provisioning-scripts/download-data.sh",
+		"/provisioning-scripts/generate-extracts.sh",
+		"/provisioning-scripts/generate-tiles.sh",
+		"/provisioning-scripts/provision.sh",
+	}
 
 	for i, s := range scripts_to_run {
-		// Websocket.NotifyClient(s, ws)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
 		_, err := cmd.Output()
 		if err != nil {
 			fmt.Println(fmt.Sprint(err))
 			return JobStatus{"error", s}
 		}
-		// Print the output
-		// fmt.Print(string(stdout))
-		fmt.Println(i, s)
+		fmt.Println(i+1, s)
 	}
 	return JobStatus{"done", "nil"}
 }
@@ -73,9 +75,9 @@ func (w Worker) start() {
 				// Dispatcher has added a job to my jobQueue.
 				var jobstatus JobStatus = provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
 				if jobstatus.status == "done" {
-					Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
+					Mailer.SendSuccessMail(job.Email, job.FullName, job.Uuid, job.Name)
 				} else if jobstatus.status == "error" {
-					Mailer.SendErrorMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
+					Mailer.SendErrorMail(job.Email, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
 				}
 
 			case <-w.quitChan:

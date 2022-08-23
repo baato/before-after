@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/baato/before-after/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,10 +19,13 @@ var dispatcher = NewDispatcher(jobQueue, maxWorkers)
 
 type Server struct {
 	router *gin.Engine
+	config *util.Config
 }
 
-func NewServer() *Server {
-	server := &Server{}
+func NewServer(config *util.Config) *Server {
+	server := &Server{
+		config: config,
+	}
 
 	server.setupRouter()
 

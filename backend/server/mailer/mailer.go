@@ -7,19 +7,39 @@ import (
 	"net/smtp"
 	"os"
 	"text/template"
+
+	"github.com/baato/before-after/util"
 )
 
-var GMAIL_USERNAME = os.Getenv("GMAIL_USERNAME")
-var GMAIL_PASSWORD = os.Getenv("GMAIL_PASSWORD")
-var gmailAuth = smtp.PlainAuth("", GMAIL_USERNAME, GMAIL_PASSWORD, "smtp.gmail.com")
+var (
+	config    util.Config
+	configErr error
+)
 
-func SendMail(receiver []string, FullName string, Uuid string, Name string) {
+func init() {
+	config, configErr = util.LoadConfig("../../")
+	if configErr != nil {
+		log.Fatal("cannot load config:", configErr)
+	}
+}
+
+func sendMail(receiver []string, body bytes.Buffer) {
+	var smtpAuth = smtp.PlainAuth("", config.SMTPUsername, config.SMTPPassword, config.SMTPHost)
+	var smtpURL = config.SMTPHost + ":" + config.SMTPPort
+
+	smtp.SendMail(smtpURL, smtpAuth, config.SMTPUsername, receiver, body.Bytes())
+}
+
+func SendSuccessMail(receiver string, FullName string, Uuid string, Name string) {
+
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 	t, err := template.ParseFiles(wd + "/mailer/email-template.html")
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	var body bytes.Buffer
 	headers := "MIME-version: 1.0;\nContent-Type: text/html;"
@@ -32,19 +52,21 @@ func SendMail(receiver []string, FullName string, Uuid string, Name string) {
 	}{
 		FullName: FullName,
 		Name:     Name,
-		URL:      os.Getenv("HOST_PROTOCOL") + "//" + os.Getenv("HOST_IP") + "/provision/" + Uuid,
+		URL:      config.HostProtocol + "//" + config.HostIP + "/provision/" + Uuid,
 	})
 
-	smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body.Bytes())
+	sendMail([]string{receiver, config.MAILCC}, body)
 }
 
-func SendErrorMail(receiver []string, FullName, Uuid, ErrorAt, Year, Bbox, Name, Country, Continent, Email string) {
+func SendErrorMail(receiver string, FullName, Uuid, ErrorAt, Year, Bbox, Name, Country, Continent, Email string) {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 	t, err := template.ParseFiles(wd + "/mailer/error-email-template.html")
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	var body bytes.Buffer
 	headers := "MIME-version: 1.0;\nContent-Type: text/html;"
@@ -72,5 +94,5 @@ func SendErrorMail(receiver []string, FullName, Uuid, ErrorAt, Year, Bbox, Name,
 		Email:     Email,
 	})
 
-	smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body.Bytes())
+	sendMail([]string{receiver, config.MAILCC}, body)
 }
