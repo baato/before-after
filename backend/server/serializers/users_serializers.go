@@ -16,6 +16,11 @@ type UserResponse struct {
 	IsEmailVerified bool      `json:"is_email_verified"`
 }
 
+type LoginUserResponse struct {
+	User     UserResponse `json:"user"`
+	JwtToken string       `json:"jwt_token"`
+}
+
 func NewUserResponse(user db.User) UserResponse {
 	return UserResponse{
 		ID:              user.ID,

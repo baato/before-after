@@ -16,6 +16,7 @@ type Config struct {
 	SMTPPassword      string        `mapstructure:"SMTP_PASSWORD"`
 	MAILCC            string        `mapstructure:"MAIL_CC"`
 	APIBaseURL        string        `mapstructure:"API_BASE_URL"`
+	AppSecret         string        `mapstructure:"APP_SECRET"`
 	OAUTHClientID     string        `mapstructure:"OAUTH_CLIENT_ID"`
 	OAUTHClientSecret string        `mapstructure:"OAUTH_CLIENT_SECRET"`
 	OAUTHScopes       []string      `mapstructure:"OAUTH_SCOPES"`

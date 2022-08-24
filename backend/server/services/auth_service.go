@@ -58,7 +58,7 @@ func GetOSMUser(token string) (UserInfo, error) {
 }
 
 // Create a new user in db if user not found else updates existing user and returns user
-func LoginUser(query *db.Queries, userinfo *UserInfo) (serializer.UserResponse, error) {
+func LoginUser(query *db.Queries, userinfo *UserInfo) (serializer.LoginUserResponse, error) {
 
 	// Check if user exists in db
 	_, getErr := query.GetUser(context.Background(), userinfo.ID)
@@ -72,10 +72,14 @@ func LoginUser(query *db.Queries, userinfo *UserInfo) (serializer.UserResponse, 
 		user, err = createUser(query, userinfo)
 	}
 	if err != nil {
-		return serializer.UserResponse{}, err
+		return serializer.LoginUserResponse{}, err
 	} else {
 		userResponse := serializer.NewUserResponse(user)
-		return userResponse, nil
+		loginResponse := serializer.LoginUserResponse{
+			User:     userResponse,
+			JwtToken: GenerateSessionToken(user.ID),
+		}
+		return loginResponse, nil
 	}
 
 }
