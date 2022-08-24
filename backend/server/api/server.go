@@ -34,6 +34,9 @@ func NewServer(config *util.Config) *Server {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	router.GET("/api/v1/login", server.login)
+	router.GET("/api/v1/callback", server.callback)
 	router.POST("/api/v1/instance", server.RequestHandlerForAPI)
 
 	server.router = router

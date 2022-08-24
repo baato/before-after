@@ -10,6 +10,36 @@ import (
 	"database/sql"
 )
 
+const createUser = `-- name: CreateUser :one
+INSERT INTO users (
+  id, username, picture_url
+) VALUES (
+  $1, $2, $3
+)
+RETURNING id, username, role, created_at, email_address, is_email_verified, picture_url
+`
+
+type CreateUserParams struct {
+	ID         int32          `json:"id"`
+	Username   string         `json:"username"`
+	PictureUrl sql.NullString `json:"picture_url"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.ID, arg.Username, arg.PictureUrl)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Role,
+		&i.CreatedAt,
+		&i.EmailAddress,
+		&i.IsEmailVerified,
+		&i.PictureUrl,
+	)
+	return i, err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1
 `
