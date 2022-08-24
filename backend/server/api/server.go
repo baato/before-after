@@ -1,6 +1,7 @@
 package api
 
 import (
+	db "github.com/baato/before-after/db/sqlc"
 	"github.com/baato/before-after/util"
 	"github.com/gin-gonic/gin"
 )
@@ -19,12 +20,14 @@ var dispatcher = NewDispatcher(jobQueue, maxWorkers)
 
 type Server struct {
 	router *gin.Engine
+	query  *db.Queries
 	config *util.Config
 }
 
-func NewServer(config *util.Config) *Server {
+func NewServer(query *db.Queries, config *util.Config) *Server {
 	server := &Server{
 		config: config,
+		query:  query,
 	}
 
 	server.setupRouter()

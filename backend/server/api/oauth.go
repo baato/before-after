@@ -43,8 +43,18 @@ func (server *Server) callback(ctx *gin.Context) {
 		return
 	}
 
+	// Create/update user in database and return logged in user details.
+	loggedInUserResponse, err := services.LoginUser(server.query, &user_info)
+	if err != nil {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": "error logging in"},
+		)
+		log.Errorf(ctx, "error logging in: %v", err)
+		return
+	}
 	ctx.JSON(
 		http.StatusOK,
-		&user_info,
+		loggedInUserResponse,
 	)
 }
