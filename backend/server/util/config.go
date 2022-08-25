@@ -8,6 +8,8 @@ import (
 // Config stores all configuration of the application.
 // The values are read by viper from a config file or environment variable.
 type Config struct {
+	DBDriver          string        `mapstructure:"DB_DRIVER"`
+	DBSource          string        `mapstructure:"DB_SOURCE"`
 	HostProtocol      string        `mapstructure:"HOST_PROTOCOL"`
 	HostIP            string        `mapstructure:"HOST_IP"`
 	SMTPHost          string        `mapstructure:"SMTP_HOST"`
