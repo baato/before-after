@@ -1,4 +1,4 @@
-package mailer
+package services
 
 import (
 	"bytes"
@@ -7,21 +7,7 @@ import (
 	"net/smtp"
 	"os"
 	"text/template"
-
-	"github.com/baato/before-after/util"
 )
-
-var (
-	config    util.Config
-	configErr error
-)
-
-func init() {
-	config, configErr = util.LoadConfig("../../")
-	if configErr != nil {
-		log.Fatal("cannot load config:", configErr)
-	}
-}
 
 func sendMail(receiver []string, body bytes.Buffer) {
 	var smtpAuth = smtp.PlainAuth("", config.SMTPUsername, config.SMTPPassword, config.SMTPHost)
@@ -36,7 +22,7 @@ func SendSuccessMail(receiver string, FullName string, Uuid string, Name string)
 	if err != nil {
 		log.Fatal(err)
 	}
-	t, err := template.ParseFiles(wd + "/mailer/email-template.html")
+	t, err := template.ParseFiles(wd + "/services/email_templates/email-template.html")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,7 +49,7 @@ func SendErrorMail(receiver string, FullName, Uuid, ErrorAt, Year, Bbox, Name, C
 	if err != nil {
 		log.Fatal(err)
 	}
-	t, err := template.ParseFiles(wd + "/mailer/error-email-template.html")
+	t, err := template.ParseFiles(wd + "/services/email_templates/error-email-template.html")
 	if err != nil {
 		fmt.Println(err)
 	}

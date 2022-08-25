@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os/exec"
 
-	Mailer "github.com/baato/before-after/mailer"
+	"github.com/baato/before-after/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -75,9 +75,9 @@ func (w Worker) start() {
 				// Dispatcher has added a job to my jobQueue.
 				var jobstatus JobStatus = provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
 				if jobstatus.status == "done" {
-					Mailer.SendSuccessMail(job.Email, job.FullName, job.Uuid, job.Name)
+					services.SendSuccessMail(job.Email, job.FullName, job.Uuid, job.Name)
 				} else if jobstatus.status == "error" {
-					Mailer.SendErrorMail(job.Email, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
+					services.SendErrorMail(job.Email, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
 				}
 
 			case <-w.quitChan:
