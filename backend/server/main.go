@@ -7,12 +7,13 @@ import (
 	"github.com/baato/before-after/api"
 	db "github.com/baato/before-after/db/sqlc"
 	"github.com/baato/before-after/util"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	config, err := util.LoadConfig("../../")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		log.Fatal("cannot load config: ", err)
 	}
 
 	conn, err := sql.Open(config.DBDriver, config.DBSource)

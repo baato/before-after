@@ -1,16 +1,39 @@
 version: "3"
 services:
-  backend:
-    image: before-after_backend:latest
+  postgres:
+    container_name: before-after-db
+    image: mdillon/postgis:11
     restart: always
-    container_name: app-docker
+    environment:
+      - POSTGRES_USER=baato
+      - POSTGRES_PASSWORD=baato
+      - POSTGRES_DB=before-after
+    volumes:
+      - data/postgres:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: "."
+      dockerfile: "./Dockerfile.backend"
+    container_name: backend
+    entrypoint: ["/start.sh"]
+    restart: always
     ports:
       - 8848:8848
-    environment:
-      - HOST_IP=${HOST_IP}
     volumes:
       - appdata:/appdata
       - downloads:/downloads
+
+  migration:
+    image: before-after_backend:latest
+    container_name: migration
+    restart: on-failure
+    command: migrate -path ./backend/server/db/migration -database postgresql://baato:baato@postgres:5432/before-after?sslmode=disable -verbose up
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
   nginx:
     restart: always
     container_name: app-nginx
@@ -22,6 +45,8 @@ services:
       - backend
     volumes:
       - appdata:/appdata
+
 volumes:
   appdata:
   downloads:
+  data/postgres:

@@ -22,6 +22,9 @@ RUN apt-get install -y osmosis
 RUN apt-get install -y python3-pip python-dev build-essential
 RUN pip install mbutil
 
+RUN curl -s https://packagecloud.io/install/repositories/golang-migrate/migrate/script.deb.sh | bash
+RUN apt-get update
+RUN apt-get install -y migrate
 
 COPY backend/tilemaker-configs/config.json /
 COPY backend/tilemaker-configs/process.lua /
@@ -47,8 +50,6 @@ WORKDIR /server/backend/server
 
 RUN go build
 
-WORKDIR /server
-
 COPY before-after.env .
 
-ENTRYPOINT ["/start.sh"]
+WORKDIR /server
