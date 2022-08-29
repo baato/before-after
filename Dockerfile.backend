@@ -36,6 +36,7 @@ COPY backend/server/ /server/backend/server
 RUN chmod +x /server/backend/server/main.go
 
 COPY backend/start.sh /start.sh
+COPY backend/migrate.sh /migrate.sh
 
 RUN mkdir -p /provisioning-scripts
 COPY backend/provisioning-scripts/ /provisioning-scripts
@@ -44,6 +45,7 @@ RUN mkdir -p /map-styles
 COPY backend/map-styles/ /map-styles
 
 RUN chmod +x /start.sh
+RUN chmod +x /migrate.sh
 RUN chmod +x /provisioning-scripts/*.sh
 
 WORKDIR /server/backend/server

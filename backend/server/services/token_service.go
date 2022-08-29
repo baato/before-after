@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const minSecretKeySize = 12
+const minSecretKeySize = 32
 
 var (
 	ErrInvalidToken = errors.New("token is invalid")

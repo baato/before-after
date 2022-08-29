@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/baato/before-after/services"
@@ -37,7 +38,7 @@ func (server *Server) callback(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "error getting user details"},
+			gin.H{"error": fmt.Sprintf("error getting user details: %v", err)},
 		)
 		log.Errorf(ctx, "error getting user details: %v", err)
 		return
@@ -48,7 +49,7 @@ func (server *Server) callback(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "error logging in"},
+			gin.H{"error": fmt.Sprintf("error logging in %v", err)},
 		)
 		log.Errorf(ctx, "error logging in: %v", err)
 		return

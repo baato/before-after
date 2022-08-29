@@ -4,18 +4,18 @@ services:
     container_name: before-after-db
     image: mdillon/postgis:11
     restart: always
-    environment:
-      - POSTGRES_USER=baato
-      - POSTGRES_PASSWORD=baato
-      - POSTGRES_DB=before-after
+    env_file:
+      - ${ENV_FILE:-before-after.env}
     volumes:
-      - data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     build:
       context: "."
       dockerfile: "./Dockerfile.backend"
     container_name: backend
+    env_file:
+      - ${ENV_FILE:-before-after.env}
     entrypoint: ["/start.sh"]
     restart: always
     ports:
@@ -28,7 +28,11 @@ services:
     image: before-after_backend:latest
     container_name: migration
     restart: on-failure
-    command: migrate -path ./backend/server/db/migration -database postgresql://baato:baato@postgres:5432/before-after?sslmode=disable -verbose up
+    environment:
+    # DBSource is used to establish connection with postgres db.
+    # It should be in the format of  postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=<disable>
+      - DBSource=postgresql://baato:baato@postgres:5432/before-after?sslmode=disable
+    entrypoint: ["/migrate.sh"]
     depends_on:
       - postgres
     links:
@@ -49,4 +53,4 @@ services:
 volumes:
   appdata:
   downloads:
-  data/postgres:
+  postgres_data:

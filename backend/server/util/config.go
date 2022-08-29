@@ -1,6 +1,8 @@
 package util
 
 import (
+	"fmt"
+
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
@@ -9,7 +11,13 @@ import (
 // The values are read by viper from a config file or environment variable.
 type Config struct {
 	DBDriver          string        `mapstructure:"DB_DRIVER"`
-	DBSource          string        `mapstructure:"DB_SOURCE"`
+	DBSource          string        `mapstructure:"-"`
+	PostgresUser      string        `mapstructure:"POSTGRES_USER"`
+	PostgresPassword  string        `mapstructure:"POSTGRES_PASSWORD"`
+	PostgresDB        string        `mapstructure:"POSTGRES_DB"`
+	PostgresHost      string        `mapstructure:"POSTGRES_HOST"`
+	PostgresPort      string        `mapstructure:"POSTGRES_PORT"`
+	PostgresSSL       string        `mapstructure:"POSTGRES_SSL_MODE"`
 	HostProtocol      string        `mapstructure:"HOST_PROTOCOL"`
 	HostIP            string        `mapstructure:"HOST_IP"`
 	SMTPHost          string        `mapstructure:"SMTP_HOST"`
@@ -17,7 +25,6 @@ type Config struct {
 	SMTPUsername      string        `mapstructure:"SMTP_USERNAME"`
 	SMTPPassword      string        `mapstructure:"SMTP_PASSWORD"`
 	MAILCC            string        `mapstructure:"MAIL_CC"`
-	APIBaseURL        string        `mapstructure:"API_BASE_URL"`
 	AppSecret         string        `mapstructure:"APP_SECRET"`
 	OAUTHClientID     string        `mapstructure:"OAUTH_CLIENT_ID"`
 	OAUTHClientSecret string        `mapstructure:"OAUTH_CLIENT_SECRET"`
@@ -42,6 +49,16 @@ func LoadConfig(path string) (config Config, err error) {
 
 	err = viper.Unmarshal(&config)
 
+	// Create DBSource using env variables
+	// e.g. DBSource postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=<disable>
+	config.DBSource = fmt.Sprint(
+		"postgresql://",
+		config.PostgresUser, ":", config.PostgresPassword, "@",
+		config.PostgresHost, ":", config.PostgresPort, "/", config.PostgresDB,
+		"?sslmode=", config.PostgresSSL,
+	)
+
+	// Create OAuth config using env vatiables
 	config.OAUTHConfig.RedirectURL = config.OAUTHRedirectURL
 	config.OAUTHConfig.ClientID = config.OAUTHClientID
 	config.OAUTHConfig.ClientSecret = config.OAUTHClientSecret
