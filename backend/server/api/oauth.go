@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/baato/before-after/services"
+	"github.com/baato/before-after/util"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"google.golang.org/appengine/log"
@@ -12,7 +13,7 @@ import (
 
 func (server *Server) login(ctx *gin.Context) {
 	// TODO: Generate random state
-	state := "kdbcjbjvghvdsyt637"
+	state := util.RandomState()
 	url := server.config.OAUTHConfig.AuthCodeURL(state)
 	ctx.JSON(
 		http.StatusOK,
