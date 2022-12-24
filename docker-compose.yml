@@ -1,18 +1,43 @@
 version: "3"
 services:
-  backend:
-    build: backend/
+  postgres:
+    container_name: before-after-db
+    image: mdillon/postgis:11
     restart: always
-    container_name: app-docker
+    env_file:
+      - ${ENV_FILE:-before-after.env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: "."
+      dockerfile: "./Dockerfile.backend"
+    container_name: backend
+    env_file:
+      - ${ENV_FILE:-before-after.env}
+    entrypoint: ["/start.sh"]
+    restart: always
     ports:
       - 8848:8848
-    environment:
-      - HOST_IP=${HOST_IP}
-    env_file:
-      - .env
     volumes:
       - appdata:/appdata
       - downloads:/downloads
+
+  migration:
+    image: before-after_backend:latest
+    container_name: migration
+    restart: on-failure
+    environment:
+    # DBSource is used to establish connection with postgres db.
+    # It should be in the format of  postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=<disable>
+      - DBSource=postgresql://baato:baato@postgres:5432/before-after?sslmode=disable
+    entrypoint: ["/migrate.sh"]
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
   nginx:
     restart: always
     container_name: app-nginx
@@ -24,6 +49,8 @@ services:
       - backend
     volumes:
       - appdata:/appdata
+
 volumes:
   appdata:
   downloads:
+  postgres_data:

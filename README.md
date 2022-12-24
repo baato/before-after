@@ -7,7 +7,7 @@ Technical stack for generating before-after map (with vector tiles).
 # Installation and Setup
 
 - Clone the repository
-- ` cp .env.sample .env`
+- `cp .env.sample before-after.env`
 - Make required changes in .env file
 - `docker-compose build`
 - `docker-compose up`
@@ -19,11 +19,16 @@ Technical stack for generating before-after map (with vector tiles).
 - Frontend: It houses the main provisioning interface.
 
 # Developing the Backend
-
-- `docker build` after making changes
-- `docker up` to test the changes
+- `make build` after making changes
+- `make up` to test the changes
 
 # Developing the Frontend
+#### With Docker
+- `make frontend` after making changes
+- `make up`
 
+#### Without Docker
 - `yarn install` inside frontend/src/app
 - `yarn serve`
+
+For detailed development setup instructions have a look at our [development setup guide](development-setup.md)

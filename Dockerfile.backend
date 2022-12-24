@@ -22,31 +22,36 @@ RUN apt-get install -y osmosis
 RUN apt-get install -y python3-pip python-dev build-essential
 RUN pip install mbutil
 
+RUN curl -s https://packagecloud.io/install/repositories/golang-migrate/migrate/script.deb.sh | bash
+RUN apt-get update
+RUN apt-get install -y migrate
 
-COPY tilemaker-configs/config.json /
-COPY tilemaker-configs/process.lua /
+COPY backend/tilemaker-configs/config.json /
+COPY backend/tilemaker-configs/process.lua /
 
-COPY index.html /index.html
+COPY backend/index.html /index.html
 
 RUN mkdir -p /server/backend/server
-COPY server/ /server/backend/server
+COPY backend/server/ /server/backend/server
 RUN chmod +x /server/backend/server/main.go
 
-COPY start.sh /start.sh
+COPY backend/start.sh /start.sh
+COPY backend/migrate.sh /migrate.sh
 
 RUN mkdir -p /provisioning-scripts
-COPY provisioning-scripts/ /provisioning-scripts
+COPY backend/provisioning-scripts/ /provisioning-scripts
 
 RUN mkdir -p /map-styles
-COPY map-styles/ /map-styles
+COPY backend/map-styles/ /map-styles
 
 RUN chmod +x /start.sh
+RUN chmod +x /migrate.sh
 RUN chmod +x /provisioning-scripts/*.sh
 
 WORKDIR /server/backend/server
 
 RUN go build
 
-WORKDIR /server
+COPY before-after.env .
 
-ENTRYPOINT ["/start.sh"]
+WORKDIR /server
