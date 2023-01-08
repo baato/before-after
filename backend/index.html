@@ -272,6 +272,7 @@
             <div id="style-selector">
                 <label for="style">Choose map style:</label>
                 <select name="style" id="style" onchange="styleChangeHandler()">
+                    <option value="osome">OSM Theme</option>
                     <option value="retro">Retro</option>
                     <option value="breeze">Breeze</option>
                     <option value="monochrome">Monochrome</option>
@@ -354,7 +355,7 @@
             zipGeo,
             countyZips,
             zipData;
-        var defaultStyle = "retro";
+        var defaultStyle = "osome";
         let selectedStyle = defaultStyle;
         function styleChangeHandler() {
             selectedStyle = document.getElementById("style").value;

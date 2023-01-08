@@ -19,5 +19,8 @@ sed -e 's#_HOST_PROTOCOL_#'"${HOST_PROTOCOL:-http:}"'#g' -e 's#_HOSTNAME_#'"${HO
 sed -e 's#_HOST_PROTOCOL_#'"${HOST_PROTOCOL:-http:}"'#g' -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"beforetiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/monochrome.json > /appdata/beforestyles/${4}/monochrome.json
 sed -e 's#_HOST_PROTOCOL_#'"${HOST_PROTOCOL:-http:}"'#g' -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/monochrome.json > /appdata/afterstyles/${4}/monochrome.json
 
+sed -e 's#_HOST_PROTOCOL_#'"${HOST_PROTOCOL:-http:}"'#g'  -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"beforetiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/osome.json > /appdata/beforestyles/${4}/osome.json
+sed -e 's#_HOST_PROTOCOL_#'"${HOST_PROTOCOL:-http:}"'#g' -e 's#_HOSTNAME_#'"${HOST_IP}"'#g' -e 's#_TILE_EPOCH_#'"aftertiles"'#g' -e 's#_UUID_#'"${4}"'#g' /map-styles/osome.json > /appdata/afterstyles/${4}/osome.json
+
 echo "Provision ready!"
 
