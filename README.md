@@ -2,7 +2,7 @@
 
 ![Screenshot 2021-06-06 221025](https://user-images.githubusercontent.com/24402285/120932069-090c3380-c714-11eb-87e1-627a0e5273b3.png)
 
-Technical stack for generating before-after map (with vector tiles).
+Technical stack for generating before-after map (with vector tiles), which allows users to understand how map data in OSM has changed over time.
 
 # Installation and Setup
 
