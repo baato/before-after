@@ -143,3 +143,7 @@ func (server *Server) RequestHandlerForAPI(ctx *gin.Context) {
 	jobQueue <- job
 	ctx.JSON(http.StatusOK, "Instance is being provisioned")
 }
+
+func (server *Server) HealthCheckHandler(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, "OK")
+}
