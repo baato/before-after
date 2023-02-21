@@ -62,7 +62,9 @@
             <li>
               We have also already started gathering feedback and feature
               requests. Feel free to open an issue or send us a feature request
-              <a href="https://github.com/baato/before-after">through the project's official repository.</a>
+              <a href="https://github.com/baato/before-after"
+                >through the project's official repository.</a
+              >
             </li>
             <li>
               Ideally, we want this application to remain free fo anyone to use,
@@ -101,9 +103,12 @@
               >)
             </li>
             <li>
-              The map styles for rendering before-after maps are provided free
-              of cost by Baato Maps
-              <a href="https://baato.io">(https://baato.io)</a>
+              The map styles for rendering before-after maps is based on
+              OpenStreetMap theme from MapTiler. The style used here is a
+              derivative of the style from MapTiler (with a few changes).
+              <a href="https://cloud.maptiler.com/maps/openstreetmap/"
+                >(https://cloud.maptiler.com/maps/openstreetmap/)</a
+              >
             </li>
           </ul>
         </v-card-text>

@@ -1,7 +1,33 @@
 #!/bin/bash 
 
 ## declare an array variable for themes you want to include in data
-declare -a arr=("highway=trunk" "highway=primary" "highway=secondary" "highway=tertiary" "highway=unclassifed" "highway=residential" "highway=path" "building" "amenity" "landuse" "waterway" "water" "landcover" "aeroway" "healthcare" "leisure" "military" "natural" "place")
+declare -a arr=(
+    "aerialway"
+    "aerodrome"
+    "aeroway" 
+    "amenity" 
+    "barrier"
+    "boundary" 
+    "building" 
+    "healthcare" 
+    "highway"
+    "historic"
+    "landcover"
+    "landuse" 
+    "leisure" 
+    "military" 
+    "natural"
+    "natural" 
+    "park"
+    "place"
+    "railway"
+    "shop"
+    "sport"
+    "tourism" 
+    "water" 
+    "waterway"
+)
+
 
 ## now loop through the above array
 for i in "${arr[@]}"
