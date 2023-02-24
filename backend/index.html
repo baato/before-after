@@ -106,7 +106,7 @@
         #map,
         #map2 {
             position: absolute;
-            top: 140px;
+            top: 100px;
             bottom: 50px;
             width: 100%;
             border: 1px solid black;
@@ -143,7 +143,7 @@
 
         #footer {
             position: absolute;
-            bottom: 15px;
+            bottom: 5px;
             text-align: center;
             width: 100%;
             font-family: Roboto;
@@ -267,16 +267,17 @@
 <body>
     <div id="container">
         <div id="title">
-            <span>BEFORE AFTER MAP</span>
+            <span>OSM BEFORE-AFTER MAPS</span>
             <h1>_NAME_</h1>
-            <div id="style-selector">
+            <!-- <div id="style-selector">
                 <label for="style">Choose map style:</label>
                 <select name="style" id="style" onchange="styleChangeHandler()">
+                    <option value="OpenStreetMap">OpenStreetMap Theme</option>
                     <option value="retro">Retro</option>
                     <option value="breeze">Breeze</option>
                     <option value="monochrome">Monochrome</option>
                 </select>
-            </div>
+            </div> -->
         </div>
         <div id="map">
             <div id="map-title">
@@ -284,12 +285,12 @@
             </div>
             <div
                 style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
-                © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
-                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a></div>
-            <div style="z-index: 100; padding: 0 5px;margin: 0; position:absolute; bottom:-5px; left: -5px">
-                <a style="margin:0;" href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
-                        src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
-                        width="80px"></img></a>
+                Data © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
+                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a>,
+                Map SDK © <a style="margin:0;" href="https://maplibre.org/projects/maplibre-gl-js/"
+                    rel="noopener noreferrer no follow" target="_blank">MapLibre</a>,
+                Map Style © <a style="margin:0;" href="_URL_FOR_MAP_THEME_" rel="noopener noreferrer no follow"
+                    target="_blank">_MAP_ORG_</a>
             </div>
         </div>
         <div id="divider"></div>
@@ -299,18 +300,23 @@
             </div>
             <div
                 style="z-index: 10; padding: 0 5px;background-color: hsla(0,0%,100%,.5);margin: 0; position:absolute; bottom:0px; right: 0px">
-                © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
-                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a></div>
-            <div style="z-index: 100; padding: 0 5px;margin: 0; position:absolute; bottom:-5px; left: -5px">
-                <a style="margin:0;" href="https://baato.io" rel="noopener noreferrer no follow" target="_blank"><img
-                        src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg" alt="Baato"
-                        width="80px"></img></a>
+                Data © <a style="margin:0;" href="https://www.openstreetmap.org/copyright"
+                    rel="noopener noreferrer no follow" target="_blank">OpenStreetMap contributors</a>,
+                Map SDK © <a style="margin:0;" href="https://maplibre.org/projects/maplibre-gl-js/"
+                    rel="noopener noreferrer no follow" target="_blank">MapLibre</a>,
+                Map Style © <a style="margin:0;" href="_URL_FOR_MAP_THEME_" rel="noopener noreferrer no follow"
+                    target="_blank">_MAP_ORG_</a>
             </div>
         </div>
         <div id="footer">
-            This map was generated using the <span><a rel="noopener noreferrer no follow" target="_blank"
-                    href="https://beforeafter.baato.io">Before After Map Tool</a></span>
+            This Before-after maps was generated using the <span><a rel="noopener noreferrer no follow" target="_blank"
+                    href="https://beforeafter.baato.io"> OSM Before After Map Tool</a></span>
             from <a rel="noopener noreferrer no follow" target="_blank" href="https://baato.io">Baato</a>.
+            <br />
+            <small> This tool is
+                built using awesome open-sourced tools. You can read more on this from "About" section of this
+                tool.
+            </small>
         </div>
 
         <div id="sharing">
@@ -354,13 +360,13 @@
             zipGeo,
             countyZips,
             zipData;
-        var defaultStyle = "retro";
+        var defaultStyle = "OpenStreetMap";
         let selectedStyle = defaultStyle;
-        function styleChangeHandler() {
-            selectedStyle = document.getElementById("style").value;
-            map.setStyle(`${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`);
-            map2.setStyle(`${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`);
-        }
+        // function styleChangeHandler() {
+        //     selectedStyle = document.getElementById("style").value;
+        //     map.setStyle(`${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`);
+        //     map2.setStyle(`${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`);
+        // }
         window.onload = function () { mapBoxInit(); }
         window.onresize = function () {
             setWindowSize();
