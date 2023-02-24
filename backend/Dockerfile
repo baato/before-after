@@ -23,8 +23,8 @@ RUN apt-get install -y python3-pip python-dev build-essential
 RUN pip install mbutil
 
 
-COPY tilemaker-configs/config.json /
-COPY tilemaker-configs/process.lua /
+COPY tilemaker-configs/config-openmaptiles.json /config.json
+COPY tilemaker-configs/process-openmaptiles.lua /process.lua
 
 COPY index.html /index.html
 
