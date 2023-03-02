@@ -8,6 +8,6 @@ mkdir -p /appdata/afterstyles
 
 mkdir -p /appdata/provision/${4}
 
-chown -R www-data:www-data /appdata/
+#chown -R www-data:www-data /appdata/
 
 echo "Preparation completed!"
