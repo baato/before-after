@@ -138,7 +138,7 @@
         <br />
         <v-btn
           large
-          class="v-step-3 white--text float-right"
+          class="v-step-3 white--text float-left"
           :disabled="!valid"
           color="#2c3e50"
           @click="validate"

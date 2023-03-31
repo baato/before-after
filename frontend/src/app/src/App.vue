@@ -39,14 +39,15 @@
       <v-btn text @click="toggleTour"
         >How to use <v-icon right dark> mdi-help-circle-outline </v-icon></v-btn
       >
-      <v-col class="text-right">
+      <span> | </span>
+      <v-col class="text-left">
         <strong
           >Powered by
           <a rel="noreferrer noopener" href="https://baato.io" target="_blank">
             <img
               src="https://sgp1.digitaloceanspaces.com/baatocdn/images/BaatoLogo.svg"
               alt="Baato"
-              width="80px"
+              width="50px"
             /> </a
         ></strong>
       </v-col>
