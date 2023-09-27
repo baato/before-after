@@ -14,7 +14,7 @@ preferred_language_attribute = "name:latin"
 -- If OSM's name tag differs, then write it into this attribute (usually "name_int"):
 default_language_attribute = "name_int"
 -- Also write these languages if they differ - for example, { "de", "fr" }
-additional_languages = { }
+additional_languages = { "en", "ne" }
 --------
 
 -- Enter/exit Tilemaker
