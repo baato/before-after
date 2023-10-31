@@ -31,6 +31,7 @@ func NewServer() *Server {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 	router.POST("/api/v1/instance", server.RequestHandlerForAPI)
+	router.GET("/api/v1/health", server.HealthCheckAPI)
 
 	server.router = router
 }
