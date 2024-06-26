@@ -3,12 +3,12 @@ FROM golang:1.18
 # install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    build-essential libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-program-options-dev libboost-system-dev liblua5.1-0-dev libprotobuf-dev libshp-dev libsqlite3-dev protobuf-compiler rapidjson-dev git-core osmium-tool unzip wget ca-certificates gzip
+    build-essential libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-program-options-dev libboost-system-dev lua5.1 liblua5.1-0-dev libluajit-5.1-dev libprotobuf-dev libshp-dev libsqlite3-dev protobuf-compiler rapidjson-dev git-core osmium-tool unzip wget ca-certificates gzip 
 
 
 RUN mkdir -p /tilemaker/src \
     && cd /tilemaker/src \
-    && git clone https://github.com/systemed/tilemaker.git 
+    && git clone --branch v2.2.0 https://github.com/systemed/tilemaker.git 
 
 WORKDIR /tilemaker/src/tilemaker
 RUN make
