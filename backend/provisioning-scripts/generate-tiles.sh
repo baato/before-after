@@ -49,26 +49,32 @@ cd /
 # merge layers one by one
 for i in "${arr[@]}"
 do
-   tilemaker /extracts/before_$4_$i.osm.pbf --merge --compact  --output=/appdata/beforetiles/${4}.mbtiles
+   tilemaker /extracts/before_$4_$i.osm.pbf --merge --compact  --output=/tmp/${4}_beforetiles.mbtiles
 done
 
+# we need to do this to have Mbtileserver works as expected- 
+# when mbtiles is copied to watched directory when generation is complete (rather than generating directly in watched directly)
+mv /tmp/${4}_beforetiles.mbtiles   /appdata/beforetiles/${4}.mbtiles
+
 # generate tiles from mbtiles
-mb-util --image_format=pbf /appdata/beforetiles/${4}.mbtiles /appdata/beforetiles/${4} 
+# mb-util --image_format=pbf /appdata/beforetiles/${4}.mbtiles /appdata/beforetiles/${4} 
 
 
 for i in "${arr[@]}"
 do
-   tilemaker /extracts/after_$4_$i.osm.pbf --merge --compact   --output=/appdata/aftertiles/${4}.mbtiles
+   tilemaker /extracts/after_$4_$i.osm.pbf --merge --compact   --output=/tmp/${4}_aftertiles.mbtiles
 done
 
-mb-util --image_format=pbf /appdata/aftertiles/${4}.mbtiles /appdata/aftertiles/${4} 
+mv /tmp/${4}_aftertiles.mbtiles /appdata/aftertiles/${4}.mbtiles
+
+# mb-util --image_format=pbf /appdata/aftertiles/${4}.mbtiles /appdata/aftertiles/${4} 
 
 # gzip the generated tiles
-cd /appdata/beforetiles/${4}/
-gzip -7 -r *
+# cd /appdata/beforetiles/${4}/
+# gzip -7 -r *
 
-cd /appdata/aftertiles/${4}/
-gzip -7 -r *
+# cd /appdata/aftertiles/${4}/
+# gzip -7 -r *
 
 # remove intermediate files
 for i in "${arr[@]}"
@@ -78,8 +84,8 @@ do
 done
 
 # remove intemediate mbtiles and extracts
-rm /appdata/beforetiles/${4}.mbtiles
-rm /appdata/aftertiles/${4}.mbtiles
+# rm /appdata/beforetiles/${4}.mbtiles
+# rm /appdata/aftertiles/${4}.mbtiles
 
 rm /extracts/before_${4}.osm.pbf
 rm /extracts/after_${4}.osm.pbf
