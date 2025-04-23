@@ -12,7 +12,7 @@
   "sources": {
     "openmaptiles": {
       "tiles": [
-        "_HOST_PROTOCOL_//_HOSTNAME_/_TILE_EPOCH_/_UUID_/{z}/{x}/{y}.pbf"
+        "_HOST_PROTOCOL_//_HOSTNAME_/services/_TILE_EPOCH_/_UUID_/tiles/{z}/{x}/{y}.pbf"
       ],
       "maxZoom": 14,
       "maxzoom": 14,
