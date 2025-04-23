@@ -1,6 +1,6 @@
 {
   "name": "before-after",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "![Screenshot 2021-06-06 221025](https://user-images.githubusercontent.com/24402285/120932069-090c3380-c714-11eb-87e1-627a0e5273b3.png)",
   "main": "index.js",
   "scripts": {
