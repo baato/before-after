@@ -7,8 +7,8 @@
   // position: absolute;
   // top: 0;
   // bottom: 0;
-  height: 81vh;
-  width: 100%;
+  height: 85vh;
+  width: 99%;
   // border-radius: 5px;
   // box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
   // z-index: 10;
@@ -35,10 +35,13 @@ export default {
     applySource(geometry, extent) {
       console.log("Extent", extent);
 
-      this.mapView.fitBounds([
-        [extent[0], extent[1]], // southwestern corner of the bounds
-        [extent[2], extent[3]], // northeastern corner of the bounds
-      ], {padding: 200});
+      this.mapView.fitBounds(
+        [
+          [extent[0], extent[1]], // southwestern corner of the bounds
+          [extent[2], extent[3]], // northeastern corner of the bounds
+        ],
+        { padding: 200 }
+      );
 
       // this.mapView.flyTo({
       //   center: geometry.coordinates,
@@ -106,7 +109,7 @@ export default {
     });
 
     const attribution = new mapboxgl.AttributionControl();
-    this.mapView.addControl(attribution, 'bottom-right');
+    this.mapView.addControl(attribution, "bottom-right");
 
     // this.drawView = new MapboxDraw({
     //   displayControlsDefault: false,
