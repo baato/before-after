@@ -7,11 +7,34 @@ import (
 	"net/smtp"
 	"os"
 	"text/template"
+	"time"
 )
 
 var GMAIL_USERNAME = os.Getenv("GMAIL_USERNAME")
 var GMAIL_PASSWORD = os.Getenv("GMAIL_PASSWORD")
 var gmailAuth = smtp.PlainAuth("", GMAIL_USERNAME, GMAIL_PASSWORD, "smtp.gmail.com")
+
+// deliver sends the message but never blocks the caller for longer than the
+// timeout, and skips entirely when SMTP credentials are not configured. This
+// prevents a missing/blocked mail server from stalling the provisioning worker.
+func deliver(receiver []string, body []byte) {
+	if GMAIL_USERNAME == "" || GMAIL_PASSWORD == "" {
+		log.Println("[mailer] GMAIL_USERNAME/GMAIL_PASSWORD not set; skipping e-mail")
+		return
+	}
+	done := make(chan error, 1)
+	go func() {
+		done <- smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body)
+	}()
+	select {
+	case err := <-done:
+		if err != nil {
+			log.Printf("[mailer] send failed: %v\n", err)
+		}
+	case <-time.After(20 * time.Second):
+		log.Println("[mailer] send timed out after 20s; continuing")
+	}
+}
 
 func SendMail(receiver []string, FullName string, Uuid string, Name string) {
 	wd, err := os.Getwd()
@@ -35,7 +58,7 @@ func SendMail(receiver []string, FullName string, Uuid string, Name string) {
 		URL:      os.Getenv("HOST_PROTOCOL") + "//" + os.Getenv("HOST_IP") + "/provision/" + Uuid,
 	})
 
-	smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body.Bytes())
+	deliver(receiver, body.Bytes())
 }
 
 func SendErrorMail(receiver []string, FullName, Uuid, ErrorAt, Year, Bbox, Name, Country, Continent, Email string) {
@@ -72,5 +95,5 @@ func SendErrorMail(receiver []string, FullName, Uuid, ErrorAt, Year, Bbox, Name,
 		Email:     Email,
 	})
 
-	smtp.SendMail("smtp.gmail.com:587", gmailAuth, GMAIL_USERNAME, receiver, body.Bytes())
+	deliver(receiver, body.Bytes())
 }

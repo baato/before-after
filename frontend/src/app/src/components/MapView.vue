@@ -4,21 +4,13 @@
 
 <style lang="scss" scoped>
 .basemap {
-  // position: absolute;
-  // top: 0;
-  // bottom: 0;
   height: 81vh;
   width: 100%;
-  // border-radius: 5px;
-  // box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-  // z-index: 10;
 }
 </style>
 
-
 <script>
 import mapboxgl from "mapbox-gl";
-// import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { bboxPolygon } from "@turf/turf";
 
 export default {
@@ -26,49 +18,119 @@ export default {
   data() {
     return {
       accessToken:
-        "pk.eyJ1Ijoic3J2YmgiLCJhIjoiY2l5bWtwb2ZsMDAwbzJ2cXo4cm0zczU2diJ9.YBNdguBp6N0s5bEDi25uCA",
+        "pk.eyJ1Ijoic3J2YmgiLCJhIjoiY21yYm1tNzBuMHg0aDMwc2VjY3B3bGZtdSJ9.DzMraI1zpB4c9q0FWTGGpQ",
       mapView: null,
-      drawView: null,
+      drawing: false,
+      drawStart: null,
+      bboxHandlers: null,
     };
   },
   methods: {
-    applySource(geometry, extent) {
-      console.log("Extent", extent);
-
-      this.mapView.fitBounds([
-        [extent[0], extent[1]], // southwestern corner of the bounds
-        [extent[2], extent[3]], // northeastern corner of the bounds
-      ], {padding: 200});
-
-      // this.mapView.flyTo({
-      //   center: geometry.coordinates,
-      //   zoom: 10,
-      //   offset: [0, 200],
-      // });
-
+    ensureBboxLayers(data) {
       if (this.mapView.getSource("bbox")) {
-        this.mapView.removeLayer("bbox").removeSource("bbox");
+        this.mapView.getSource("bbox").setData(data);
+        return;
       }
-
-      this.mapView.addSource("bbox", {
-        type: "geojson",
-        data: bboxPolygon(extent),
+      this.mapView.addSource("bbox", { type: "geojson", data });
+      this.mapView.addLayer({
+        id: "bbox-fill",
+        type: "fill",
+        source: "bbox",
+        paint: {
+          "fill-color": "#47889d",
+          "fill-opacity": 0.12,
+        },
       });
-
-      // Add a new layer to visualize the polygon.
       this.mapView.addLayer({
         id: "bbox",
         type: "line",
-        source: "bbox", // reference the data source
-        layout: {},
+        source: "bbox",
+        layout: { "line-join": "round" },
         paint: {
-          "line-color": "#000000", // blue color fill
+          "line-color": "#47889d",
           "line-width": 2.5,
           "line-dasharray": [2, 1],
         },
       });
-      // this.drawView.deleteAll().getAll();
-      // this.drawView.add(bboxPolygon(extent));
+    },
+
+    applySource(geometry, extent) {
+      this.mapView.fitBounds(
+        [
+          [extent[0], extent[1]], // south-western corner
+          [extent[2], extent[3]], // north-eastern corner
+        ],
+        { padding: 120 }
+      );
+      this.ensureBboxLayers(bboxPolygon(extent));
+    },
+
+    clearBbox() {
+      if (!this.mapView) return;
+      ["bbox", "bbox-fill"].forEach((id) => {
+        if (this.mapView.getLayer(id)) this.mapView.removeLayer(id);
+      });
+      if (this.mapView.getSource("bbox")) this.mapView.removeSource("bbox");
+    },
+
+    // ---- drag-to-draw a bounding box on the map ----
+    enableBboxDraw() {
+      if (!this.mapView) return;
+      this.disableBboxDraw();
+      this.drawing = true;
+      const map = this.mapView;
+      map.getCanvas().style.cursor = "crosshair";
+      map.dragPan.disable();
+
+      const onDown = (e) => {
+        this.drawStart = e.lngLat;
+      };
+      const onMove = (e) => {
+        if (!this.drawStart) return;
+        this.ensureBboxLayers(this.rectFrom(this.drawStart, e.lngLat));
+      };
+      const onUp = (e) => {
+        if (!this.drawStart) return;
+        const b = this.boundsOf(this.drawStart, e.lngLat);
+        this.drawStart = null;
+        this.disableBboxDraw();
+        // ignore accidental clicks with no area
+        if (b.east - b.west < 1e-6 || b.north - b.south < 1e-6) return;
+        this.ensureBboxLayers(bboxPolygon([b.west, b.north, b.east, b.south]));
+        this.$emit("bbox-drawn", b);
+      };
+
+      this.bboxHandlers = { onDown, onMove, onUp };
+      map.on("mousedown", onDown);
+      map.on("mousemove", onMove);
+      map.on("mouseup", onUp);
+    },
+
+    disableBboxDraw() {
+      if (!this.mapView) return;
+      this.drawing = false;
+      const map = this.mapView;
+      map.getCanvas().style.cursor = "";
+      map.dragPan.enable();
+      if (this.bboxHandlers) {
+        map.off("mousedown", this.bboxHandlers.onDown);
+        map.off("mousemove", this.bboxHandlers.onMove);
+        map.off("mouseup", this.bboxHandlers.onUp);
+        this.bboxHandlers = null;
+      }
+    },
+
+    boundsOf(a, b) {
+      return {
+        west: Math.min(a.lng, b.lng),
+        east: Math.max(a.lng, b.lng),
+        south: Math.min(a.lat, b.lat),
+        north: Math.max(a.lat, b.lat),
+      };
+    },
+    rectFrom(a, b) {
+      const bo = this.boundsOf(a, b);
+      return bboxPolygon([bo.west, bo.north, bo.east, bo.south]);
     },
   },
 
@@ -106,19 +168,7 @@ export default {
     });
 
     const attribution = new mapboxgl.AttributionControl();
-    this.mapView.addControl(attribution, 'bottom-right');
-
-    // this.drawView = new MapboxDraw({
-    //   displayControlsDefault: false,
-    //   controls: {
-    //     polygon: true,
-    //     trash: true,
-    //   },
-    // });
-
-    // this.mapView.on("load", () => {
-    //   this.mapView.addControl(this.drawView, "top-left");
-    // });
+    this.mapView.addControl(attribution, "bottom-right");
   },
 };
 </script>

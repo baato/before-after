@@ -1,8 +1,5 @@
-
-
-
 <template>
-  <div class="row">
+  <div class="row no-gutters">
     <SuccessfullyProvisioned
       v-if="successfullyProvisioned"
       :instanceName="instance.uuid"
@@ -21,22 +18,42 @@
       :progressMessage="provisioningStateMappings[provisioningState]"
     />
 
-    <div class="col-md-3 p-4" style="background-color: #47889d">
+    <div class="col-md-3 p-4 brand-panel">
       <v-form ref="form" v-model="valid" lazy-validation>
-        <span
-          style="
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            font-weight: 600;
-          "
-          >Location</span
-        >
-        <br />
+        <div class="brand-panel-title">Create a map</div>
+        <div class="brand-panel-desc mt-1 mb-4">
+          Pick an area, choose a year to compare against, and we&rsquo;ll build
+          the before&ndash;after maps for you.
+        </div>
 
+        <span class="brand-section-label">Location</span>
+
+        <div class="loc-switch mt-2 mb-3">
+          <button
+            type="button"
+            class="loc-opt"
+            :class="{ active: locationMode === 'search' }"
+            @click="setMode('search')"
+          >
+            <v-icon small>mdi-magnify</v-icon>
+            <span>Search a place</span>
+          </button>
+          <button
+            type="button"
+            class="loc-opt"
+            :class="{ active: locationMode === 'bbox' }"
+            @click="setMode('bbox')"
+          >
+            <v-icon small>mdi-vector-rectangle</v-icon>
+            <span>Draw a box</span>
+          </button>
+        </div>
+
+        <!-- Search mode -->
         <v-autocomplete
+          v-if="locationMode === 'search'"
           dark
-          class="v-step-0 mt-2 app-combobox"
+          class="v-step-0 app-combobox"
           v-model="place"
           :loading="isLoading"
           :items="items"
@@ -51,29 +68,88 @@
           solo-inverted
           @change="selectPlace"
           return-object
-          required
           dense
-          :rules="requiredRules"
           color="blue-grey lighten-2"
         ></v-autocomplete>
-        <br />
 
-        <span
-          style="
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            font-weight: 600;
-          "
-          >MAP DETAILS</span
-        >
-        <br />
+        <!-- Bounding box mode -->
+        <div v-else class="v-step-0">
+          <div class="d-flex" style="gap: 8px">
+            <v-btn
+              outlined dark small
+              class="text-none flex-grow-1"
+              style="border-color: rgba(255, 255, 255, 0.4)"
+              @click="startDraw"
+            >
+              <v-icon left small>mdi-select-drag</v-icon>
+              {{ drawing ? "Drawing\u2026" : "Draw box on map" }}
+            </v-btn>
+            <v-btn
+              text dark small
+              class="text-none px-2"
+              :disabled="!hasBbox"
+              @click="clearBboxSelection"
+            >
+              <v-icon left small>mdi-close-circle-outline</v-icon>
+              Clear
+            </v-btn>
+          </div>
+
+          <v-row dense class="mt-1">
+            <v-col cols="6">
+              <v-text-field
+                dark dense outlined hide-details type="number" step="0.0001"
+                label="West (min lng)" color="white"
+                v-model.number="bbox.west" @change="applyBbox"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                dark dense outlined hide-details type="number" step="0.0001"
+                label="South (min lat)" color="white"
+                v-model.number="bbox.south" @change="applyBbox"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                dark dense outlined hide-details type="number" step="0.0001"
+                label="East (max lng)" color="white"
+                v-model.number="bbox.east" @change="applyBbox"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                dark dense outlined hide-details type="number" step="0.0001"
+                label="North (max lat)" color="white"
+                v-model.number="bbox.north" @change="applyBbox"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <div v-if="detectedRegion" class="brand-detect mt-3">
+            <v-icon small>mdi-map-check</v-icon>
+            <span>Region: <strong>{{ detectedRegion }}</strong></span>
+          </div>
+          <div v-else-if="detectError" class="brand-detect is-error mt-3">
+            <v-icon small color="#e5734e">mdi-alert-outline</v-icon>
+            <span>{{ detectError }}</span>
+          </div>
+          <div v-else-if="resolving" class="brand-hint mt-3">
+            <v-progress-circular
+              indeterminate size="14" width="2" color="white" class="mr-2"
+            />
+            Detecting region&hellip;
+          </div>
+          <div v-else class="brand-hint mt-3">
+            Draw a box or enter coordinates. We&rsquo;ll match it to the right
+            data region automatically.
+          </div>
+        </div>
+
+        <div class="mt-5"></div>
+        <span class="brand-section-label">Map details</span>
         <v-text-field
-          dark
-          outlined
-          dense
-          class="v-step-1 mt-3"
-          color="white"
+          dark outlined dense class="v-step-1 mt-3" color="white"
           label="Name of this map"
           v-model="instance.name"
           :rules="requiredRules"
@@ -81,28 +157,17 @@
         ></v-text-field>
 
         <v-select
-          dark
-          class="v-step-2 mt-0"
-          outlined
-          dense
+          dark class="v-step-2 mt-0" outlined dense
           label="Compare against (year)"
-          :items="years"
-          color="white"
+          :items="years" color="white"
           v-model="instance.beforeYear"
           :rules="requiredRules"
           required
         ></v-select>
-        <br />
 
-        <div style="line-height: 1rem">
-          <span
-            style="
-              color: rgba(255, 255, 255, 0.7);
-              text-transform: uppercase;
-              font-size: 0.8rem;
-              font-weight: 600;
-            "
-            >PERSONAL DETAILS
+        <div style="line-height: 1rem" class="mt-2">
+          <span class="brand-section-label"
+            >Personal details
             <a
               @click="giveReasonForAskingPersonalDetails"
               class="font-weight-light float-right"
@@ -113,21 +178,14 @@
         </div>
 
         <v-text-field
-          dark
-          outlined
-          dense
-          class="v-step-1 mt-3"
-          color="white"
+          dark outlined dense class="v-step-1 mt-3" color="white"
           label="Enter your full name"
           v-model="instance.fullName"
           :rules="requiredRules"
           required
         ></v-text-field>
         <v-text-field
-          dark
-          outlined
-          class="v-step-1 mt-0"
-          color="white"
+          dark outlined class="v-step-1 mt-0" color="white"
           label="Enter your email address"
           v-model="instance.email"
           :rules="emailRules.concat(requiredRules)"
@@ -135,30 +193,29 @@
           dense
         ></v-text-field>
 
-        <br />
         <v-btn
-          large
-          class="v-step-3 white--text float-right"
-          :disabled="!valid"
-          color="#2c3e50"
+          large block
+          class="v-step-3 brand-generate mt-2"
+          :disabled="!canGenerate"
           @click="validate"
-          style="padding: 10px"
         >
-          GENERATE MAP
+          Generate map
+          <v-icon right small>mdi-arrow-right</v-icon>
         </v-btn>
       </v-form>
     </div>
-    <div class="col-md-9 p-0" style="">
-      <MapView ref="mapView" :theme="theme" />
+
+    <div class="col-md-9 p-0">
+      <div class="brand-map-wrap">
+        <div v-if="drawing" class="brand-draw-hint">
+          <v-icon small color="white">mdi-select-drag</v-icon>
+          Click and drag on the map to draw a bounding box
+        </div>
+        <MapView ref="mapView" :theme="theme" @bbox-drawn="onBboxDrawn" />
+      </div>
     </div>
-    <!-- <div class="col-md-12" style="background-color: #fff; min-height: 400px">
-      Holla
-    </div> -->
   </div>
 </template>
-
-
-
 
 <script>
 import SuccessfullyProvisioned from "./SuccessfullyProvisioned";
@@ -220,7 +277,41 @@ export default {
     keepAliveCounter: null,
     showPersonalDetailsRequirement: false,
     showInstanceRequested: false,
+    // --- bounding-box mode ---
+    locationMode: "search",
+    bbox: { west: null, south: null, east: null, north: null },
+    drawing: false,
+    resolving: false,
+    detectedRegion: null,
+    detectError: null,
   }),
+  computed: {
+    bboxValid() {
+      const b = this.bbox;
+      const nums = [b.west, b.south, b.east, b.north];
+      if (nums.some((n) => n === null || n === "" || isNaN(Number(n))))
+        return false;
+      return (
+        Number(b.west) < Number(b.east) && Number(b.south) < Number(b.north)
+      );
+    },
+    hasBbox() {
+      const b = this.bbox;
+      return (
+        b.west !== null ||
+        b.south !== null ||
+        b.east !== null ||
+        b.north !== null
+      );
+    },
+    canGenerate() {
+      if (!this.valid) return false;
+      if (this.locationMode === "bbox") {
+        return this.bboxValid && !!this.instance.country && !this.detectError;
+      }
+      return !!this.instance.bbox && !!this.instance.country;
+    },
+  },
   methods: {
     giveReasonForAskingPersonalDetails() {
       this.$gtag.event("click", {
@@ -268,7 +359,6 @@ export default {
         "district",
         "county",
         "suburb",
-        // "country",
       ];
       axios
         .get("https://photon.komoot.io/api/", {
@@ -303,11 +393,134 @@ export default {
         });
     },
     selectPlace() {
+      if (!this.place) return;
       this.$refs.mapView.applySource(this.place.geometry, this.place.extent);
       this.instance.bbox = this.place.extent.join(",");
       this.instance.country =
         countryCodes[this.place.countrycode.toLowerCase()];
     },
+
+    // ---------------- bounding-box mode ----------------
+    setMode(mode) {
+      if (this.locationMode === mode) return;
+      this.locationMode = mode;
+      this.onModeChange();
+    },
+    clearBboxSelection() {
+      this.bbox = { west: null, south: null, east: null, north: null };
+      this.instance.bbox = null;
+      this.instance.country = null;
+      this.detectedRegion = null;
+      this.detectError = null;
+      this.resolving = false;
+      this.drawing = false;
+      if (this.$refs.mapView) {
+        this.$refs.mapView.disableBboxDraw();
+        this.$refs.mapView.clearBbox();
+      }
+    },
+    onModeChange() {
+      this.detectError = null;
+      this.detectedRegion = null;
+      this.resolving = false;
+      this.drawing = false;
+      if (this.$refs.mapView) {
+        this.$refs.mapView.disableBboxDraw();
+        this.$refs.mapView.clearBbox();
+      }
+      if (this.locationMode === "search") {
+        this.bbox = { west: null, south: null, east: null, north: null };
+      } else {
+        this.place = null;
+        this.instance.bbox = null;
+        this.instance.country = null;
+      }
+    },
+    startDraw() {
+      if (!this.$refs.mapView) return;
+      this.drawing = true;
+      this.$refs.mapView.enableBboxDraw();
+    },
+    onBboxDrawn(b) {
+      this.drawing = false;
+      this.bbox = {
+        west: this.round(b.west),
+        south: this.round(b.south),
+        east: this.round(b.east),
+        north: this.round(b.north),
+      };
+      this.applyBbox();
+    },
+    round(n) {
+      return Math.round(Number(n) * 1e6) / 1e6;
+    },
+    applyBbox() {
+      if (!this.bboxValid) {
+        this.detectedRegion = null;
+        this.detectError = null;
+        this.instance.country = null;
+        this.instance.bbox = null;
+        return;
+      }
+      const w = Number(this.bbox.west);
+      const s = Number(this.bbox.south);
+      const e = Number(this.bbox.east);
+      const n = Number(this.bbox.north);
+
+      // Keep the SAME extent order the search flow uses (photon: [W, N, E, S]),
+      // so the value flows identically through drawing, turf and osmium.
+      const extent = [w, n, e, s];
+      this.instance.bbox = extent.join(",");
+
+      const centroidGeom = {
+        type: "Point",
+        coordinates: [(w + e) / 2, (s + n) / 2],
+      };
+      this.$refs.mapView.applySource(centroidGeom, extent);
+
+      this.resolveCountryFromBbox((w + e) / 2, (s + n) / 2);
+    },
+    resolveCountryFromBbox(lng, lat) {
+      this.resolving = true;
+      this.detectError = null;
+      this.detectedRegion = null;
+      axios
+        .get("https://photon.komoot.io/reverse", {
+          params: { lon: lng, lat: lat, limit: 1 },
+          timeout: 1000 * 30,
+        })
+        .then((res) => {
+          this.resolving = false;
+          const feats = (res.data && res.data.features) || [];
+          const props = feats.length ? feats[0].properties : null;
+          const cc =
+            props && props.countrycode
+              ? props.countrycode.toLowerCase()
+              : null;
+          const region = cc ? countryCodes[cc] : null;
+          if (!cc || !region) {
+            this.instance.country = null;
+            this.detectError =
+              "Couldn't match this area to a data region. Try nudging the box or use search.";
+            return;
+          }
+          this.instance.country = region;
+          const countryName = (props && props.country) || cc.toUpperCase();
+          const continent = countryContinents[region] || "";
+          this.detectedRegion = continent
+            ? `${countryName} (${continent})`
+            : countryName;
+        })
+        .catch((error) => {
+          this.resolving = false;
+          this.instance.country = null;
+          this.detectError =
+            "Region lookup failed. Check your connection or use search.";
+          console.log(error);
+        });
+    },
+    // ---------------------------------------------------
+
     openBaatoSite() {
       window.open("https://baato.io", "_blank");
     },
@@ -414,13 +627,11 @@ export default {
         });
     },
     enableNavigationPrompt() {
-      // Enable navigation prompt
       window.onbeforeunload = function () {
         return true;
       };
     },
     disableNavigationPrompt() {
-      // Remove navigation prompt
       window.onbeforeunload = null;
     },
     provisionInstanceAPICall() {
@@ -434,7 +645,8 @@ export default {
     },
     validate() {
       const isFormValid = this.$refs.form.validate();
-      if (isFormValid) this.submitForm();
+      if (this.locationMode === "bbox" && !this.canGenerate) return;
+      if (isFormValid && this.canGenerate) this.submitForm();
     },
   },
   props: {
@@ -442,4 +654,3 @@ export default {
   },
 };
 </script>
-

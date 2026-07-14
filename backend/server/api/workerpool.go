@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 
 	Mailer "github.com/baato/before-after/mailer"
 	"github.com/gin-gonic/gin"
@@ -31,16 +32,21 @@ func provision(year, bbox, style, name, uuid, country, continent, fullName, emai
 	scripts_to_run := [5]string{"/provisioning-scripts/prepare-provision.sh", "/provisioning-scripts/download-data.sh", "/provisioning-scripts/generate-extracts.sh", "/provisioning-scripts/generate-tiles.sh", "/provisioning-scripts/provision.sh"}
 
 	for i, s := range scripts_to_run {
-		// Websocket.NotifyClient(s, ws)
+		fmt.Printf("\n=== [%s] step %d/%d: %s ===\n", uuid, i+1, len(scripts_to_run), s)
 		cmd := exec.Command("/bin/bash", s, year, bbox, style, uuid, country, name, continent)
-		_, err := cmd.Output()
-		if err != nil {
-			fmt.Println(fmt.Sprint(err))
+		// Stream the script's output live so long-running steps (wget, osmium,
+		// tilemaker) are visible and errors surface immediately instead of the
+		// whole job appearing to hang.
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Env = os.Environ()
+
+		start := time.Now()
+		if err := cmd.Run(); err != nil {
+			fmt.Printf("=== [%s] FAILED at %s after %s: %v ===\n", uuid, s, time.Since(start).Round(time.Second), err)
 			return JobStatus{"error", s}
 		}
-		// Print the output
-		// fmt.Print(string(stdout))
-		fmt.Println(i, s)
+		fmt.Printf("=== [%s] OK %s (%s) ===\n", uuid, s, time.Since(start).Round(time.Second))
 	}
 	return JobStatus{"done", "nil"}
 }
@@ -72,10 +78,13 @@ func (w Worker) start() {
 			case job := <-w.jobQueue:
 				// Dispatcher has added a job to my jobQueue.
 				var jobstatus JobStatus = provision(job.Year, job.Bbox, job.Style, job.Name, job.Uuid, job.Country, job.Continent, job.FullName, job.Email)
+				// Send notification e-mails asynchronously: a slow or
+				// misconfigured SMTP server must never block the worker (and
+				// therefore every subsequent job) from making progress.
 				if jobstatus.status == "done" {
-					Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
+					go Mailer.SendMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, job.Name)
 				} else if jobstatus.status == "error" {
-					Mailer.SendErrorMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
+					go Mailer.SendErrorMail([]string{job.Email, os.Getenv("MAIL_CC")}, job.FullName, job.Uuid, jobstatus.err, job.Year, job.Bbox, job.Name, job.Country, job.Continent, job.Email)
 				}
 
 			case <-w.quitChan:

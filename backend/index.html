@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
@@ -261,6 +262,541 @@
             background-color: #2795e9;
             border-color: #2795e9;
         }
+
+        /* ===== Change Timelapse feature (self-contained, OSM-matched light theme) ===== */
+        #tl-switch {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            z-index: 20001;
+            display: inline-flex;
+            gap: 3px;
+            padding: 4px;
+            background: rgba(255, 255, 255, .9);
+            border: 1px solid rgba(31, 45, 58, .12);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(31, 45, 58, .14);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            font-family: 'Space Grotesk', Roboto, sans-serif;
+        }
+
+        .tl-sw-opt {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: #5a6b78;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .01em;
+            cursor: pointer;
+            transition: background .16s ease, color .16s ease, box-shadow .16s ease;
+        }
+
+        .tl-sw-opt:hover { color: #1f2d3a; background: rgba(71, 136, 157, .08); }
+
+        .tl-sw-opt.tl-active {
+            background: #47889d;
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(71, 136, 157, .35);
+        }
+
+        .tl-sw-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #17a35c;
+            box-shadow: 0 0 0 0 rgba(23, 163, 92, .6);
+            animation: tl-pulse 2.4s ease-out infinite;
+        }
+        .tl-sw-opt.tl-active .tl-sw-dot { background: #eafff3; }
+
+        @keyframes tl-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(23, 163, 92, .5); }
+            70% { box-shadow: 0 0 0 7px rgba(23, 163, 92, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(23, 163, 92, 0); }
+        }
+
+        #tl-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            background: #eef2f4;
+            color: #1f2d3a;
+            font-family: Roboto, sans-serif;
+        }
+
+        #tl-modal.tl-open { display: flex; }
+
+        #tl-head {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 22px;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(31, 45, 58, .08);
+        }
+
+        #tl-head .tl-kick {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #47889d;
+        }
+
+        #tl-head .tl-name {
+            font-family: 'Space Grotesk', Roboto, sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 2px;
+            color: #1f2d3a;
+        }
+
+        #tl-head .tl-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #5a6b78;
+        }
+
+        #tl-head .tl-range b { color: #1f2d3a; font-weight: 600; }
+        #tl-head .tl-range .tl-arrow { color: #9aa7b1; }
+
+        #tl-close {
+            width: 38px; height: 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(31, 45, 58, .12);
+            background: #ffffff;
+            color: #5a6b78;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        #tl-close:hover { background: #f0f3f5; color: #1f2d3a; }
+
+        #tl-stage {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        #tl-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #f2efe9;
+            box-shadow: 0 18px 50px rgba(31, 45, 58, .22), inset 0 0 0 1px rgba(31, 45, 58, .06);
+        }
+
+        #tl-basemap { position: absolute; inset: 0; }
+        #tl-basemap canvas { outline: none; }
+
+        #tl-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: transparent;
+        }
+
+        #tl-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: #5a6b78;
+            font-size: 13px;
+            letter-spacing: .04em;
+            background: rgba(238, 242, 244, .78);
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+        }
+
+        #tl-loader .tl-spin {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 2px solid rgba(31, 45, 58, .12);
+            border-top-color: #47889d;
+            animation: tl-spin 0.9s linear infinite;
+        }
+
+        @keyframes tl-spin { to { transform: rotate(360deg); } }
+
+        #tl-controls {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 14px 22px 18px;
+            background: #ffffff;
+            border-top: 1px solid rgba(31, 45, 58, .08);
+        }
+
+        .tl-btn {
+            flex: 0 0 auto;
+            width: 44px; height: 44px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 12px;
+            border: 1px solid rgba(31, 45, 58, .12);
+            background: #ffffff;
+            color: #1f2d3a;
+            cursor: pointer;
+            transition: background .15s ease, transform .12s ease;
+        }
+
+        .tl-btn:hover { background: #f0f3f5; }
+        .tl-btn:active { transform: scale(.96); }
+        .tl-btn svg { width: 18px; height: 18px; display: block; }
+        .tl-btn[disabled] { opacity: .4; cursor: default; }
+
+        #tl-play { background: #47889d; border-color: #47889d; color: #ffffff; }
+        #tl-play:hover { background: #54a0b8; }
+
+        #tl-track-wrap {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        #tl-track {
+            position: relative;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #tl-track .tl-rail {
+            position: absolute;
+            left: 0; right: 0;
+            height: 5px;
+            border-radius: 999px;
+            background: rgba(31, 45, 58, .12);
+            overflow: hidden;
+        }
+
+        #tl-track .tl-fill {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #356b7d 0%, #47889d 55%, #6fb3c7 100%);
+        }
+
+        #tl-track .tl-head {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            width: 15px; height: 15px;
+            margin-left: -7px;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(71, 136, 157, .28), 0 2px 6px rgba(31, 45, 58, .3);
+            pointer-events: none;
+        }
+
+        #tl-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            letter-spacing: .04em;
+            color: #5a6b78;
+        }
+
+        #tl-scale b { color: #1f2d3a; font-weight: 600; }
+
+        #tl-legend { display: flex; gap: 14px; flex: 0 0 auto; }
+
+        #tl-legend .tl-leg {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #5a6b78;
+        }
+
+        #tl-legend .tl-sw { width: 10px; height: 10px; border-radius: 3px; }
+
+        #tl-speed {
+            display: inline-flex;
+            border: 1px solid rgba(31, 45, 58, .12);
+            border-radius: 10px;
+            overflow: hidden;
+            flex: 0 0 auto;
+        }
+
+        #tl-speed button {
+            padding: 8px 11px;
+            font-family: Roboto, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a6b78;
+            background: #ffffff;
+            border: 0;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        #tl-speed button + button { border-left: 1px solid rgba(31, 45, 58, .1); }
+        #tl-speed button.tl-active { background: rgba(71, 136, 157, .14); color: #356b7d; }
+
+        #tl-basemode {
+            display: inline-flex;
+            border: 1px solid rgba(31, 45, 58, .12);
+            border-radius: 10px;
+            overflow: hidden;
+            flex: 0 0 auto;
+        }
+
+        #tl-basemode button {
+            padding: 8px 13px;
+            font-family: Roboto, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a6b78;
+            background: #ffffff;
+            border: 0;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        #tl-basemode button + button { border-left: 1px solid rgba(31, 45, 58, .1); }
+        #tl-basemode button.tl-active { background: rgba(71, 136, 157, .14); color: #356b7d; }
+
+        #tl-export {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0 18px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid rgba(31, 45, 58, .14);
+            background: #ffffff;
+            color: #1f2d3a;
+            font-family: Roboto, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s ease;
+        }
+
+        #tl-export:hover { background: #f0f3f5; }
+        #tl-export[disabled] { opacity: .5; cursor: default; }
+        #tl-export svg { width: 16px; height: 16px; }
+        #tl-export .tl-exp-prog { font-variant-numeric: tabular-nums; color: #356b7d; }
+
+        #tl-note {
+            position: absolute;
+            left: 22px;
+            bottom: 96px;
+            max-width: 360px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #1f2d3a;
+            background: rgba(255, 255, 255, .96);
+            border: 1px solid rgba(31, 45, 58, .12);
+            border-left: 3px solid #e08b00;
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: 0 6px 18px rgba(31, 45, 58, .12);
+            display: none;
+            z-index: 6;
+        }
+
+        #tl-hidden-maps {
+            position: fixed;
+            left: -99999px;
+            top: 0;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @media (max-width: 760px) {
+            #tl-controls { flex-wrap: wrap; gap: 12px; }
+            #tl-track-wrap { order: 5; flex-basis: 100%; }
+            #tl-legend { order: 6; }
+            #tl-head .tl-name { font-size: 15px; }
+            #tl-switch { top: 14px; right: 14px; }
+            .tl-sw-opt { padding: 7px 11px; font-size: 12px; }
+        }
+        /* ===== end Change Timelapse ===== */
+
+        /* ================= Baato premium brand theme ================= */
+        #ba-loader {
+            position: absolute;
+            top: 100px; left: 0; right: 0; bottom: 50px;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: #eef2f4;
+            color: #5a6b78;
+            font-family: 'Space Grotesk', Roboto, sans-serif;
+            font-size: 14px;
+            letter-spacing: .02em;
+        }
+
+        #ba-loader .ba-spin {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: 3px solid rgba(31, 45, 58, .12);
+            border-top-color: #47889d;
+            animation: tl-spin 0.9s linear infinite;
+        }
+
+        #tl-basemap-dark {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity .18s ease;
+            pointer-events: none;
+        }
+        #tl-basemap-dark.tl-show { opacity: 1; }
+
+        body {
+            background: #eef2f4;
+            color: #2c3e50;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #title {
+            padding-top: 22px;
+        }
+
+        #title span {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: .26em;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #47889d;
+        }
+
+        #title h1 {
+            font-family: 'Space Grotesk', Roboto, sans-serif;
+            font-weight: 600;
+            font-size: 30px;
+            line-height: 1.1;
+            color: #1f2d3a;
+            letter-spacing: -0.01em;
+            margin-top: 3px;
+        }
+
+        #map,
+        #map2 {
+            border: 1px solid #d6dee1;
+        }
+
+        #divider {
+            background: linear-gradient(180deg, #4f93a8 0%, #356b7d 100%);
+            width: 8px;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(31, 45, 58, .06);
+        }
+
+        #divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 26px;
+            height: 46px;
+            border-radius: 22px;
+            background: #ffffff;
+            box-shadow: 0 6px 16px rgba(31, 45, 58, .3), inset 0 0 0 1px rgba(71, 136, 157, .45);
+        }
+
+        #divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 3px;
+            height: 16px;
+            border-radius: 3px;
+            background: #47889d;
+            box-shadow: -4px 0 0 #47889d, 4px 0 0 #47889d;
+            z-index: 1;
+        }
+
+        #map-title {
+            top: 14px;
+            left: 14px;
+        }
+
+        #map-title h2 {
+            font-family: 'Space Grotesk', Roboto, sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: #1f2d3a;
+            background: rgba(255, 255, 255, .82);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(71, 136, 157, .35);
+            box-shadow: 0 4px 14px rgba(31, 45, 58, .12);
+        }
+
+        #footer {
+            color: #5a6b78;
+        }
+
+        #footer a {
+            color: #47889d;
+        }
+
+        #sharing {
+            color: #5a6b78;
+            font-size: 12px;
+        }
+
+        .resp-sharing-button--twitter,
+        .resp-sharing-button--facebook {
+            background-color: #2c3e50 !important;
+            border-color: #2c3e50 !important;
+        }
+
+        .resp-sharing-button--twitter:hover,
+        .resp-sharing-button--facebook:hover,
+        .resp-sharing-button--twitter:active,
+        .resp-sharing-button--facebook:active {
+            background-color: #47889d !important;
+            border-color: #47889d !important;
+        }
+
+/* (timelapse now uses its own light theme above) */
+        /* ================= end Baato premium brand theme ================= */
+
     </style>
 </head>
 
@@ -388,8 +924,9 @@
                 container: 'map',
                 zoom: 11,
                 style: `${window.location.protocol}//_HOSTNAME_/beforestyles/_UUID_/${selectedStyle}.json`,
-                attributionControl: false
-            }).fitBounds(bounds);
+                attributionControl: false,
+                fadeDuration: 0
+            }).fitBounds(bounds, { animate: false });
             window.map = map;
             // Add zoom and rotation controls to the map.
             map.addControl(new maplibregl.NavigationControl());
@@ -398,8 +935,9 @@
                 container: 'map2',
                 zoom: 11,
                 style: `${window.location.protocol}//_HOSTNAME_/afterstyles/_UUID_/${selectedStyle}.json`,
-                attributionControl: false
-            }).fitBounds(bounds);
+                attributionControl: false,
+                fadeDuration: 0
+            }).fitBounds(bounds, { animate: false });
             window.map2 = map2;
             // Add zoom and rotation controls to the map.
             map2.addControl(new maplibregl.NavigationControl());
@@ -441,8 +979,1059 @@
                     disable = false;
                 }
             })
+
+            // hide the loading overlay once both maps have rendered their tiles
+            var baReady = 0;
+            var hideBaLoader = function () {
+                var l = document.getElementById('ba-loader');
+                if (l) l.style.display = 'none';
+            };
+            var onBaReady = function () { baReady++; if (baReady >= 2) hideBaLoader(); };
+            map.once('idle', onBaReady);
+            map2.once('idle', onBaReady);
+            setTimeout(hideBaLoader, 20000); // safety fallback
         }
     </script>
+
+    <!-- ===== Change Timelapse launcher + modal (self-contained) ===== -->
+    <div id="ba-loader" aria-hidden="true">
+        <div class="ba-spin"></div>
+        <div class="ba-text">Loading maps&hellip;</div>
+    </div>
+    <div id="tl-switch" role="tablist" aria-label="Map view">
+        <button id="tl-sw-compare" class="tl-sw-opt tl-active" type="button" role="tab" aria-selected="true">
+            Before / After
+        </button>
+        <button id="tl-sw-tl" class="tl-sw-opt" type="button" role="tab" aria-selected="false">
+            <span class="tl-sw-dot" aria-hidden="true"></span>
+            Timelapse
+        </button>
+    </div>
+
+    <div id="tl-modal" role="dialog" aria-modal="true" aria-label="Change timelapse">
+        <div id="tl-head">
+            <div>
+                <div class="tl-kick">OSM Change Timelapse</div>
+                <div class="tl-name" id="tl-name">_NAME_</div>
+            </div>
+            <div class="tl-range">
+                <span>Before <b id="tl-r-before">_BEFORE_YEAR_</b></span>
+                <span class="tl-arrow">&rarr;</span>
+                <span>After <b id="tl-r-after">_AFTER_YEAR_</b></span>
+            </div>
+            <button id="tl-close" type="button" aria-label="Close timelapse">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M6 6l12 12M18 6L6 18"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div id="tl-stage">
+            <div id="tl-frame">
+                <div id="tl-basemap"></div>
+                <div id="tl-basemap-dark"></div>
+                <canvas id="tl-canvas"></canvas>
+            </div>
+            <div id="tl-loader">
+                <div class="tl-spin"></div>
+                <div id="tl-loader-text">Rendering the two epochs&hellip;</div>
+            </div>
+            <div id="tl-note"></div>
+        </div>
+
+        <div id="tl-controls">
+            <button class="tl-btn" id="tl-play" type="button" aria-label="Play or pause" disabled>
+                <svg id="tl-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"></path>
+                </svg>
+            </button>
+            <button class="tl-btn" id="tl-restart" type="button" aria-label="Restart" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+                    <path d="M3 4v4h4"></path>
+                </svg>
+            </button>
+
+            <div id="tl-track-wrap">
+                <div id="tl-track" role="slider" aria-label="Timeline" aria-valuemin="0" aria-valuemax="100"
+                    aria-valuenow="0" tabindex="0">
+                    <div class="tl-rail"><div class="tl-fill" id="tl-fill"></div></div>
+                    <div class="tl-head" id="tl-thumb"></div>
+                </div>
+                <div id="tl-scale">
+                    <span><b id="tl-s-before">_BEFORE_YEAR_</b></span>
+                    <span id="tl-legend-wrap">
+                        <span id="tl-legend">
+                            <span class="tl-leg"><span class="tl-sw" style="background:#17a35c"></span>Added</span>
+                            <span class="tl-leg"><span class="tl-sw" style="background:#e08b00"></span>Modified</span>
+                            <span class="tl-leg"><span class="tl-sw" style="background:#d83a3f"></span>Removed</span>
+                        </span>
+                    </span>
+                    <span><b id="tl-s-after">_AFTER_YEAR_</b></span>
+                </div>
+            </div>
+
+            <div id="tl-basemode" role="group" aria-label="Base map overlay">
+                <button type="button" data-mode="osm" class="tl-active">Map</button>
+                <button type="button" data-mode="dark">Dark</button>
+            </div>
+
+            <div id="tl-speed" role="group" aria-label="Playback speed">
+                <button type="button" data-speed="0.5">0.5&times;</button>
+                <button type="button" data-speed="1" class="tl-active">1&times;</button>
+                <button type="button" data-speed="2">2&times;</button>
+            </div>
+
+            <button id="tl-export" type="button" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12"></path>
+                    <path d="M7 10l5 5 5-5"></path>
+                    <path d="M4 20h16"></path>
+                </svg>
+                <span id="tl-export-label">Export video</span>
+            </button>
+        </div>
+    </div>
+    <div id="tl-hidden-maps"></div>
+    <!-- ===== end Change Timelapse ===== -->
+
+    <!-- ===== Change Timelapse engine (feature-level, self-contained) ===== -->
+    <script>
+    (function () {
+        "use strict";
+        if (typeof maplibregl === "undefined") { return; }
+
+        var $ = function (id) { return document.getElementById(id); };
+        var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+        var easeOut = function (t) { return 1 - Math.pow(1 - t, 3); };
+        var easeInOut = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+        var easeOutBack = function (t) { var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+        var COLS = {
+            osm:  { add: [23, 163, 92], mod: [224, 139, 0], rem: [216, 58, 63] },
+            dark: { add: [34, 224, 138], mod: [255, 176, 32], rem: [255, 90, 95] }
+        };
+        var THEMES = {
+            osm: {
+                markerMode: "solid",
+                paper: "#f2efe9",
+                wash: "rgba(245,247,248,0.62)",
+                hudTop: ["rgba(244,246,247,0.82)", "rgba(244,246,247,0)"],
+                hudBot: ["rgba(244,246,247,0)", "rgba(244,246,247,0.92)"],
+                ink: "#1f2d3a", kick: "#47889d", sub: "#3a4a56",
+                watermark: "rgba(90,107,120,0.7)",
+                rail: "rgba(31,45,58,0.14)", railDot: "#47889d", railGlow: "rgba(71,136,157,0.55)",
+                railGrad: ["#356b7d", "#6fb3c7"],
+                counterLabel: "rgba(58,74,86,0.9)",
+                vignette: "rgba(31,45,58,0.10)"
+            },
+            dark: {
+                markerMode: "glow",
+                paper: "#0a0e13",
+                wash: "rgba(9,13,18,0.34)",
+                hudTop: ["rgba(4,6,9,0.60)", "rgba(4,6,9,0)"],
+                hudBot: ["rgba(4,6,9,0)", "rgba(4,6,9,0.80)"],
+                ink: "#f4f6f8", kick: "#79b3c5", sub: "rgba(220,228,235,0.9)",
+                watermark: "rgba(200,208,216,0.5)",
+                rail: "rgba(255,255,255,0.16)", railDot: "#ffffff", railGlow: "rgba(71,136,157,0.95)",
+                railGrad: ["#356b7d", "#79b3c5"],
+                counterLabel: "rgba(210,218,226,0.8)",
+                vignette: "rgba(0,0,0,0.34)"
+            }
+        };
+        var baseMode = "osm";
+        var TH = THEMES.osm, MK = COLS.osm;
+        var css = function (c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; };
+
+        // Pre-rendered radial glow sprites. Drawing a cached sprite with
+        // drawImage is dramatically cheaper than creating a gradient and using
+        // shadowBlur per marker per frame (the old approach froze weaker
+        // machines with hundreds of markers).
+        var sprites = null;
+        function makeGlowSprite(c) {
+            var S = 64, cn = document.createElement("canvas");
+            cn.width = S; cn.height = S;
+            var x = cn.getContext("2d");
+            var g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+            g.addColorStop(0, css(c, 0.95));
+            g.addColorStop(0.42, css(c, 0.45));
+            g.addColorStop(1, css(c, 0));
+            x.fillStyle = g; x.fillRect(0, 0, S, S);
+            return cn;
+        }
+        function buildSprites() {
+            sprites = { add: makeGlowSprite(MK.add), mod: makeGlowSprite(MK.mod), rem: makeGlowSprite(MK.rem) };
+        }
+        function applyTheme() { TH = THEMES[baseMode]; MK = COLS[baseMode]; buildSprites(); }
+
+        // Vector source-layers we inspect for change (openmaptiles schema)
+        var LAYERS = ["building", "poi", "place", "transportation", "waterway", "water", "landuse", "park", "aeroway", "mountain_peak"];
+        var LINE_LAYERS = { transportation: 1, waterway: 1 };
+        var POLY_LAYERS = { building: 1, water: 1, landuse: 1, park: 1, aeroway: 1 };
+
+        // ---- state ----
+        var built = false, building = false;
+        var base = null, beforeMap = null;
+        var afterSource = null, beforeSource = null;
+        var darkBase = null, savedCam = null;
+        var osmSnap = null, darkSnap = null, darkReady = false;
+        var baseSnap = null, baseClean = true;
+        var W = 0, H = 0, dpr = 1;
+        var markers = [], totals = { add: 0, mod: 0, rem: 0 };
+        var comp = null, cctx = null;
+        var raf = null, playing = false, progress = 0, lastTs = 0, speed = 1, exporting = false;
+        var DURATION = 11000;
+        var beforeLabel = "", afterLabel = "", name = "";
+        var MAX_MARKERS = 560;
+
+        var el = {};
+        function grab() {
+            el.modal = $("tl-modal"); el.stage = $("tl-stage"); el.frame = $("tl-frame");
+            el.basemap = $("tl-basemap"); el.basemapDark = $("tl-basemap-dark"); el.loader = $("tl-loader"); el.loaderText = $("tl-loader-text");
+            el.note = $("tl-note"); el.play = $("tl-play"); el.playIcon = $("tl-play-icon");
+            el.restart = $("tl-restart"); el.track = $("tl-track"); el.fill = $("tl-fill");
+            el.thumb = $("tl-thumb"); el.exportBtn = $("tl-export"); el.exportLabel = $("tl-export-label");
+            comp = $("tl-canvas"); cctx = comp.getContext("2d");
+        }
+
+        var ICON_PLAY = '<path d="M8 5v14l11-7z"></path>';
+        var ICON_PAUSE = '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"></path>';
+
+        // -----------------------------------------------------------------
+        function open() {
+            grab();
+            var b = document.querySelector("#map #map-title h2") || document.querySelector("#map-title h2");
+            var a = document.querySelector("#map2 #map-title h2");
+            beforeLabel = (b && b.textContent.trim()) || $("tl-r-before").textContent.trim();
+            afterLabel = (a && a.textContent.trim()) || $("tl-r-after").textContent.trim();
+            var nm = document.querySelector("#title h1");
+            name = (nm && nm.textContent.trim()) || $("tl-name").textContent.trim();
+
+            el.modal.classList.add("tl-open");
+            resetControls();
+            el.loader.style.display = "flex";
+            el.note.style.display = "none";
+            setLoader("Preparing the two epochs\u2026");
+            requestAnimationFrame(function () { requestAnimationFrame(build); });
+        }
+
+        function close() {
+            stop();
+            el.modal.classList.remove("tl-open");
+            teardown();
+        }
+
+        function setLoader(t) { if (el.loaderText) el.loaderText.textContent = t; }
+
+        function resetControls() {
+            progress = 0; playing = false; speed = 1;
+            baseMode = "osm";
+            if (el.basemapDark) el.basemapDark.classList.remove("tl-show");
+            if (el.basemap) el.basemap.style.opacity = "1";
+            el.play.disabled = true; el.restart.disabled = true; el.exportBtn.disabled = true;
+            el.playIcon.innerHTML = ICON_PLAY; syncTrack();
+            Array.prototype.forEach.call(document.querySelectorAll("#tl-speed button"), function (btn) {
+                btn.classList.toggle("tl-active", btn.getAttribute("data-speed") === "1");
+            });
+            applyTheme(); updateBaseModeUI();
+        }
+
+        // -----------------------------------------------------------------
+        // Style helpers
+        // -----------------------------------------------------------------
+        function styleUrl(which) {
+            var s = (typeof selectedStyle !== "undefined" && selectedStyle) ? selectedStyle : "OpenStreetMap";
+            return window.location.protocol + "//_HOSTNAME_/" + which + "styles/_UUID_/" + s + ".json";
+        }
+
+        function darkLayers(src) {
+            return [
+                { id: "tl-bg", type: "background", paint: { "background-color": "#090d12" } },
+                { id: "tl-landcover", type: "fill", source: src, "source-layer": "landcover", paint: { "fill-color": "#0d141b", "fill-opacity": 0.5 } },
+                { id: "tl-landuse", type: "fill", source: src, "source-layer": "landuse", paint: { "fill-color": "#0f1620", "fill-opacity": 0.42 } },
+                { id: "tl-park", type: "fill", source: src, "source-layer": "park", paint: { "fill-color": "#0e1a16", "fill-opacity": 0.5 } },
+                { id: "tl-water", type: "fill", source: src, "source-layer": "water", paint: { "fill-color": "#0b1a27" } },
+                { id: "tl-waterway", type: "line", source: src, "source-layer": "waterway", paint: { "line-color": "#123243", "line-width": 0.8 } },
+                { id: "tl-building", type: "fill", source: src, "source-layer": "building", paint: { "fill-color": "#141d28", "fill-opacity": 0.55 } },
+                { id: "tl-transport", type: "line", source: src, "source-layer": "transportation", paint: { "line-color": "#1b2937", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.3, 13, 0.9, 16, 2.2] } }
+            ];
+        }
+
+        function fetchStyle(which) {
+            return fetch(styleUrl(which)).then(function (r) { return r.json(); }).then(function (j) {
+                var srcKey = Object.keys(j.sources || {})[0];
+                return j.sources[srcKey];  // reuse the exact vector source (correct tiles URL)
+            });
+        }
+
+        function buildStyle(source) {
+            return { version: 8, sources: { openmaptiles: source }, layers: darkLayers("openmaptiles") };
+        }
+
+        // 'osm'  -> the real provisioned OSM style (matches the before/after maps)
+        // 'dark' -> the minimal dark abstract base (previous look)
+        function baseStyleFor(mode) {
+            return mode === "dark" ? buildStyle(afterSource) : styleUrl("after");
+        }
+
+        function updateBaseModeUI() {
+            Array.prototype.forEach.call(document.querySelectorAll("#tl-basemode button"), function (b) {
+                b.classList.toggle("tl-active", b.getAttribute("data-mode") === baseMode);
+            });
+        }
+
+        function setBaseMode(mode) {
+            if (mode !== "osm" && mode !== "dark") return;
+            if (mode === baseMode) { updateBaseModeUI(); return; }
+            baseMode = mode; applyTheme(); updateBaseModeUI(); updateLegend();
+
+            if (!built) return; // nothing rendered yet; build() will use baseMode
+
+            if (mode === "dark") {
+                if (darkReady) {
+                    if (el.basemapDark) el.basemapDark.classList.add("tl-show");
+                    if (el.basemap) el.basemap.style.opacity = "0";
+                    baseSnap = darkSnap; baseClean = !!darkSnap;
+                    drawScene(progress, cctx, W, H, null);
+                } else {
+                    // lazily build the dark base ONCE, then cache it. This avoids
+                    // the heavy full-style reload that setStyle() used to do on
+                    // every toggle (the cause of the freeze).
+                    ensureDarkBase();
+                }
+            } else { // osm
+                if (el.basemapDark) el.basemapDark.classList.remove("tl-show");
+                if (el.basemap) el.basemap.style.opacity = "1";
+                baseSnap = osmSnap; baseClean = !!osmSnap;
+                drawScene(progress, cctx, W, H, null);
+            }
+        }
+
+        function ensureDarkBase() {
+            if (darkBase || !el.basemapDark) return;
+            try {
+                darkBase = new maplibregl.Map({
+                    container: el.basemapDark, style: buildStyle(afterSource),
+                    center: savedCam.center, zoom: savedCam.zoom, bearing: savedCam.bearing, pitch: savedCam.pitch,
+                    interactive: false, attributionControl: false, preserveDrawingBuffer: true, fadeDuration: 0
+                });
+            } catch (e) { return; }
+            var settle = function () {
+                try { darkSnap = snapshot(darkBase); } catch (e) { darkSnap = null; }
+                darkReady = true;
+                if (baseMode === "dark") {
+                    el.basemapDark.classList.add("tl-show");
+                    if (el.basemap) el.basemap.style.opacity = "0";
+                    baseSnap = darkSnap; baseClean = !!darkSnap;
+                    drawScene(progress, cctx, W, H, null);
+                }
+            };
+            darkBase.once("idle", settle);
+            darkBase.on("error", function () {});
+            setTimeout(function () { if (!darkReady) settle(); }, 12000);
+        }
+
+        // -----------------------------------------------------------------
+        // Build: load both epochs, extract features, diff, project, schedule
+        // -----------------------------------------------------------------
+        function build() {
+            if (built) { autoplay(); return; }
+            if (building) return;
+            building = true;
+
+            var m = window.map;
+            var cam = (m && m.getCenter) ?
+                { center: m.getCenter(), zoom: m.getZoom(), bearing: m.getBearing(), pitch: m.getPitch() } :
+                { center: [_CENTERLNG_MIN_, _CENTERLAT_MIN_], zoom: 12, bearing: 0, pitch: 0 };
+            savedCam = cam;
+
+            setLoader("Loading map layers\u2026");
+
+            Promise.all([fetchStyle("after"), fetchStyle("before")]).then(function (srcs) {
+                afterSource = srcs[0]; beforeSource = srcs[1];
+
+                base = new maplibregl.Map({
+                    container: el.basemap, style: baseStyleFor(baseMode),
+                    center: cam.center, zoom: cam.zoom, bearing: cam.bearing, pitch: cam.pitch,
+                    interactive: false, attributionControl: false, preserveDrawingBuffer: true, fadeDuration: 0
+                });
+
+                var hidden = document.createElement("div");
+                hidden.style.cssText = "position:fixed;left:-99999px;top:0;width:" + el.frame.clientWidth + "px;height:" + el.frame.clientHeight + "px;";
+                document.body.appendChild(hidden);
+                beforeMap = new maplibregl.Map({
+                    container: hidden, style: buildStyle(beforeSource),
+                    center: cam.center, zoom: cam.zoom, bearing: cam.bearing, pitch: cam.pitch,
+                    interactive: false, attributionControl: false, fadeDuration: 0
+                });
+                beforeMap._tlHidden = hidden;
+
+                var ready = 0, done = false;
+                var go = function () { if (!done && ready >= 2) { done = true; extract(); } };
+                base.once("idle", function () { ready++; go(); });
+                beforeMap.once("idle", function () { ready++; go(); });
+                base.on("error", function () {});
+                beforeMap.on("error", function () {});
+                setTimeout(function () { if (!done && !built) { done = true; extract(); } }, 18000);
+            }).catch(function (e) {
+                building = false;
+                fail("Could not load the map styles for the timelapse.");
+            });
+        }
+
+        function centroid(geom) {
+            var t = geom.type, c = geom.coordinates;
+            if (t === "Point") return c;
+            var pts;
+            if (t === "LineString") pts = c;
+            else if (t === "MultiLineString") pts = c[0];
+            else if (t === "Polygon") pts = c[0];
+            else if (t === "MultiPolygon") pts = c[0][0];
+            else return null;
+            var sx = 0, sy = 0, n = 0;
+            for (var i = 0; i < pts.length; i++) { sx += pts[i][0]; sy += pts[i][1]; n++; }
+            return n ? [sx / n, sy / n] : null;
+        }
+
+        function ring(geom) {
+            var t = geom.type, c = geom.coordinates;
+            if (t === "Polygon") return c[0];
+            if (t === "MultiPolygon") return c[0][0];
+            if (t === "LineString") return c;
+            if (t === "MultiLineString") return c[0];
+            return null;
+        }
+
+        function project(map, lngLat) {
+            var p = map.project(lngLat);
+            return [p.x * dpr, p.y * dpr];
+        }
+
+        function collect(map) {
+            // returns Map: locKey -> {layer, type, x, y, sig, geom}
+            var out = {};
+            var cw = map.getContainer().clientWidth * dpr, ch = map.getContainer().clientHeight * dpr;
+            for (var li = 0; li < LAYERS.length; li++) {
+                var layer = LAYERS[li];
+                var feats;
+                try { feats = map.querySourceFeatures("openmaptiles", { sourceLayer: layer }); }
+                catch (e) { continue; }
+                for (var i = 0; i < feats.length; i++) {
+                    var f = feats[i];
+                    if (!f.geometry) continue;
+                    var ct = centroid(f.geometry);
+                    if (!ct) continue;
+                    var sp = project(map, ct);
+                    if (sp[0] < -40 || sp[1] < -40 || sp[0] > cw + 40 || sp[1] > ch + 40) continue;
+                    var gx = Math.round(sp[0] / (6 * dpr)), gy = Math.round(sp[1] / (6 * dpr));
+                    var key = layer + ":" + gx + "," + gy;
+                    if (out[key]) continue;
+                    var p = f.properties || {};
+                    var sig = (p.class || "") + "|" + (p.subclass || "") + "|" + (p["name"] || p["name:latin"] || "") + "|" + (p.type || "");
+                    var type = LINE_LAYERS[layer] ? "line" : (POLY_LAYERS[layer] ? "poly" : "point");
+                    if (f.geometry.type === "Point" || f.geometry.type === "MultiPoint") type = "point";
+                    out[key] = { layer: layer, type: type, x: sp[0], y: sp[1], sig: sig, geom: f.geometry, map: map };
+                }
+            }
+            return out;
+        }
+
+        function screenPath(map, geom) {
+            var r = ring(geom);
+            if (!r) return null;
+            var pts = [], last = null, step = Math.max(1, Math.floor(r.length / 60));
+            for (var i = 0; i < r.length; i += step) {
+                var sp = project(map, r[i]);
+                if (last && Math.abs(sp[0] - last[0]) < 2 * dpr && Math.abs(sp[1] - last[1]) < 2 * dpr) continue;
+                pts.push(sp); last = sp;
+            }
+            return pts.length > 1 ? pts : null;
+        }
+
+        function extract() {
+            setLoader("Comparing features\u2026");
+            var trueDpr = base.getCanvas().width / Math.max(1, base.getContainer().clientWidth);
+            // Cap the overlay/marker render scale. On retina/4K the true dpr is
+            // 2-3x, which multiplies every per-frame fill and can stall weaker
+            // machines. 1.5x (and a hard pixel-size cap) stays crisp but cheap.
+            dpr = Math.min(trueDpr, 1.5);
+            var longest = Math.max(base.getContainer().clientWidth, base.getContainer().clientHeight);
+            if (longest * dpr > 1600) dpr = 1600 / longest;
+            if (!isFinite(dpr) || dpr <= 0) dpr = 1;
+            var afterF = {}, beforeF = {};
+            try { afterF = collect(base); } catch (e) {}
+            try { beforeF = collect(beforeMap); } catch (e) {}
+
+            var add = [], mod = [], rem = [];
+            var k;
+            for (k in afterF) {
+                if (!afterF.hasOwnProperty(k)) continue;
+                if (!beforeF[k]) add.push(afterF[k]);
+                else if (beforeF[k].sig !== afterF[k].sig) mod.push(afterF[k]);
+            }
+            for (k in beforeF) {
+                if (!beforeF.hasOwnProperty(k)) continue;
+                if (!afterF[k]) rem.push(beforeF[k]);
+            }
+
+            totals = { add: add.length, mod: mod.length, rem: rem.length };
+
+            // sample down for a clean, legible animation (keep true totals for counters)
+            var budget = { add: Math.round(MAX_MARKERS * 0.62), mod: Math.round(MAX_MARKERS * 0.18), rem: Math.round(MAX_MARKERS * 0.2) };
+            add = sample(add, budget.add); mod = sample(mod, budget.mod); rem = sample(rem, budget.rem);
+
+            markers = [];
+            var wpx = base.getContainer().clientWidth * dpr;
+
+            add.forEach(function (f) {
+                var m = mk(f, "add");
+                // additions emerge in a gentle left-to-right sweep with jitter
+                m.t0 = 0.14 + 0.82 * (f.x / wpx) + (Math.random() - 0.5) * 0.12;
+                m.t0 = clamp(m.t0, 0.05, 0.97);
+                m.dur = 0.13;
+                if (f.type !== "point" && Math.random() < 0.9) m.path = screenPath(f.map, f.geom);
+                markers.push(m);
+            });
+            mod.forEach(function (f) {
+                var m = mk(f, "mod");
+                m.t0 = 0.22 + Math.random() * 0.6; m.dur = 0.16;
+                markers.push(m);
+            });
+            rem.forEach(function (f) {
+                var m = mk(f, "rem");
+                m.t0 = 0.05 + Math.random() * 0.4; m.dur = 0.16;
+                markers.push(m);
+            });
+
+            baseClean = true;
+            try { baseSnap = snapshot(base); } catch (e) { baseClean = false; baseSnap = null; }
+            osmSnap = baseSnap;
+
+            finish();
+        }
+
+        function mk(f, c) {
+            var r = f.type === "poly" ? 10 : (f.type === "line" ? 7 : 8);
+            if (f.layer === "poi" || f.layer === "place") r = 9;
+            return { c: c, type: f.type, x: f.x, y: f.y, r: r * dpr, path: null, t0: 0, dur: 0.14, seed: Math.random() };
+        }
+
+        function sample(arr, n) {
+            if (arr.length <= n) return arr;
+            // Fisher-Yates partial shuffle
+            for (var i = arr.length - 1; i > arr.length - 1 - n; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            }
+            return arr.slice(arr.length - n);
+        }
+
+        function snapshot(map) {
+            var src = map.getCanvas();
+            var c = document.createElement("canvas");
+            c.width = src.width; c.height = src.height;
+            c.getContext("2d").drawImage(src, 0, 0);
+            // read a pixel to confirm the canvas is not tainted
+            c.getContext("2d").getImageData(0, 0, 1, 1);
+            return c;
+        }
+
+        function finish() {
+            if (built) return;
+            W = Math.max(1, Math.round(base.getContainer().clientWidth * dpr));
+            H = Math.max(1, Math.round(base.getContainer().clientHeight * dpr));
+            comp.width = W; comp.height = H;
+
+            // free the hidden before map (only base stays for context)
+            if (beforeMap) {
+                if (beforeMap._tlHidden && beforeMap._tlHidden.parentNode) beforeMap._tlHidden.parentNode.removeChild(beforeMap._tlHidden);
+                try { beforeMap.remove(); } catch (e) {}
+                beforeMap = null;
+            }
+
+            built = true; building = false;
+            el.loader.style.display = "none";
+            el.play.disabled = false; el.restart.disabled = false;
+            el.exportBtn.disabled = false;
+            updateLegend();
+
+            if (!totals.add && !totals.mod && !totals.rem) {
+                showNote("No feature-level differences were found in this view. Try zooming to an area that changed between the two dates.");
+            } else if (!baseClean) {
+                showNote("The map background couldn't be captured for video export (cross-origin map fonts/sprite), so the exported clip shows the changes on a plain background. The live view is unaffected.");
+            }
+
+            progress = 0; drawScene(0, cctx, W, H, null); syncTrack();
+            autoplay();
+        }
+
+        function teardown() {
+            [base, beforeMap, darkBase].forEach(function (m) {
+                if (m) {
+                    if (m._tlHidden && m._tlHidden.parentNode) m._tlHidden.parentNode.removeChild(m._tlHidden);
+                    try { m.remove(); } catch (e) {}
+                }
+            });
+            base = beforeMap = darkBase = null; built = false; building = false;
+            markers = []; baseSnap = null;
+            osmSnap = darkSnap = null; darkReady = false;
+            if (el.basemapDark) el.basemapDark.classList.remove("tl-show");
+            if (el.basemap) el.basemap.style.opacity = "1";
+        }
+
+        function fail(msg) { teardown(); el.loader.style.display = "none"; showNote(msg); }
+        function showNote(html) { el.note.innerHTML = html; el.note.style.display = "block"; }
+
+        function updateLegend() {
+            var legs = document.querySelectorAll("#tl-legend .tl-leg");
+            if (legs.length === 3) {
+                legs[0].style.display = totals.add ? "inline-flex" : "none";
+                legs[1].style.display = totals.mod ? "inline-flex" : "none";
+                legs[2].style.display = totals.rem ? "inline-flex" : "none";
+            }
+            var sws = document.querySelectorAll("#tl-legend .tl-sw");
+            if (sws.length === 3) {
+                sws[0].style.background = css(MK.add, 1);
+                sws[1].style.background = css(MK.mod, 1);
+                sws[2].style.background = css(MK.rem, 1);
+            }
+        }
+
+        // -----------------------------------------------------------------
+        // Scene renderer (markers + HUD). baseImg != null => export mode.
+        // -----------------------------------------------------------------
+        function drawScene(p, ctx, w, h, baseImg, opaque) {
+            var s = w / W;
+            var k = clamp(h / 720, 0.6, 2.2);
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
+            ctx.clearRect(0, 0, w, h);
+
+            if (opaque) {
+                // export: opaque base colour (OSM snapshot drawn on top if available)
+                ctx.fillStyle = TH.paper; ctx.fillRect(0, 0, w, h);
+            }
+            if (baseImg) {
+                ctx.drawImage(baseImg, 0, 0, w, h);
+                ctx.fillStyle = TH.wash; ctx.fillRect(0, 0, w, h);
+            } else if (!opaque) {
+                // live: the real base map shows through the transparent canvas;
+                // the wash keeps it faint so the change animation leads the eye
+                ctx.fillStyle = TH.wash; ctx.fillRect(0, 0, w, h);
+            }
+
+            drawMarkers(p, ctx, s);
+            drawHUD(p, ctx, w, h, k);
+            drawVignette(ctx, w, h);
+        }
+
+        function glowDot(ctx, x, y, r, c, a) {
+            if (r <= 0 || a <= 0) return;
+            var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+            g.addColorStop(0, css(c, a));
+            g.addColorStop(0.5, css(c, a * 0.45));
+            g.addColorStop(1, css(c, 0));
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+        }
+
+        function ringStroke(ctx, x, y, r, c, a, lw) {
+            if (r <= 0 || a <= 0) return;
+            ctx.strokeStyle = css(c, a); ctx.lineWidth = lw;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+        }
+
+        // solid, glowing core with a thin light outline so change markers stay
+        // legible on top of the busy OSM base map
+        function coreDot(ctx, x, y, r, c, a) {
+            if (r <= 0 || a <= 0) return;
+            ctx.save();
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = css(c, a);
+            ctx.shadowColor = css(c, a * 0.7); ctx.shadowBlur = r * 1.8;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.lineWidth = Math.max(1, r * 0.26);
+            ctx.strokeStyle = "rgba(255,255,255," + (0.9 * a) + ")";
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // marker core: cheap cached-sprite glow + a simple solid core (light
+        // base) or additive glow (dark base). No per-frame shadowBlur/gradients.
+        function dot(ctx, x, y, r, c, a, spr) {
+            if (a <= 0) return;
+            var gr = (TH.markerMode === "glow" ? 3.0 : 2.3) * r;
+            var pa = ctx.globalAlpha;
+            ctx.globalAlpha = a;
+            if (spr) ctx.drawImage(spr, x - gr, y - gr, gr * 2, gr * 2);
+            ctx.globalAlpha = pa;
+            if (TH.markerMode !== "glow") {
+                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = css(c, a); ctx.fill();
+                ctx.lineWidth = Math.max(1, r * 0.28);
+                ctx.strokeStyle = "rgba(255,255,255," + (0.9 * a) + ")";
+                ctx.stroke();
+            }
+        }
+
+        function drawMarkers(p, ctx, s) {
+            ctx.save();
+            ctx.globalCompositeOperation = TH.markerMode === "glow" ? "lighter" : "source-over";
+            for (var i = 0; i < markers.length; i++) {
+                var m = markers[i];
+                var x = m.x * s, y = m.y * s, r = m.r * s;
+                var local = (p - m.t0) / m.dur;
+                var c = MK[m.c];
+                var spr = sprites ? sprites[m.c] : null;
+
+                if (m.c === "add") {
+                    if (local <= 0) continue;
+                    var e = clamp(local, 0, 1);
+                    if (m.type === "line" && m.path) {
+                        drawPath(ctx, m.path, s, c, e, local >= 1, spr);
+                    } else if (m.type === "poly" && m.path) {
+                        drawPoly(ctx, m.path, s, x, y, c, e, local >= 1);
+                    } else {
+                        dot(ctx, x, y, r * (0.4 + 0.28 * easeOut(e)), c, local >= 1 ? 0.92 : 0.55 + 0.45 * e, spr);
+                    }
+                    if (local < 1.4) {
+                        var rr = r * (0.5 + 2.4 * clamp(local, 0, 1.2));
+                        ringStroke(ctx, x, y, rr, c, Math.max(0, (1 - clamp(local, 0, 1)) * 0.7), Math.max(1, 1.6 * s));
+                    }
+
+                } else if (m.c === "rem") {
+                    if (local < 0) {
+                        dot(ctx, x, y, r * 0.42, c, 0.85, spr);
+                        ringStroke(ctx, x, y, r * 0.95, c, 0.5, Math.max(1, 1.4 * s));
+                    } else if (local < 1) {
+                        var f = 1 - easeInOut(local);
+                        dot(ctx, x, y, r * 0.42 * f, c, 0.85 * f, spr);
+                        ringStroke(ctx, x, y, r * (0.95 - 0.5 * local), c, 0.6 * f, Math.max(1, 1.4 * s));
+                    }
+
+                } else { // mod
+                    dot(ctx, x, y, r * 0.42, c, local < 0 ? 0.75 : 0.9, spr);
+                    if (local >= 0 && local < 1) {
+                        var rp = r * (0.6 + 2.2 * local);
+                        ringStroke(ctx, x, y, rp, c, (1 - local) * 0.7, Math.max(1, 1.5 * s));
+                        if (local < 0.6) ringStroke(ctx, x, y, r * (0.6 + 3.4 * local), c, (0.6 - local) * 0.55, Math.max(1, 1.3 * s));
+                    }
+                }
+            }
+            ctx.restore();
+        }
+
+        function drawPath(ctx, pts, s, c, e, done, spr) {
+            var total = pts.length;
+            var upto = Math.max(2, Math.floor(total * clamp(e, 0, 1)));
+            ctx.lineJoin = "round"; ctx.lineCap = "round";
+            ctx.strokeStyle = css(c, done ? 0.7 : 0.95);
+            ctx.lineWidth = Math.max(1.6, 2.4 * s);
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0] * s, pts[0][1] * s);
+            for (var i = 1; i < upto; i++) ctx.lineTo(pts[i][0] * s, pts[i][1] * s);
+            ctx.stroke();
+            if (!done && upto > 1 && spr) {
+                var hx = pts[upto - 1][0] * s, hy = pts[upto - 1][1] * s, g = 7 * s;
+                var pa = ctx.globalAlpha; ctx.globalAlpha = 0.9;
+                ctx.drawImage(spr, hx - g, hy - g, g * 2, g * 2);
+                ctx.globalAlpha = pa;
+            }
+        }
+
+        function drawPoly(ctx, pts, s, cx, cy, c, e, done) {
+            var sc = easeOutBack(clamp(e, 0, 1));
+            ctx.save();
+            ctx.beginPath();
+            for (var i = 0; i < pts.length; i++) {
+                var px = cx + (pts[i][0] * s - cx) * sc;
+                var py = cy + (pts[i][1] * s - cy) * sc;
+                if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = css(c, done ? 0.20 : 0.26 * e);
+            ctx.fill();
+            ctx.strokeStyle = css(c, done ? 0.6 : 0.9);
+            ctx.lineWidth = Math.max(1.3, 1.8 * s);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath(); ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+        }
+
+        function ramp(setName, p) {
+            var n = 0, d = 0;
+            for (var i = 0; i < markers.length; i++) {
+                if (markers[i].c !== setName) continue;
+                d++; if (markers[i].t0 <= p) n++;
+            }
+            if (!d) return 0;
+            return Math.round(totals[setName] * (n / d));
+        }
+
+        function drawHUD(p, ctx, w, h, k) {
+            ctx.save();
+            ctx.globalCompositeOperation = "source-over";
+            ctx.textBaseline = "alphabetic"; ctx.textAlign = "left"; ctx.filter = "none";
+
+            var topG = ctx.createLinearGradient(0, 0, 0, 130 * k);
+            topG.addColorStop(0, TH.hudTop[0]); topG.addColorStop(1, TH.hudTop[1]);
+            ctx.fillStyle = topG; ctx.fillRect(0, 0, w, 130 * k);
+            var botG = ctx.createLinearGradient(0, h - 170 * k, 0, h);
+            botG.addColorStop(0, TH.hudBot[0]); botG.addColorStop(1, TH.hudBot[1]);
+            ctx.fillStyle = botG; ctx.fillRect(0, h - 170 * k, w, 170 * k);
+
+            var pad = 22 * k;
+
+            ctx.fillStyle = TH.kick;
+            ctx.font = "600 " + (11 * k) + "px Roboto, sans-serif";
+            ctx.fillText("LIVE CHANGE FEED", pad, pad + 11 * k);
+            ctx.fillStyle = TH.ink;
+            ctx.font = "600 " + (20 * k) + "px 'Space Grotesk', Roboto, sans-serif";
+            ctx.fillText(name, pad, pad + 34 * k);
+
+            // running counters (bottom-centre)
+            var a = ramp("add", p), md = ramp("mod", p), rm = ramp("rem", p);
+            drawCounters(ctx, w / 2, h - 72 * k, k, a, md, rm);
+
+            // progress line
+            var lx = pad, rx = w - pad, ly = h - 26 * k;
+            ctx.strokeStyle = TH.rail; ctx.lineWidth = Math.max(2, 3 * k);
+            ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(rx, ly); ctx.stroke();
+            var px = lx + (rx - lx) * clamp(p, 0, 1);
+            var pg = ctx.createLinearGradient(lx, 0, px, 0);
+            pg.addColorStop(0, TH.railGrad[0]); pg.addColorStop(1, TH.railGrad[1]);
+            ctx.strokeStyle = pg; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(px, ly); ctx.stroke();
+            ctx.fillStyle = TH.railDot; ctx.shadowColor = TH.railGlow; ctx.shadowBlur = 10 * k;
+            ctx.beginPath(); ctx.arc(px, ly, Math.max(3, 5 * k), 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+
+            ctx.fillStyle = TH.sub;
+            ctx.font = "600 " + (12 * k) + "px Roboto, sans-serif";
+            ctx.fillText(beforeLabel, lx, ly - 12 * k);
+            ctx.textAlign = "right"; ctx.fillText(afterLabel, rx, ly - 12 * k);
+
+            ctx.fillStyle = TH.watermark;
+            ctx.font = "400 " + (10 * k) + "px Roboto, sans-serif";
+            ctx.fillText("beforeafter.baato.io", w - pad, pad + 12 * k);
+            ctx.textAlign = "left";
+
+            ctx.restore();
+        }
+
+        function drawCounters(ctx, cx, cy, k, a, md, rm) {
+            var items = [];
+            if (totals.add) items.push(["+" + a, "added", MK.add]);
+            if (totals.mod) items.push(["~" + md, "modified", MK.mod]);
+            if (totals.rem) items.push(["\u2212" + rm, "removed", MK.rem]);
+            if (!items.length) return;
+
+            ctx.save();
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            var numFont = "600 " + (26 * k) + "px 'Space Grotesk', Roboto, sans-serif";
+            var labFont = "400 " + (11 * k) + "px Roboto, sans-serif";
+            var gap = 34 * k;
+            var widths = items.map(function (it) {
+                ctx.font = numFont; var nw = ctx.measureText(it[0]).width;
+                ctx.font = labFont; var lw = ctx.measureText(it[1]).width;
+                return Math.max(nw, lw);
+            });
+            var total = widths.reduce(function (s, x) { return s + x; }, 0) + gap * (items.length - 1);
+            var x = cx - total / 2;
+            for (var i = 0; i < items.length; i++) {
+                var it = items[i], wI = widths[i], midx = x + wI / 2;
+                ctx.fillStyle = css(it[2], 1);
+                if (TH.markerMode === "glow") { ctx.shadowColor = css(it[2], 0.6); ctx.shadowBlur = 10 * k; }
+                ctx.font = numFont; ctx.fillText(it[0], midx, cy);
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = TH.counterLabel;
+                ctx.font = labFont; ctx.fillText(it[1], midx, cy + 20 * k);
+                x += wI + gap;
+            }
+            ctx.restore();
+        }
+
+        function drawVignette(ctx, w, h) {
+            var g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.42, w / 2, h / 2, Math.max(w, h) * 0.78);
+            g.addColorStop(0, css([0, 0, 0], 0)); g.addColorStop(1, TH.vignette);
+            ctx.save(); ctx.globalCompositeOperation = "source-over";
+            ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); ctx.restore();
+        }
+
+        // -----------------------------------------------------------------
+        // Playback
+        // -----------------------------------------------------------------
+        function autoplay() { progress = 0; playFrom(); }
+        function playFrom() {
+            if (progress >= 1) progress = 0;
+            playing = true; lastTs = 0; el.playIcon.innerHTML = ICON_PAUSE;
+            cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+        }
+        function pause() { playing = false; el.playIcon.innerHTML = ICON_PLAY; cancelAnimationFrame(raf); }
+        function stop() { pause(); }
+
+        function tick(ts) {
+            if (!playing) return;
+            if (!lastTs) lastTs = ts;
+            var dt = ts - lastTs; lastTs = ts;
+            progress += dt / (DURATION / speed);
+            if (progress >= 1) { progress = 1; playing = false; el.playIcon.innerHTML = ICON_PLAY; }
+            drawScene(progress, cctx, W, H, null); syncTrack();
+            if (playing) raf = requestAnimationFrame(tick);
+        }
+
+        function syncTrack() {
+            var pct = clamp(progress, 0, 1) * 100;
+            if (el.fill) el.fill.style.width = pct + "%";
+            if (el.thumb) el.thumb.style.left = pct + "%";
+            if (el.track) el.track.setAttribute("aria-valuenow", Math.round(pct));
+        }
+
+        function seekFromEvent(ev) {
+            var rect = el.track.getBoundingClientRect();
+            var x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+            progress = clamp(x / rect.width, 0, 1);
+            drawScene(progress, cctx, W, H, null); syncTrack();
+        }
+
+        // -----------------------------------------------------------------
+        // Video export
+        // -----------------------------------------------------------------
+        function pickMime() {
+            var list = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm", "video/mp4"];
+            for (var i = 0; i < list.length; i++) if (window.MediaRecorder && MediaRecorder.isTypeSupported(list[i])) return list[i];
+            return "";
+        }
+        function download(blob, filename) {
+            var url = URL.createObjectURL(blob), a = document.createElement("a");
+            a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+            setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+        }
+        function slug(s) { return (s || "timelapse").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "timelapse"; }
+
+        function exportVideo() {
+            if (exporting || !built) return;
+            if (!window.MediaRecorder) { showNote("This browser does not support in-page video recording (MediaRecorder)."); return; }
+            var mime = pickMime();
+            if (!mime) { showNote("This browser could not provide a supported video codec for export."); return; }
+
+            pause(); exporting = true; el.exportBtn.disabled = true;
+            var origLabel = el.exportLabel.innerHTML;
+
+            var fps = 30, seconds = DURATION / 1000, totalFrames = Math.round(seconds * fps);
+            var s = Math.min(1, 1280 / W), EW = Math.round(W * s), EH = Math.round(H * s);
+            if (EW % 2) EW--; if (EH % 2) EH--;
+
+            var ec = document.createElement("canvas"); ec.width = EW; ec.height = EH;
+            var ex = ec.getContext("2d");
+            var stream = ec.captureStream(0);
+            var track = stream.getVideoTracks()[0];
+            var manual = track && typeof track.requestFrame === "function";
+
+            var rec;
+            try { rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8000000 }); }
+            catch (e) { exporting = false; el.exportBtn.disabled = false; showNote("Could not start the recorder: " + (e && e.message ? e.message : e)); return; }
+
+            var chunks = [];
+            rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+            var finished = new Promise(function (res) { rec.onstop = res; });
+            rec.start();
+
+            var frameMs = 1000 / fps, f = 0, startWall = performance.now();
+            function step() {
+                var pr = f / totalFrames;
+                drawScene(pr, ex, EW, EH, baseSnap, true);
+                if (manual) track.requestFrame();
+                el.exportLabel.innerHTML = 'Exporting <span class="tl-exp-prog">' + Math.round((f / totalFrames) * 100) + '%</span>';
+                f++;
+                if (f > totalFrames) { setTimeout(function () { rec.stop(); }, 120); return; }
+                var target = startWall + f * frameMs, delay = Math.max(0, target - performance.now());
+                setTimeout(step, delay);
+            }
+            step();
+
+            finished.then(function () {
+                var blob = new Blob(chunks, { type: mime });
+                var ext = mime.indexOf("mp4") >= 0 ? "mp4" : "webm";
+                download(blob, slug(name) + "-changes." + ext);
+                exporting = false; el.exportBtn.disabled = false; el.exportLabel.innerHTML = origLabel;
+                progress = 1; drawScene(1, cctx, W, H, null); syncTrack();
+            });
+        }
+
+        // -----------------------------------------------------------------
+        function setView(v) {
+            var swC = $("tl-sw-compare"), swT = $("tl-sw-tl");
+            if (v === "timelapse") {
+                swT.classList.add("tl-active"); swC.classList.remove("tl-active");
+                swT.setAttribute("aria-selected", "true"); swC.setAttribute("aria-selected", "false");
+                open();
+            } else {
+                swC.classList.add("tl-active"); swT.classList.remove("tl-active");
+                swC.setAttribute("aria-selected", "true"); swT.setAttribute("aria-selected", "false");
+                close();
+            }
+        }
+
+        function wire() {
+            $("tl-sw-compare").addEventListener("click", function () { setView("compare"); });
+            $("tl-sw-tl").addEventListener("click", function () { setView("timelapse"); });
+            $("tl-close").addEventListener("click", function () { setView("compare"); });
+            $("tl-play").addEventListener("click", function () { if (!built) return; if (playing) pause(); else playFrom(); });
+            $("tl-restart").addEventListener("click", function () { if (!built) return; progress = 0; playFrom(); });
+
+            var track = $("tl-track"), dragging = false;
+            var down = function (ev) { if (!built) return; dragging = true; pause(); seekFromEvent(ev); ev.preventDefault(); };
+            var move = function (ev) { if (dragging) { seekFromEvent(ev); ev.preventDefault(); } };
+            var up = function () { dragging = false; };
+            track.addEventListener("mousedown", down);
+            window.addEventListener("mousemove", move);
+            window.addEventListener("mouseup", up);
+            track.addEventListener("touchstart", down, { passive: false });
+            track.addEventListener("touchmove", move, { passive: false });
+            window.addEventListener("touchend", up);
+            track.addEventListener("keydown", function (ev) {
+                if (!built) return;
+                if (ev.key === "ArrowRight") { progress = clamp(progress + 0.02, 0, 1); pause(); drawScene(progress, cctx, W, H, null); syncTrack(); }
+                else if (ev.key === "ArrowLeft") { progress = clamp(progress - 0.02, 0, 1); pause(); drawScene(progress, cctx, W, H, null); syncTrack(); }
+            });
+
+            Array.prototype.forEach.call(document.querySelectorAll("#tl-speed button"), function (btn) {
+                btn.addEventListener("click", function () {
+                    speed = parseFloat(btn.getAttribute("data-speed"));
+                    Array.prototype.forEach.call(document.querySelectorAll("#tl-speed button"), function (b) { b.classList.toggle("tl-active", b === btn); });
+                });
+            });
+
+            Array.prototype.forEach.call(document.querySelectorAll("#tl-basemode button"), function (btn) {
+                btn.addEventListener("click", function () { setBaseMode(btn.getAttribute("data-mode")); });
+            });
+
+            $("tl-export").addEventListener("click", exportVideo);
+
+            document.addEventListener("keydown", function (ev) {
+                if (!el.modal || !el.modal.classList.contains("tl-open")) return;
+                if (ev.key === "Escape") setView("compare");
+                else if ((ev.key === " " || ev.code === "Space") && built && !exporting) { ev.preventDefault(); if (playing) pause(); else playFrom(); }
+            });
+
+            dpr = window.devicePixelRatio || 1;
+        }
+
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wire);
+        else wire();
+    })();
+    </script>
+    <!-- ===== end Change Timelapse engine ===== -->
+
 </body>
 
 </html>
