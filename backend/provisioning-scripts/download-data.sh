@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+# args from the Go worker: $1=year(2-digit) $2=bbox $3=style $4=uuid
+#                          $5=country(geofabrik basename) $6=name $7=continent
 YEAR="${1}"
 UUID="${4}"
 COUNTRY="${5}"
@@ -8,64 +10,70 @@ CONTINENT="${7}"
 
 today_date=$(date +%Y%m%d)
 base="https://download.geofabrik.de/${CONTINENT}"
-
-echo "[download] country=${COUNTRY} continent=${CONTINENT} year=20${YEAR}"
+UA="Mozilla/5.0 (compatible; baato-before-after/1.0; +https://baato.io)"
 
 before_file="/downloads/${COUNTRY}-${YEAR}0101.osm.pbf"
 after_file="/downloads/${COUNTRY}-${today_date}.osm.pbf"
 
-# Fetch $1 -> $2 using a fast multi-connection, resumable download when aria2
-# is available (Geofabrik/Hetzner support range requests), else fall back to
-# wget with resume. Downloads to a .part file and only moves into place on
-# success so a partial file is never treated as a valid cache hit.
-download() {
-    local url="$1"
-    local dest="$2"
-    local dir name part
-    dir="$(dirname "${dest}")"
-    name="$(basename "${dest}")"
-    part="${name}.part"
+echo "[download] country=${COUNTRY} continent=${CONTINENT} year=20${YEAR}"
 
-    echo "[download] fetching ${url}"
-
-    if command -v aria2c >/dev/null 2>&1; then
-        # -x/-s: up to 16 parallel connections; -c: resume; -k1M: split size
-        aria2c \
-            --max-connection-per-server=16 \
-            --split=16 \
-            --min-split-size=1M \
-            --continue=true \
-            --auto-file-renaming=false \
-            --allow-overwrite=true \
-            --file-allocation=none \
-            --summary-interval=5 \
-            --console-log-level=warn \
-            --dir="${dir}" \
-            --out="${part}" \
-            "${url}" || { echo "[download] ERROR: could not download ${url}"; exit 1; }
-    else
-        if ! wget -q --spider "${url}"; then
-            echo "[download] ERROR: file not found on Geofabrik: ${url}"
-            echo "[download] (check country='${COUNTRY}' / continent='${CONTINENT}' are valid Geofabrik paths)"
-            exit 1
-        fi
-        wget --continue --progress=dot:giga "${url}" -O "${dir}/${part}"
-    fi
-
-    mv "${dir}/${part}" "${dest}"
-    echo "[download] saved ${dest}"
+# Does a URL resolve to HTTP 200 (without downloading the body)?
+url_exists() {
+    wget -q --spider --tries=2 --timeout=30 --user-agent="${UA}" "$1"
 }
 
-# historic snapshot (Jan 1 of the chosen year) - immutable, cached forever
+# Robustly fetch $1 -> $2.
+#
+# IMPORTANT: Geofabrik rate-limits per client IP and returns HTTP 502 to
+# aggressive multi-connection download managers (aria2 -x16 etc.). Extra
+# parallel connections do NOT increase throughput on Geofabrik and are the
+# reason the previous version looped on "status=502". So we use a SINGLE
+# resumable connection, with our own retry + exponential backoff for genuine
+# transient 5xx blips.
+fetch() {
+    local url="$1" dest="$2"
+    local tmp="/tmp/$(basename "$dest").${UUID}.part"
+    local try max=6 wait=5
+
+    # Fail fast (with a helpful message) if the file simply isn't published,
+    # instead of hammering the server forever.
+    if ! url_exists "${url}"; then
+        echo "[download] ERROR: not available on Geofabrik: ${url}"
+        echo "[download] Geofabrik's public server keeps only recent dated"
+        echo "[download] snapshots (about the last 90 days) plus '-latest'."
+        echo "[download] A historic date like 20${YEAR}-01-01 may no longer be"
+        echo "[download] published there. Pick a more recent year, or use the"
+        echo "[download] authenticated osm-internal.download.geofabrik.de for old history."
+        return 2
+    fi
+
+    for ((try=1; try<=max; try++)); do
+        echo "[download] (${try}/${max}) ${url}"
+        if wget -c --tries=1 --timeout=120 --user-agent="${UA}" \
+                --progress=dot:giga "${url}" -O "${tmp}"; then
+            mv "${tmp}" "${dest}"
+            echo "[download] saved ${dest} ($(du -h "${dest}" 2>/dev/null | cut -f1))"
+            return 0
+        fi
+        echo "[download] attempt ${try} failed (transient 5xx / throttle); retry in ${wait}s"
+        sleep "${wait}"
+        wait=$(( wait * 2 )); [ "${wait}" -gt 60 ] && wait=60
+    done
+
+    echo "[download] ERROR: gave up on ${url} after ${max} attempts"
+    return 1
+}
+
+# historic snapshot (Jan 1 of the chosen year) — cached across runs
 if [ ! -f "${before_file}" ]; then
-    download "${base}/${COUNTRY}-${YEAR}0101.osm.pbf" "${before_file}"
+    fetch "${base}/${COUNTRY}-${YEAR}0101.osm.pbf" "${before_file}"
 else
     echo "[download] cached ${before_file}"
 fi
 
-# latest snapshot - cached per day
+# latest snapshot — cached per-day
 if [ ! -f "${after_file}" ]; then
-    download "${base}/${COUNTRY}-latest.osm.pbf" "${after_file}"
+    fetch "${base}/${COUNTRY}-latest.osm.pbf" "${after_file}"
 else
     echo "[download] cached ${after_file}"
 fi
