@@ -636,6 +636,84 @@
             opacity: 0;
         }
 
+        #tl-inv-toggle.tl-active { background: #47889d; border-color: #47889d; color: #fff; }
+
+        /* ---- change inspector tooltip ---- */
+        #tl-tip {
+            position: absolute; z-index: 8; display: none;
+            max-width: 220px; padding: 9px 11px;
+            background: #ffffff; border: 1px solid rgba(31,45,58,.14);
+            border-radius: 10px; box-shadow: 0 10px 28px rgba(31,45,58,.22);
+            font-family: Roboto, sans-serif; pointer-events: none;
+        }
+        #tl-tip .tl-tip-state {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px;
+            border-radius: 999px; color: #fff; margin-bottom: 5px;
+        }
+        #tl-tip .tl-tip-name { display: block; font-family: 'Space Grotesk', Roboto, sans-serif; font-weight: 600; font-size: 14px; color: #1f2d3a; }
+        #tl-tip .tl-tip-meta { display: block; font-size: 12px; color: #5a6b78; margin-top: 2px; }
+        .tl-tip-state.tl-state-add, .tl-inv-dot.tl-state-add { background: #17a35c; }
+        .tl-tip-state.tl-state-mod, .tl-inv-dot.tl-state-mod { background: #e08b00; }
+        .tl-tip-state.tl-state-rem, .tl-inv-dot.tl-state-rem { background: #d83a3f; }
+
+        /* ---- change inventory / inspector panel ---- */
+        #tl-inv {
+            position: absolute; top: 0; right: 0; bottom: 0; z-index: 7;
+            width: 340px; max-width: 86%;
+            display: flex; flex-direction: column;
+            background: #ffffff; border-left: 1px solid rgba(31,45,58,.10);
+            box-shadow: -14px 0 40px rgba(31,45,58,.14);
+            transform: translateX(105%); transition: transform .22s ease;
+            font-family: Roboto, sans-serif;
+        }
+        #tl-modal.tl-inv-open #tl-inv { transform: translateX(0); }
+
+        #tl-inv-head {
+            flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 16px 11px; border-bottom: 1px solid rgba(31,45,58,.08);
+        }
+        #tl-inv .tl-inv-title { font-family: 'Space Grotesk', Roboto, sans-serif; font-weight: 600; font-size: 16px; color: #1f2d3a; }
+        #tl-inv .tl-inv-title span { color: #47889d; }
+        #tl-inv-close {
+            width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(31,45,58,.12); background: #fff; color: #5a6b78; border-radius: 8px; cursor: pointer;
+        }
+        #tl-inv-close:hover { background: #f0f3f5; color: #1f2d3a; }
+        #tl-inv-hint { flex: 0 0 auto; padding: 10px 16px; font-size: 11.5px; line-height: 1.5; color: #5a6b78; background: #f6f8f9; }
+        #tl-inv-body { flex: 1 1 auto; overflow-y: auto; padding: 4px 16px 18px; }
+
+        .tl-inv-sec { padding-top: 14px; }
+        .tl-inv-h { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #8a97a2; margin-bottom: 9px; }
+        .tl-inv-h .tl-inv-sub { color: #47889d; letter-spacing: 0; }
+        .tl-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+        .tl-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 11px; border-radius: 999px; cursor: pointer;
+            border: 1px solid rgba(31,45,58,.14); background: #fff;
+            font-family: Roboto, sans-serif; font-size: 12.5px; color: #5a6b78;
+            transition: background .14s ease, color .14s ease, border-color .14s ease, opacity .14s ease;
+            opacity: .5;
+        }
+        .tl-chip b { font-weight: 700; color: inherit; }
+        .tl-chip.tl-on { opacity: 1; color: #1f2d3a; border-color: rgba(71,136,157,.5); background: rgba(71,136,157,.08); }
+        .tl-chip .tl-chip-dot { width: 9px; height: 9px; border-radius: 50%; background: #9aa7b1; }
+        .tl-chip.tl-state-add .tl-chip-dot { background: #17a35c; }
+        .tl-chip.tl-state-mod .tl-chip-dot { background: #e08b00; }
+        .tl-chip.tl-state-rem .tl-chip-dot { background: #d83a3f; }
+
+        .tl-inv-list { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+        .tl-inv-row {
+            display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+            padding: 8px 9px; border: 0; border-radius: 8px; background: transparent; cursor: pointer;
+            font-family: Roboto, sans-serif;
+        }
+        .tl-inv-row:hover { background: rgba(71,136,157,.09); }
+        .tl-inv-dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; }
+        .tl-inv-name { flex: 1 1 auto; font-size: 13.5px; color: #1f2d3a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tl-inv-meta { flex: 0 0 auto; font-size: 11px; color: #8a97a2; }
+        .tl-inv-empty { font-size: 12.5px; line-height: 1.55; color: #6a7883; padding: 6px 2px; }
+
         @media (max-width: 760px) {
             #tl-controls { flex-wrap: wrap; gap: 12px; }
             #tl-track-wrap { order: 5; flex-basis: 100%; }
@@ -643,6 +721,7 @@
             #tl-head .tl-name { font-size: 15px; }
             #tl-switch { top: 14px; right: 14px; }
             .tl-sw-opt { padding: 7px 11px; font-size: 12px; }
+            #tl-inv { width: 100%; max-width: 100%; }
         }
         /* ===== end Change Timelapse ===== */
 
@@ -805,6 +884,10 @@
         <div id="title">
             <span>OSM BEFORE-AFTER MAPS</span>
             <h1>_NAME_</h1>
+            <a id="st-open" href="#" role="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+                View change statistics
+            </a>
             <!-- <div id="style-selector">
                 <label for="style">Choose map style:</label>
                 <select name="style" id="style" onchange="styleChangeHandler()">
@@ -1038,6 +1121,18 @@
                 <div id="tl-loader-text">Rendering the two epochs&hellip;</div>
             </div>
             <div id="tl-note"></div>
+            <div id="tl-tip"></div>
+
+            <aside id="tl-inv" aria-label="Changes inventory">
+                <div id="tl-inv-head">
+                    <div class="tl-inv-title">Changes <span id="tl-inv-count">0</span></div>
+                    <button id="tl-inv-close" type="button" aria-label="Close changes list">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                    </button>
+                </div>
+                <div id="tl-inv-hint">Toggle types on/off, click a named change to locate it, or click any marker on the map to inspect it.</div>
+                <div id="tl-inv-body"></div>
+            </aside>
         </div>
 
         <div id="tl-controls">
@@ -1073,6 +1168,15 @@
                 </div>
             </div>
 
+            <button id="tl-inv-toggle" class="tl-btn" type="button" aria-label="Show changes list">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M8 6h13M8 12h13M8 18h13"></path>
+                    <circle cx="3.5" cy="6" r="1.4" fill="currentColor" stroke="none"></circle>
+                    <circle cx="3.5" cy="12" r="1.4" fill="currentColor" stroke="none"></circle>
+                    <circle cx="3.5" cy="18" r="1.4" fill="currentColor" stroke="none"></circle>
+                </svg>
+            </button>
+
             <div id="tl-basemode" role="group" aria-label="Base map overlay">
                 <button type="button" data-mode="osm" class="tl-active">Map</button>
                 <button type="button" data-mode="dark">Dark</button>
@@ -1099,6 +1203,23 @@
     <!-- ===== end Change Timelapse ===== -->
 
     <!-- ===== Change Timelapse engine (feature-level, self-contained) ===== -->
+    <script>
+        // Load the authoritative, server-computed diff (every add/mod/removal by
+        // OSM id) and exact stats, if this map was provisioned with them.
+        window.__CHANGES = null; window.__STATS = null;
+        (function () {
+            try {
+                fetch("changes.geojson", { cache: "no-store" })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) { if (j && j.features) window.__CHANGES = j; })
+                    .catch(function () {});
+                fetch("stats.json", { cache: "no-store" })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) { if (j) window.__STATS = j; })
+                    .catch(function () {});
+            } catch (e) {}
+        })();
+    </script>
     <script>
     (function () {
         "use strict";
@@ -1172,6 +1293,22 @@
         var LINE_LAYERS = { transportation: 1, waterway: 1 };
         var POLY_LAYERS = { building: 1, water: 1, landuse: 1, park: 1, aeroway: 1 };
 
+        // group raw source-layers into mapper-friendly buckets (for filters + inventory)
+        var BUCKET = {
+            transportation: "roads", waterway: "water", water: "water",
+            building: "buildings", poi: "poi", place: "places",
+            landuse: "land", park: "land", landcover: "land",
+            aeroway: "aero", mountain_peak: "terrain"
+        };
+        var BUCKET_LABEL = {
+            roads: "Roads & paths", buildings: "Buildings", poi: "Points of interest",
+            places: "Places", water: "Water", land: "Land use", aero: "Aeroways",
+            terrain: "Terrain", other: "Other"
+        };
+        var BUCKET_ORDER = ["roads", "buildings", "poi", "places", "water", "land", "aero", "terrain", "other"];
+        function bucketOf(layer) { return BUCKET[layer] || "other"; }
+        var STATE_LABEL = { add: "Added", mod: "Modified", rem: "Removed" };
+
         // ---- state ----
         var built = false, building = false;
         var base = null, beforeMap = null;
@@ -1185,7 +1322,17 @@
         var raf = null, playing = false, progress = 0, lastTs = 0, speed = 1, exporting = false;
         var DURATION = 11000;
         var beforeLabel = "", afterLabel = "", name = "";
-        var MAX_MARKERS = 560;
+        // Hard ceiling only to protect very weak machines in pathologically dense
+        // views. Normal views show every detected change (no more 560 budget).
+        var CAP = 4000;
+        var trimmedNote = "";
+
+        // filters + inventory + inspection
+        var filterState = { add: true, mod: true, rem: true };
+        var filterBucket = {};                 // bucket -> false when hidden
+        var invOpen = false;
+        var hlIdx = -1, hlStart = 0, hlRaf = null;   // click-to-locate pulse
+        function markerVisible(m) { return filterState[m.c] !== false && filterBucket[m.bucket] !== false; }
 
         var el = {};
         function grab() {
@@ -1194,6 +1341,7 @@
             el.note = $("tl-note"); el.play = $("tl-play"); el.playIcon = $("tl-play-icon");
             el.restart = $("tl-restart"); el.track = $("tl-track"); el.fill = $("tl-fill");
             el.thumb = $("tl-thumb"); el.exportBtn = $("tl-export"); el.exportLabel = $("tl-export-label");
+            el.inv = $("tl-inv"); el.invCount = $("tl-inv-count"); el.tip = $("tl-tip");
             comp = $("tl-canvas"); cctx = comp.getContext("2d");
         }
 
@@ -1236,6 +1384,7 @@
             Array.prototype.forEach.call(document.querySelectorAll("#tl-speed button"), function (btn) {
                 btn.classList.toggle("tl-active", btn.getAttribute("data-speed") === "1");
             });
+            hlIdx = -1; setInventory(false); hideTip();
             applyTheme(); updateBaseModeUI();
         }
 
@@ -1411,9 +1560,14 @@
         }
 
         function collect(map) {
-            // returns Map: locKey -> {layer, type, x, y, sig, geom}
+            // returns Map: locKey -> {layer, type, x, y, sig, geom, name, cls, bucket}
             var out = {};
             var cw = map.getContainer().clientWidth * dpr, ch = map.getContainer().clientHeight * dpr;
+            // Finer dedup cell than before (was 6px) so neighbouring changes are
+            // not collapsed. The class is folded into the key so two different
+            // feature kinds sharing a cell both survive, while the same feature
+            // still matches across epochs.
+            var cell = 3.2 * dpr;
             for (var li = 0; li < LAYERS.length; li++) {
                 var layer = LAYERS[li];
                 var feats;
@@ -1426,14 +1580,20 @@
                     if (!ct) continue;
                     var sp = project(map, ct);
                     if (sp[0] < -40 || sp[1] < -40 || sp[0] > cw + 40 || sp[1] > ch + 40) continue;
-                    var gx = Math.round(sp[0] / (6 * dpr)), gy = Math.round(sp[1] / (6 * dpr));
-                    var key = layer + ":" + gx + "," + gy;
-                    if (out[key]) continue;
                     var p = f.properties || {};
-                    var sig = (p.class || "") + "|" + (p.subclass || "") + "|" + (p["name"] || p["name:latin"] || "") + "|" + (p.type || "");
+                    var nm = p["name"] || p["name:latin"] || p["name:en"] || "";
+                    var cls = p.class || p.subclass || p.type || "";
+                    var gx = Math.round(sp[0] / cell), gy = Math.round(sp[1] / cell);
+                    var key = layer + ":" + gx + "," + gy + ":" + cls;
+                    if (out[key]) continue;
+                    // signature drives modify-detection: include every discriminating
+                    // openmaptiles field we can see so real tag edits surface.
+                    var sig = [p.class, p.subclass, nm, p.type, p.oneway, p.brunnel,
+                               p.service, p.ramp, p.network, p.ref, p.level, p.rank,
+                               p.intermittent, p.access].join("|");
                     var type = LINE_LAYERS[layer] ? "line" : (POLY_LAYERS[layer] ? "poly" : "point");
                     if (f.geometry.type === "Point" || f.geometry.type === "MultiPoint") type = "point";
-                    out[key] = { layer: layer, type: type, x: sp[0], y: sp[1], sig: sig, geom: f.geometry, map: map };
+                    out[key] = { layer: layer, type: type, x: sp[0], y: sp[1], sig: sig, geom: f.geometry, map: map, name: nm, cls: cls, bucket: bucketOf(layer) };
                 }
             }
             return out;
@@ -1461,27 +1621,55 @@
             var longest = Math.max(base.getContainer().clientWidth, base.getContainer().clientHeight);
             if (longest * dpr > 1600) dpr = 1600 / longest;
             if (!isFinite(dpr) || dpr <= 0) dpr = 1;
-            var afterF = {}, beforeF = {};
-            try { afterF = collect(base); } catch (e) {}
-            try { beforeF = collect(beforeMap); } catch (e) {}
-
             var add = [], mod = [], rem = [];
-            var k;
-            for (k in afterF) {
-                if (!afterF.hasOwnProperty(k)) continue;
-                if (!beforeF[k]) add.push(afterF[k]);
-                else if (beforeF[k].sig !== afterF[k].sig) mod.push(afterF[k]);
-            }
-            for (k in beforeF) {
-                if (!beforeF.hasOwnProperty(k)) continue;
-                if (!afterF[k]) rem.push(beforeF[k]);
+            if (window.__CHANGES && window.__CHANGES.features && window.__CHANGES.features.length) {
+                // Authoritative server-side diff (by OSM id): EVERY added,
+                // modified and removed feature — nothing missed, any zoom.
+                var fts = window.__CHANGES.features;
+                for (var fi = 0; fi < fts.length; fi++) {
+                    var ft = fts[fi], gp = ft.properties || {}, gg = ft.geometry;
+                    if (!gg) continue;
+                    var gc = centroid(gg); if (!gc) continue;
+                    var gsp; try { gsp = project(base, gc); } catch (e0) { continue; }
+                    var bk = gp.cat || "other";
+                    var fo = { layer: bk, type: (gp.kind || "point"), x: gsp[0], y: gsp[1], sig: "", geom: gg, map: base, name: gp.name || "", cls: bk, bucket: bk };
+                    if (gp.change === "add") add.push(fo);
+                    else if (gp.change === "mod") mod.push(fo);
+                    else if (gp.change === "rem") rem.push(fo);
+                }
+            } else {
+                // Fallback: in-view detection from the rendered vector tiles.
+                var afterF = {}, beforeF = {};
+                try { afterF = collect(base); } catch (e) {}
+                try { beforeF = collect(beforeMap); } catch (e) {}
+                var k;
+                for (k in afterF) {
+                    if (!afterF.hasOwnProperty(k)) continue;
+                    if (!beforeF[k]) add.push(afterF[k]);
+                    else if (beforeF[k].sig !== afterF[k].sig) mod.push(afterF[k]);
+                }
+                for (k in beforeF) {
+                    if (!beforeF.hasOwnProperty(k)) continue;
+                    if (!afterF[k]) rem.push(beforeF[k]);
+                }
             }
 
             totals = { add: add.length, mod: mod.length, rem: rem.length };
+            var totalAll = add.length + mod.length + rem.length;
 
-            // sample down for a clean, legible animation (keep true totals for counters)
-            var budget = { add: Math.round(MAX_MARKERS * 0.62), mod: Math.round(MAX_MARKERS * 0.18), rem: Math.round(MAX_MARKERS * 0.2) };
-            add = sample(add, budget.add); mod = sample(mod, budget.mod); rem = sample(rem, budget.rem);
+            // Show EVERY detected change. Only if a view is pathologically dense
+            // do we trim proportionally (to keep playback smooth on weak
+            // machines) and tell the user exactly how many were held back.
+            trimmedNote = "";
+            if (totalAll > CAP) {
+                var ratio = CAP / totalAll;
+                add = sample(add, Math.max(1, Math.round(add.length * ratio)));
+                mod = sample(mod, Math.max(1, Math.round(mod.length * ratio)));
+                rem = sample(rem, Math.max(1, Math.round(rem.length * ratio)));
+                trimmedNote = "Showing " + (add.length + mod.length + rem.length).toLocaleString() +
+                    " of " + totalAll.toLocaleString() + " changes in view (trimmed for smooth playback). " +
+                    "Zoom in on the compare maps to inspect a smaller area at full detail.";
+            }
 
             markers = [];
             var wpx = base.getContainer().clientWidth * dpr;
@@ -1502,7 +1690,10 @@
             });
             rem.forEach(function (f) {
                 var m = mk(f, "rem");
-                m.t0 = 0.05 + Math.random() * 0.4; m.dur = 0.16;
+                m.t0 = 0.08 + Math.random() * 0.34; m.dur = 0.26;
+                // draw removed roads/areas as their real shape (from the BEFORE
+                // map) so a deleted road is visible, not just a fading dot.
+                if (f.type !== "point") m.path = screenPath(f.map, f.geom);
                 markers.push(m);
             });
 
@@ -1516,7 +1707,10 @@
         function mk(f, c) {
             var r = f.type === "poly" ? 10 : (f.type === "line" ? 7 : 8);
             if (f.layer === "poi" || f.layer === "place") r = 9;
-            return { c: c, type: f.type, x: f.x, y: f.y, r: r * dpr, path: null, t0: 0, dur: 0.14, seed: Math.random() };
+            return {
+                c: c, type: f.type, x: f.x, y: f.y, r: r * dpr, path: null, t0: 0, dur: 0.14, seed: Math.random(),
+                layer: f.layer, name: f.name || "", cls: f.cls || "", bucket: f.bucket || bucketOf(f.layer)
+            };
         }
 
         function sample(arr, n) {
@@ -1556,10 +1750,14 @@
             el.loader.style.display = "none";
             el.play.disabled = false; el.restart.disabled = false;
             el.exportBtn.disabled = false;
+            initFilters();
             updateLegend();
+            buildInventory();
 
             if (!totals.add && !totals.mod && !totals.rem) {
                 showNote("No feature-level differences were found in this view. Try zooming to an area that changed between the two dates.");
+            } else if (trimmedNote) {
+                showNote(trimmedNote);
             } else if (!baseClean) {
                 showNote("The map background couldn't be captured for video export (cross-origin map fonts/sprite), so the exported clip shows the changes on a plain background. The live view is unaffected.");
             }
@@ -1587,10 +1785,12 @@
 
         function updateLegend() {
             var legs = document.querySelectorAll("#tl-legend .tl-leg");
+            var st = ["add", "mod", "rem"], tk = [totals.add, totals.mod, totals.rem];
             if (legs.length === 3) {
-                legs[0].style.display = totals.add ? "inline-flex" : "none";
-                legs[1].style.display = totals.mod ? "inline-flex" : "none";
-                legs[2].style.display = totals.rem ? "inline-flex" : "none";
+                for (var i = 0; i < 3; i++) {
+                    legs[i].style.display = tk[i] ? "inline-flex" : "none";
+                    legs[i].style.opacity = filterState[st[i]] === false ? "0.35" : "1";
+                }
             }
             var sws = document.querySelectorAll("#tl-legend .tl-sw");
             if (sws.length === 3) {
@@ -1599,6 +1799,187 @@
                 sws[2].style.background = css(MK.rem, 1);
             }
         }
+
+        // -----------------------------------------------------------------
+        // Filters, inventory, inspection  (revamp: show + explore ALL changes)
+        // -----------------------------------------------------------------
+        var visTotals = { add: 0, mod: 0, rem: 0 };
+        function esc(s) { return String(s || "").replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); }
+
+        function recomputeVisTotals() {
+            visTotals = { add: 0, mod: 0, rem: 0 };
+            for (var i = 0; i < markers.length; i++) if (markerVisible(markers[i])) visTotals[markers[i].c]++;
+        }
+
+        function initFilters() {
+            filterState = { add: true, mod: true, rem: true };
+            filterBucket = {};
+            for (var i = 0; i < markers.length; i++) filterBucket[markers[i].bucket] = true;
+            recomputeVisTotals();
+        }
+
+        function presentBuckets() {
+            var seen = {}, list = [];
+            for (var i = 0; i < markers.length; i++) seen[markers[i].bucket] = true;
+            for (var j = 0; j < BUCKET_ORDER.length; j++) if (seen[BUCKET_ORDER[j]]) list.push(BUCKET_ORDER[j]);
+            return list;
+        }
+
+        function countBy(kind, val) {
+            var n = 0;
+            for (var i = 0; i < markers.length; i++) {
+                if (kind === "state" && markers[i].c === val) n++;
+                else if (kind === "bucket" && markers[i].bucket === val) n++;
+            }
+            return n;
+        }
+
+        function buildInventory() {
+            if (!el.inv) return;
+            var total = markers.length;
+            if (el.invCount) el.invCount.textContent = total.toLocaleString();
+
+            // filter chips: states
+            var html = '<div class="tl-inv-sec"><div class="tl-inv-h">Change type</div><div class="tl-chips">';
+            ["add", "mod", "rem"].forEach(function (s) {
+                var n = countBy("state", s);
+                if (!n) return;
+                html += '<button class="tl-chip tl-state-' + s + (filterState[s] ? " tl-on" : "") + '" data-state="' + s + '">' +
+                    '<span class="tl-chip-dot"></span>' + STATE_LABEL[s] + ' <b>' + n.toLocaleString() + '</b></button>';
+            });
+            html += '</div></div>';
+
+            // filter chips: buckets
+            var bks = presentBuckets();
+            html += '<div class="tl-inv-sec"><div class="tl-inv-h">Feature type</div><div class="tl-chips">';
+            bks.forEach(function (b) {
+                var n = countBy("bucket", b);
+                html += '<button class="tl-chip' + (filterBucket[b] !== false ? " tl-on" : "") + '" data-bucket="' + b + '">' +
+                    esc(BUCKET_LABEL[b]) + ' <b>' + n.toLocaleString() + '</b></button>';
+            });
+            html += '</div></div>';
+
+            // named changes list (the ones a mapper actually wants to open)
+            var named = [];
+            for (var i = 0; i < markers.length; i++) {
+                var m = markers[i];
+                if (m.name) named.push({ idx: i, m: m });
+            }
+            named.sort(function (a, b) {
+                if (a.m.c !== b.m.c) return a.m.c < b.m.c ? -1 : 1;
+                return a.m.name.localeCompare(b.m.name);
+            });
+            html += '<div class="tl-inv-sec"><div class="tl-inv-h">Named changes <span class="tl-inv-sub">' + named.length.toLocaleString() + '</span></div>';
+            if (!named.length) {
+                html += '<div class="tl-inv-empty">No named features changed in view — the changes are unnamed geometry (buildings, roads, land). Use the type filters and click any marker to inspect it.</div>';
+            } else {
+                html += '<div class="tl-inv-list">';
+                var LIMIT = 400;
+                named.slice(0, LIMIT).forEach(function (o) {
+                    html += '<button class="tl-inv-row" data-idx="' + o.idx + '">' +
+                        '<span class="tl-inv-dot tl-state-' + o.m.c + '"></span>' +
+                        '<span class="tl-inv-name">' + esc(o.m.name) + '</span>' +
+                        '<span class="tl-inv-meta">' + esc(BUCKET_LABEL[o.m.bucket] || o.m.bucket) + (o.m.cls ? " · " + esc(o.m.cls) : "") + '</span>' +
+                        '</button>';
+                });
+                if (named.length > LIMIT) html += '<div class="tl-inv-empty">…and ' + (named.length - LIMIT).toLocaleString() + ' more. Zoom in on the compare maps to narrow the list.</div>';
+                html += '</div>';
+            }
+            html += '</div>';
+
+            el.inv.querySelector("#tl-inv-body").innerHTML = html;
+        }
+
+        function refreshFilters() {
+            recomputeVisTotals();
+            // reflect on/off styles without a full rebuild
+            Array.prototype.forEach.call(el.inv.querySelectorAll("[data-state]"), function (b) {
+                b.classList.toggle("tl-on", filterState[b.getAttribute("data-state")] !== false);
+            });
+            Array.prototype.forEach.call(el.inv.querySelectorAll("[data-bucket]"), function (b) {
+                b.classList.toggle("tl-on", filterBucket[b.getAttribute("data-bucket")] !== false);
+            });
+            updateLegend();
+            drawScene(progress, cctx, W, H, null);
+        }
+
+        function toggleState(s) { filterState[s] = filterState[s] === false ? true : false; refreshFilters(); }
+        function toggleBucket(b) { filterBucket[b] = filterBucket[b] === false ? true : false; refreshFilters(); }
+
+        function setInventory(openIt) {
+            invOpen = openIt;
+            if (el.modal) el.modal.classList.toggle("tl-inv-open", invOpen);
+            var t = $("tl-inv-toggle"); if (t) t.classList.toggle("tl-active", invOpen);
+        }
+
+        // ---- click-to-locate pulse ----
+        function highlight(idx) {
+            if (idx < 0 || idx >= markers.length) return;
+            hlIdx = idx; hlStart = performance.now();
+            if (!playing) { cancelAnimationFrame(hlRaf); pulseTick(); }
+        }
+        function pulseTick() {
+            if (hlIdx < 0) return;
+            var age = (performance.now() - hlStart) / 2600;
+            drawScene(progress, cctx, W, H, null);
+            if (age >= 1) { hlIdx = -1; return; }
+            if (!playing) hlRaf = requestAnimationFrame(pulseTick);
+        }
+        function drawHighlight(ctx, s) {
+            if (hlIdx < 0 || hlIdx >= markers.length) return;
+            var m = markers[hlIdx];
+            if (!markerVisible(m)) return;
+            var age = clamp((performance.now() - hlStart) / 2600, 0, 1);
+            var x = m.x * s, y = m.y * s, c = MK[m.c];
+            ctx.save();
+            ctx.globalCompositeOperation = "source-over";
+            for (var q = 0; q < 2; q++) {
+                var ph = (age * 2 + q * 0.5) % 1;
+                var rr = (10 + 34 * ph) * s * dpr * 0.5;
+                ctx.strokeStyle = css(c, (1 - ph) * 0.9);
+                ctx.lineWidth = Math.max(1.5, 2.4 * s);
+                ctx.beginPath(); ctx.arc(x, y, rr, 0, Math.PI * 2); ctx.stroke();
+            }
+            ctx.fillStyle = css(c, 1);
+            ctx.beginPath(); ctx.arc(x, y, Math.max(3, 4 * s * dpr * 0.5), 0, Math.PI * 2); ctx.fill();
+            ctx.lineWidth = Math.max(1.5, 2 * s); ctx.strokeStyle = "rgba(255,255,255,0.95)"; ctx.stroke();
+            ctx.restore();
+        }
+
+        // ---- inspect: click a marker on the canvas to see what changed ----
+        function inspectAt(clientX, clientY) {
+            if (!built) return;
+            var rect = comp.getBoundingClientRect();
+            var sx = (clientX - rect.left) * (W / rect.width);
+            var sy = (clientY - rect.top) * (H / rect.height);
+            var s = 1; // live canvas is drawn at W,H
+            var best = -1, bestD = (18 * dpr) * (18 * dpr);
+            for (var i = 0; i < markers.length; i++) {
+                var m = markers[i];
+                if (!markerVisible(m)) continue;
+                var dx = m.x * s - sx, dy = m.y * s - sy, d = dx * dx + dy * dy;
+                if (d < bestD) { bestD = d; best = i; }
+            }
+            if (best < 0) { hideTip(); return; }
+            var mm = markers[best];
+            showTip(clientX, clientY, mm);
+            highlight(best);
+        }
+        function showTip(clientX, clientY, m) {
+            if (!el.tip) return;
+            var sRect = el.stage.getBoundingClientRect();
+            el.tip.innerHTML =
+                '<span class="tl-tip-state tl-state-' + m.c + '">' + STATE_LABEL[m.c] + '</span>' +
+                '<span class="tl-tip-name">' + esc(m.name || (BUCKET_LABEL[m.bucket] || m.bucket)) + '</span>' +
+                '<span class="tl-tip-meta">' + esc(BUCKET_LABEL[m.bucket] || m.bucket) + (m.cls ? " · " + esc(m.cls) : "") + '</span>';
+            el.tip.style.display = "block";
+            var tx = clientX - sRect.left + 14, ty = clientY - sRect.top + 14;
+            if (tx + 220 > sRect.width) tx = clientX - sRect.left - 224;
+            if (ty + 80 > sRect.height) ty = clientY - sRect.top - 74;
+            el.tip.style.left = Math.max(6, tx) + "px";
+            el.tip.style.top = Math.max(6, ty) + "px";
+        }
+        function hideTip() { if (el.tip) el.tip.style.display = "none"; }
 
         // -----------------------------------------------------------------
         // Scene renderer (markers + HUD). baseImg != null => export mode.
@@ -1625,6 +2006,7 @@
             }
 
             drawMarkers(p, ctx, s);
+            if (!opaque && hlIdx >= 0) drawHighlight(ctx, s);
             drawHUD(p, ctx, w, h, k);
             drawVignette(ctx, w, h);
         }
@@ -1684,6 +2066,7 @@
             ctx.globalCompositeOperation = TH.markerMode === "glow" ? "lighter" : "source-over";
             for (var i = 0; i < markers.length; i++) {
                 var m = markers[i];
+                if (!markerVisible(m)) continue;
                 var x = m.x * s, y = m.y * s, r = m.r * s;
                 var local = (p - m.t0) / m.dur;
                 var c = MK[m.c];
@@ -1705,13 +2088,33 @@
                     }
 
                 } else if (m.c === "rem") {
-                    if (local < 0) {
-                        dot(ctx, x, y, r * 0.42, c, 0.85, spr);
-                        ringStroke(ctx, x, y, r * 0.95, c, 0.5, Math.max(1, 1.4 * s));
-                    } else if (local < 1) {
-                        var f = 1 - easeInOut(local);
-                        dot(ctx, x, y, r * 0.42 * f, c, 0.85 * f, spr);
-                        ringStroke(ctx, x, y, r * (0.95 - 0.5 * local), c, 0.6 * f, Math.max(1, 1.4 * s));
+                    if (m.type === "line" && m.path) {
+                        // road removal: show it in red, then erase it end-to-start
+                        if (local < 0) {
+                            drawRemLine(ctx, m.path, s, c, 1, 0.8);
+                        } else if (local < 1) {
+                            var keep = 1 - easeInOut(clamp(local, 0, 1));
+                            drawRemLine(ctx, m.path, s, c, keep, 0.85);
+                        }
+                    } else if (m.type === "poly" && m.path) {
+                        // area removal: shrink toward its centre and fade
+                        if (local < 0) {
+                            drawRemPoly(ctx, m.path, s, x, y, c, 1, 0.85);
+                        } else if (local < 1) {
+                            var f4 = 1 - easeInOut(clamp(local, 0, 1));
+                            drawRemPoly(ctx, m.path, s, x, y, c, 0.15 + 0.85 * f4, f4);
+                        }
+                    } else {
+                        // point removal: shrinking dot, outward ring, and an X
+                        if (local < 0) {
+                            dot(ctx, x, y, r * 0.42, c, 0.85, spr);
+                            ringStroke(ctx, x, y, r * 0.95, c, 0.5, Math.max(1, 1.4 * s));
+                        } else if (local < 1) {
+                            var f = 1 - easeInOut(local);
+                            dot(ctx, x, y, r * 0.42 * f, c, 0.85 * f, spr);
+                            ringStroke(ctx, x, y, r * (0.95 + 1.3 * local), c, 0.6 * f, Math.max(1, 1.4 * s));
+                            crossMark(ctx, x, y, r * 0.5 * (0.6 + 0.4 * f), c, 0.85 * f, s);
+                        }
                     }
 
                 } else { // mod
@@ -1762,6 +2165,55 @@
             ctx.restore();
         }
 
+        function drawRemLine(ctx, pts, s, c, keep, alpha) {
+            var total = pts.length;
+            var upto = Math.max(2, Math.floor(total * clamp(keep, 0, 1)));
+            ctx.save();
+            ctx.lineJoin = "round"; ctx.lineCap = "round";
+            ctx.strokeStyle = css(c, alpha);
+            ctx.lineWidth = Math.max(2.2, 3.4 * s);
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0] * s, pts[0][1] * s);
+            for (var i = 1; i < upto; i++) ctx.lineTo(pts[i][0] * s, pts[i][1] * s);
+            ctx.stroke();
+            // bright "erasing head" so the eye follows the removal
+            if (keep < 1 && upto > 1) {
+                var hx = pts[upto - 1][0] * s, hy = pts[upto - 1][1] * s;
+                ringStroke(ctx, hx, hy, 6 * s, c, alpha * 0.9, Math.max(1, 1.8 * s));
+                dot(ctx, hx, hy, 2.4 * s, c, alpha, null);
+            }
+            ctx.restore();
+        }
+
+        function drawRemPoly(ctx, pts, s, cx, cy, c, sc, alpha) {
+            ctx.save();
+            ctx.beginPath();
+            for (var i = 0; i < pts.length; i++) {
+                var px = cx + (pts[i][0] * s - cx) * sc;
+                var py = cy + (pts[i][1] * s - cy) * sc;
+                if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = css(c, 0.22 * alpha);
+            ctx.fill();
+            ctx.strokeStyle = css(c, 0.9 * alpha);
+            ctx.lineWidth = Math.max(1.4, 2 * s);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function crossMark(ctx, x, y, sz, c, alpha, s) {
+            ctx.save();
+            ctx.strokeStyle = css(c, alpha);
+            ctx.lineWidth = Math.max(1.4, 2 * s);
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(x - sz, y - sz); ctx.lineTo(x + sz, y + sz);
+            ctx.moveTo(x + sz, y - sz); ctx.lineTo(x - sz, y + sz);
+            ctx.stroke();
+            ctx.restore();
+        }
+
         function roundRect(ctx, x, y, w, h, r) {
             ctx.beginPath(); ctx.moveTo(x + r, y);
             ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
@@ -1769,13 +2221,13 @@
         }
 
         function ramp(setName, p) {
-            var n = 0, d = 0;
+            var n = 0;
             for (var i = 0; i < markers.length; i++) {
-                if (markers[i].c !== setName) continue;
-                d++; if (markers[i].t0 <= p) n++;
+                var m = markers[i];
+                if (m.c !== setName || !markerVisible(m)) continue;
+                if (m.t0 <= p) n++;
             }
-            if (!d) return 0;
-            return Math.round(totals[setName] * (n / d));
+            return n;
         }
 
         function drawHUD(p, ctx, w, h, k) {
@@ -1829,9 +2281,9 @@
 
         function drawCounters(ctx, cx, cy, k, a, md, rm) {
             var items = [];
-            if (totals.add) items.push(["+" + a, "added", MK.add]);
-            if (totals.mod) items.push(["~" + md, "modified", MK.mod]);
-            if (totals.rem) items.push(["\u2212" + rm, "removed", MK.rem]);
+            if (visTotals.add) items.push(["+" + a, "added", MK.add]);
+            if (visTotals.mod) items.push(["~" + md, "modified", MK.mod]);
+            if (visTotals.rem) items.push(["\u2212" + rm, "removed", MK.rem]);
             if (!items.length) return;
 
             ctx.save();
@@ -1924,6 +2376,7 @@
             if (!mime) { showNote("This browser could not provide a supported video codec for export."); return; }
 
             pause(); exporting = true; el.exportBtn.disabled = true;
+            hlIdx = -1; hideTip();
             var origLabel = el.exportLabel.innerHTML;
 
             var fps = 30, seconds = DURATION / 1000, totalFrames = Math.round(seconds * fps);
@@ -2015,11 +2468,42 @@
                 btn.addEventListener("click", function () { setBaseMode(btn.getAttribute("data-mode")); });
             });
 
+            // inventory / inspector panel
+            $("tl-inv-toggle").addEventListener("click", function () { setInventory(!invOpen); });
+            $("tl-inv-close").addEventListener("click", function () { setInventory(false); });
+
+            // delegated clicks inside the panel (filter chips + named rows)
+            var invEl = $("tl-inv");
+            invEl.addEventListener("click", function (ev) {
+                var chip = ev.target.closest ? ev.target.closest("[data-state],[data-bucket],[data-idx]") : null;
+                if (!chip) return;
+                if (chip.hasAttribute("data-state")) { toggleState(chip.getAttribute("data-state")); }
+                else if (chip.hasAttribute("data-bucket")) { toggleBucket(chip.getAttribute("data-bucket")); }
+                else if (chip.hasAttribute("data-idx")) {
+                    var idx = parseInt(chip.getAttribute("data-idx"), 10);
+                    var m = markers[idx];
+                    if (m) { // make sure it's visible, then locate + pulse
+                        if (filterState[m.c] === false) { filterState[m.c] = true; refreshFilters(); }
+                        if (filterBucket[m.bucket] === false) { filterBucket[m.bucket] = true; refreshFilters(); }
+                        pause(); highlight(idx);
+                    }
+                }
+            });
+
+            // click a marker on the map to inspect what changed there
+            var cv = $("tl-canvas");
+            cv.addEventListener("click", function (ev) { inspectAt(ev.clientX, ev.clientY); });
+            cv.style.cursor = "pointer";
+
             $("tl-export").addEventListener("click", exportVideo);
 
             document.addEventListener("keydown", function (ev) {
                 if (!el.modal || !el.modal.classList.contains("tl-open")) return;
-                if (ev.key === "Escape") setView("compare");
+                if (ev.key === "Escape") {
+                    if (el.tip && el.tip.style.display === "block") { hideTip(); }
+                    else if (invOpen) { setInventory(false); }
+                    else { setView("compare"); }
+                }
                 else if ((ev.key === " " || ev.code === "Space") && built && !exporting) { ev.preventDefault(); if (playing) pause(); else playFrom(); }
             });
 
@@ -2032,6 +2516,350 @@
     </script>
     <!-- ===== end Change Timelapse engine ===== -->
 
+    <!-- ===== Change Statistics (self-contained popup) ===== -->
+    <style>
+        #st-open {
+            position: fixed; top: 72px; right: 22px; z-index: 19999;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 14px; border-radius: 10px; text-decoration: none;
+            font-family: 'Space Grotesk', Roboto, sans-serif; font-weight: 600; font-size: 13px;
+            color: #fff; background: #47889d; border: 1px solid #356b7d;
+            box-shadow: 0 6px 20px rgba(31,45,58,.18);
+            transition: background .15s ease, transform .15s ease;
+        }
+        #st-open:hover { background: #356b7d; transform: translateY(-1px); }
+        @media (max-width: 760px) {
+            #st-open { top: 56px; right: 14px; font-size: 12px; padding: 7px 11px; }
+        }
+        #st-overlay {
+            display: none; position: fixed; inset: 0; z-index: 30000;
+            background: rgba(31, 45, 58, .55); backdrop-filter: blur(3px);
+            align-items: center; justify-content: center; padding: 24px;
+        }
+        #st-overlay.st-show { display: flex; }
+        #st-card {
+            width: 760px; max-width: 100%; max-height: 88vh; overflow-y: auto;
+            background: #fff; border-radius: 16px; box-shadow: 0 30px 80px rgba(31,45,58,.35);
+            font-family: Roboto, sans-serif; color: #1f2d3a;
+            animation: st-pop .22s cubic-bezier(.2,.8,.25,1);
+        }
+        @keyframes st-pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+        #st-head {
+            position: sticky; top: 0; z-index: 2;
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+            padding: 22px 24px 16px; background: linear-gradient(180deg,#fff, #fff 70%, rgba(255,255,255,0));
+            border-bottom: 1px solid rgba(31,45,58,.08);
+        }
+        #st-head .st-kick { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #47889d; }
+        #st-head h3 { margin: 4px 0 0; font-family: 'Space Grotesk', Roboto, sans-serif; font-size: 22px; font-weight: 600; }
+        #st-head .st-range { margin-top: 4px; font-size: 13px; color: #5a6b78; }
+        #st-close {
+            flex: 0 0 auto; width: 36px; height: 36px; border-radius: 9px; cursor: pointer;
+            border: 1px solid rgba(31,45,58,.12); background: #fff; color: #5a6b78;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        #st-close:hover { background: #f0f3f5; color: #1f2d3a; }
+        #st-body { padding: 8px 24px 24px; }
+        .st-sub { font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: #5a6b78; margin: 6px 0 12px; }
+        .st-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 8px 0 16px; }
+        .st-tile { border-radius: 12px; padding: 16px; color: #fff; }
+        .st-tile .st-n { font-family: 'Space Grotesk', Roboto, sans-serif; font-size: 30px; font-weight: 700; line-height: 1; }
+        .st-tile .st-l { font-size: 12.5px; font-weight: 600; opacity: .95; margin-top: 6px; letter-spacing: .02em; }
+        .st-tile.add { background: linear-gradient(135deg,#1fae66,#17a35c); }
+        .st-tile.mod { background: linear-gradient(135deg,#eda01f,#e08b00); }
+        .st-tile.rem { background: linear-gradient(135deg,#e2565b,#d83a3f); }
+        .st-bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: #eef2f4; margin-bottom: 22px; }
+        .st-bar > span { display: block; height: 100%; }
+        .st-bar .add { background: #17a35c; } .st-bar .mod { background: #e08b00; } .st-bar .rem { background: #d83a3f; }
+        .st-h { font-family: 'Space Grotesk', Roboto, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #8a97a2; margin: 20px 0 12px; }
+        .st-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .st-scard { border: 1px solid rgba(31,45,58,.1); border-radius: 12px; padding: 14px 16px; }
+        .st-scard .st-cl { font-size: 12px; color: #5a6b78; }
+        .st-scard .st-cv { font-family: 'Space Grotesk', Roboto, sans-serif; font-size: 20px; font-weight: 600; margin-top: 3px; }
+        .st-scard .st-cd { font-size: 12.5px; font-weight: 600; margin-top: 2px; }
+        .st-up { color: #17a35c; } .st-down { color: #d83a3f; } .st-flat { color: #8a97a2; }
+        .st-rows { display: flex; flex-direction: column; gap: 8px; }
+        .st-row { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 12px; }
+        .st-row .st-name { font-size: 13.5px; font-weight: 600; }
+        .st-track { position: relative; height: 22px; background: #f2f5f6; border-radius: 6px; overflow: hidden; display: flex; }
+        .st-track .add { background: #17a35c; } .st-track .mod { background: #e08b00; } .st-track .rem { background: #d83a3f; }
+        .st-track > span { height: 100%; }
+        .st-row .st-tot { font-size: 12.5px; color: #5a6b78; white-space: nowrap; }
+        .st-row .st-tot b { color: #1f2d3a; }
+        .st-named { display: flex; flex-direction: column; gap: 6px; }
+        .st-nrow { display: flex; align-items: center; gap: 9px; font-size: 13.5px; }
+        .st-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+        .st-dot.add { background: #17a35c; } .st-dot.mod { background: #e08b00; } .st-dot.rem { background: #d83a3f; }
+        .st-nrow .st-meta { color: #8a97a2; font-size: 12px; margin-left: auto; }
+        #st-empty { padding: 30px 8px; text-align: center; color: #6a7883; font-size: 14px; }
+        .st-note { margin-top: 18px; font-size: 11.5px; color: #8a97a2; line-height: 1.5; }
+        @media (max-width: 620px) {
+            .st-tiles, .st-cards { grid-template-columns: 1fr 1fr; }
+            .st-row { grid-template-columns: 90px 1fr; } .st-row .st-tot { grid-column: 2; }
+        }
+    </style>
+
+    <div id="st-overlay" role="dialog" aria-modal="true" aria-label="Change statistics">
+        <div id="st-card">
+            <div id="st-head">
+                <div>
+                    <div class="st-kick">Change Statistics</div>
+                    <h3>What changed here</h3>
+                    <div class="st-range" id="st-range"></div>
+                </div>
+                <button id="st-close" type="button" aria-label="Close">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+            </div>
+            <div id="st-body"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+            var LAYERS = ["building", "poi", "place", "transportation", "waterway", "water", "landuse", "park", "aeroway", "mountain_peak"];
+            var BUCKET = {
+                transportation: "roads", waterway: "water", water: "water",
+                building: "buildings", poi: "poi", place: "places",
+                landuse: "land", park: "land", landcover: "land",
+                aeroway: "aero", mountain_peak: "terrain"
+            };
+            var BUCKET_LABEL = { roads: "Roads & paths", buildings: "Buildings", poi: "Points of interest", places: "Places", water: "Water", land: "Land use", aero: "Aeroways", terrain: "Terrain", other: "Other" };
+            var BUCKET_ORDER = ["buildings", "roads", "poi", "places", "water", "land", "aero", "terrain", "other"];
+            function bucketOf(l) { return BUCKET[l] || "other"; }
+            function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); }
+            function $(id) { return document.getElementById(id); }
+
+            function flatCoords(g, acc) {
+                if (!g) return acc;
+                var c = g.coordinates, t = g.type;
+                if (t === "Point") acc.push(c);
+                else if (t === "LineString" || t === "MultiPoint") acc.push.apply(acc, c);
+                else if (t === "Polygon" || t === "MultiLineString") c.forEach(function (r) { acc.push.apply(acc, r); });
+                else if (t === "MultiPolygon") c.forEach(function (p) { p.forEach(function (r) { acc.push.apply(acc, r); }); });
+                return acc;
+            }
+            function centroid(g) {
+                var pts = flatCoords(g, []); if (!pts.length) return null;
+                var x = 0, y = 0; for (var i = 0; i < pts.length; i++) { x += pts[i][0]; y += pts[i][1]; }
+                return [x / pts.length, y / pts.length];
+            }
+            function haversine(a, b) {
+                var R = 6371000, toR = Math.PI / 180;
+                var dLat = (b[1] - a[1]) * toR, dLon = (b[0] - a[0]) * toR;
+                var la1 = a[1] * toR, la2 = b[1] * toR;
+                var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+            }
+            function lineLen(g) {
+                if (!g) return 0; var t = g.type, len = 0, i;
+                if (t === "LineString") { for (i = 1; i < g.coordinates.length; i++) len += haversine(g.coordinates[i - 1], g.coordinates[i]); }
+                else if (t === "MultiLineString") { g.coordinates.forEach(function (l) { for (var j = 1; j < l.length; j++) len += haversine(l[j - 1], l[j]); }); }
+                return len;
+            }
+            function sigOf(p) {
+                p = p || {};
+                return [p.class, p.subclass, (p.name || p["name:latin"] || p["name:en"] || ""), p.type, p.oneway, p.brunnel, p.service, p.ramp, p.network, p.ref, p.level, p.rank, p.intermittent, p.access].join("|");
+            }
+
+            function collect(map) {
+                var out = {};
+                if (!map || !map.querySourceFeatures) return out;
+                var cell = 6; // CSS px grid
+                for (var li = 0; li < LAYERS.length; li++) {
+                    var layer = LAYERS[li], feats;
+                    try { feats = map.querySourceFeatures("openmaptiles", { sourceLayer: layer }); } catch (e) { continue; }
+                    for (var i = 0; i < feats.length; i++) {
+                        var f = feats[i]; if (!f.geometry) continue;
+                        var ct = centroid(f.geometry); if (!ct) continue;
+                        var sp; try { sp = map.project(ct); } catch (e2) { continue; }
+                        var p = f.properties || {};
+                        var cls = p.class || p.subclass || p.type || "";
+                        var key = layer + ":" + Math.round(sp.x / cell) + "," + Math.round(sp.y / cell) + ":" + cls;
+                        if (out[key]) continue;
+                        out[key] = {
+                            layer: layer, bucket: bucketOf(layer), cls: cls,
+                            name: p.name || p["name:latin"] || p["name:en"] || "",
+                            sig: sigOf(p), len: layer === "transportation" ? lineLen(f.geometry) : 0
+                        };
+                    }
+                }
+                return out;
+            }
+
+            function emptyB() { var o = {}; BUCKET_ORDER.forEach(function (b) { o[b] = { add: 0, mod: 0, rem: 0 }; }); return o; }
+
+            function compute() {
+                var B = collect(window.map), A = collect(window.map2);
+                var byB = emptyB();
+                var tot = { add: 0, mod: 0, rem: 0 };
+                var named = { add: [], rem: [], mod: [] };
+                var k;
+                for (k in A) {
+                    if (!A.hasOwnProperty(k)) continue;
+                    var a = A[k];
+                    if (!B[k]) { byB[a.bucket].add++; tot.add++; if (a.name) named.add.push(a); }
+                    else if (B[k].sig !== a.sig) { byB[a.bucket].mod++; tot.mod++; if (a.name) named.mod.push(a); }
+                }
+                for (k in B) {
+                    if (!B.hasOwnProperty(k)) continue;
+                    if (!A[k]) { byB[B[k].bucket].rem++; tot.rem++; if (B[k].name) named.rem.push(B[k]); }
+                }
+                return { byBucket: byB, tot: tot, named: named };
+            }
+
+            function render(s) {
+                var body = $("st-body");
+                var total = s.tot.add + s.tot.mod + s.tot.rem;
+                if (!total) {
+                    body.innerHTML = '<div id="st-empty">No feature changes were detected in the current view.<br>Zoom to the area you\'re interested in and re-open — detection only covers what\'s visible on screen.</div>';
+                    return;
+                }
+                var pa = (s.tot.add / total * 100), pm = (s.tot.mod / total * 100), pr = (s.tot.rem / total * 100);
+                var h = "";
+                h += '<div class="st-sub">Changes detected in the current map view</div>';
+                h += '<div class="st-tiles">' +
+                    '<div class="st-tile add"><div class="st-n">' + s.tot.add.toLocaleString() + '</div><div class="st-l">Added</div></div>' +
+                    '<div class="st-tile mod"><div class="st-n">' + s.tot.mod.toLocaleString() + '</div><div class="st-l">Modified</div></div>' +
+                    '<div class="st-tile rem"><div class="st-n">' + s.tot.rem.toLocaleString() + '</div><div class="st-l">Removed</div></div>' +
+                    '</div>';
+                h += '<div class="st-bar"><span class="add" style="width:' + pa + '%"></span><span class="mod" style="width:' + pm + '%"></span><span class="rem" style="width:' + pr + '%"></span></div>';
+
+                // change counts by feature type (no before/after totals — those aren't reliable)
+                var maxRow = 1;
+                BUCKET_ORDER.forEach(function (b) { var r = s.byBucket[b]; maxRow = Math.max(maxRow, r.add + r.mod + r.rem); });
+                h += '<div class="st-h">Changes by feature type</div><div class="st-rows">';
+                var anyRow = false;
+                BUCKET_ORDER.forEach(function (b) {
+                    var r = s.byBucket[b], sum = r.add + r.mod + r.rem;
+                    if (!sum) return;
+                    anyRow = true;
+                    var w = function (n) { return (n / maxRow * 100) + "%"; };
+                    h += '<div class="st-row">' +
+                        '<div class="st-name">' + esc(BUCKET_LABEL[b]) + '</div>' +
+                        '<div class="st-track"><span class="add" style="width:' + w(r.add) + '"></span><span class="mod" style="width:' + w(r.mod) + '"></span><span class="rem" style="width:' + w(r.rem) + '"></span></div>' +
+                        '<div class="st-tot"><span class="st-up">+' + r.add + '</span> <span style="color:#e08b00">~' + r.mod + '</span> <span class="st-down">\u2212' + r.rem + '</span></div>' +
+                        '</div>';
+                });
+                if (!anyRow) h += '<div class="st-note">All detected changes are unnamed geometry with no category tag.</div>';
+                h += '</div>';
+
+                // named changes — each one is a real, verifiable feature
+                var picks = [];
+                s.named.add.slice(0, 8).forEach(function (o) { picks.push({ st: "add", o: o }); });
+                s.named.rem.slice(0, 6).forEach(function (o) { picks.push({ st: "rem", o: o }); });
+                s.named.mod.slice(0, 4).forEach(function (o) { picks.push({ st: "mod", o: o }); });
+                if (picks.length) {
+                    h += '<div class="st-h">Named changes you can verify</div><div class="st-named">';
+                    picks.forEach(function (p) {
+                        h += '<div class="st-nrow"><span class="st-dot ' + p.st + '"></span>' + esc(p.o.name) +
+                            '<span class="st-meta">' + (p.st === "add" ? "added" : p.st === "rem" ? "removed" : "modified") + ' \u00b7 ' + esc(BUCKET_LABEL[p.o.bucket] || p.o.bucket) + '</span></div>';
+                    });
+                    h += '</div>';
+                }
+
+                h += '<div class="st-note"><b>How to read this:</b> these are change <i>locations</i> detected between the two dates within the current on-screen view, matched by position and simplified by the map\u2019s zoom level. They show <b>where</b> and <b>what kind</b> of change happened \u2014 treat them as indicative, not exact feature counts (dense clusters and off-screen areas are under-counted). Zoom in and re-open for finer detail.</div>';
+                body.innerHTML = h;
+            }
+
+            function renderAccurate(st) {
+                var body = $("st-body");
+                var t = st.totals || { added: 0, modified: 0, removed: 0 };
+                var total = (t.added || 0) + (t.modified || 0) + (t.removed || 0);
+                if (!total) {
+                    body.innerHTML = '<div id="st-empty">No feature changes between the two dates for this area.</div>';
+                    return;
+                }
+                var pa = t.added / total * 100, pm = t.modified / total * 100, pr = t.removed / total * 100;
+                var h = '<div class="st-sub">Exact changes, computed from the full OSM data for this area</div>';
+                h += '<div class="st-tiles">' +
+                    '<div class="st-tile add"><div class="st-n">' + (t.added || 0).toLocaleString() + '</div><div class="st-l">Added</div></div>' +
+                    '<div class="st-tile mod"><div class="st-n">' + (t.modified || 0).toLocaleString() + '</div><div class="st-l">Modified</div></div>' +
+                    '<div class="st-tile rem"><div class="st-n">' + (t.removed || 0).toLocaleString() + '</div><div class="st-l">Removed</div></div>' +
+                    '</div>';
+                h += '<div class="st-bar"><span class="add" style="width:' + pa + '%"></span><span class="mod" style="width:' + pm + '%"></span><span class="rem" style="width:' + pr + '%"></span></div>';
+
+                var rd = st.roads || {};
+                if (rd.lengthBeforeKm !== undefined) {
+                    var net = rd.netKm || 0;
+                    var ncls = net > 0 ? "st-up" : (net < 0 ? "st-down" : "st-flat");
+                    h += '<div class="st-h">Road &amp; path length</div><div class="st-cards">';
+                    h += '<div class="st-scard"><div class="st-cl">Total length</div><div class="st-cv">' + rd.lengthBeforeKm + ' &rarr; ' + rd.lengthAfterKm + ' km</div><div class="st-cd ' + ncls + '">' + (net >= 0 ? "+" : "\u2212") + Math.abs(net) + ' km net</div></div>';
+                    h += '<div class="st-scard"><div class="st-cl">New vs removed</div><div class="st-cv"><span class="st-up">+' + (rd.addedKm || 0) + '</span> / <span class="st-down">\u2212' + (rd.removedKm || 0) + '</span> km</div><div class="st-cd st-flat">roads added / deleted</div></div>';
+                    h += '</div>';
+                }
+
+                var byc = st.byCategory || {};
+                var order = ["buildings", "roads", "poi", "places", "water", "land", "aero"];
+                var lbl = { buildings: "Buildings", roads: "Roads & paths", poi: "Points of interest", places: "Places", water: "Water", land: "Land use", aero: "Aeroways" };
+                var maxRow = 1;
+                order.forEach(function (b) { var r = byc[b] || {}; maxRow = Math.max(maxRow, (r.added || 0) + (r.modified || 0) + (r.removed || 0)); });
+                h += '<div class="st-h">Changes by feature type</div><div class="st-rows">';
+                order.forEach(function (b) {
+                    var r = byc[b] || {}, sum = (r.added || 0) + (r.modified || 0) + (r.removed || 0);
+                    if (!sum) return;
+                    var w = function (n) { return ((n || 0) / maxRow * 100) + "%"; };
+                    h += '<div class="st-row">' +
+                        '<div class="st-name">' + esc(lbl[b] || b) + '</div>' +
+                        '<div class="st-track"><span class="add" style="width:' + w(r.added) + '"></span><span class="mod" style="width:' + w(r.modified) + '"></span><span class="rem" style="width:' + w(r.removed) + '"></span></div>' +
+                        '<div class="st-tot"><span class="st-up">+' + (r.added || 0) + '</span> <span style="color:#e08b00">~' + (r.modified || 0) + '</span> <span class="st-down">\u2212' + (r.removed || 0) + '</span></div>' +
+                        '</div>';
+                });
+                h += '</div>';
+
+                // a few real named changes, pulled from the change set
+                if (window.__CHANGES && window.__CHANGES.features) {
+                    var named = [];
+                    var F = window.__CHANGES.features;
+                    for (var i = 0; i < F.length && named.length < 14; i++) {
+                        var p = F[i].properties || {};
+                        if (p.name) named.push(p);
+                    }
+                    if (named.length) {
+                        h += '<div class="st-h">Named changes you can verify</div><div class="st-named">';
+                        named.forEach(function (p) {
+                            h += '<div class="st-nrow"><span class="st-dot ' + (p.change === "add" ? "add" : p.change === "rem" ? "rem" : "mod") + '"></span>' + esc(p.name) +
+                                '<span class="st-meta">' + (p.change === "add" ? "added" : p.change === "rem" ? "removed" : "modified") + ' \u00b7 ' + esc((lbl[p.cat] || p.cat || "")) + '</span></div>';
+                        });
+                        h += '</div>';
+                    }
+                }
+
+                h += '<div class="st-note">Exact figures computed by comparing the two OSM extracts object-by-object (by OSM id) for the whole selected area \u2014 not limited to what\u2019s on screen.</div>';
+                body.innerHTML = h;
+            }
+
+            function label(id, fallback) { var e = $(id) || document.querySelector(id); return e ? (e.textContent || "").trim() : fallback; }
+
+            function open() {
+                var before = label("tl-r-before", "Before"), after = label("tl-r-after", "After");
+                var rng = $("st-range"); if (rng) rng.innerHTML = "Before <b>" + esc(before) + "</b> &nbsp;&rarr;&nbsp; After <b>" + esc(after) + "</b>";
+                var body = $("st-body");
+                body.innerHTML = '<div id="st-empty">Calculating changes\u2026</div>';
+                $("st-overlay").classList.add("st-show");
+                setTimeout(function () {
+                    try {
+                        if (window.__STATS && window.__STATS.totals) renderAccurate(window.__STATS);
+                        else render(compute());
+                    } catch (e) {
+                        body.innerHTML = '<div id="st-empty">Could not read the change data yet. Let the map finish loading, then reopen.</div>';
+                    }
+                }, 30);
+            }
+            function close() { $("st-overlay").classList.remove("st-show"); }
+
+            function wire() {
+                var op = $("st-open"); if (op) op.addEventListener("click", function (e) { e.preventDefault(); open(); });
+                var cl = $("st-close"); if (cl) cl.addEventListener("click", close);
+                var ov = $("st-overlay"); if (ov) ov.addEventListener("click", function (e) { if (e.target === ov) close(); });
+                document.addEventListener("keydown", function (e) { if (e.key === "Escape" && $("st-overlay").classList.contains("st-show")) close(); });
+            }
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wire); else wire();
+        })();
+    </script>
+    <!-- ===== end Change Statistics ===== -->
 </body>
+
 
 </html>

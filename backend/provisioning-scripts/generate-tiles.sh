@@ -1,63 +1,101 @@
-#!/bin/bash
-set -o pipefail
+#!/bin/bash 
 
-UUID="${4}"
-
-## tag categories to include in the tiles
+## declare an array variable for themes you want to include in data
 declare -a arr=(
-    "aerialway" "aerodrome" "aeroway" "amenity" "atm" "barrier" "boundary"
-    "building" "healthcare" "highway" "historic" "landcover" "landuse"
-    "leisure" "military" "natural" "park" "place" "railway" "shop" "sport"
-    "tourism" "water" "waterway"
+    "aerialway" 
+    "aerodrome" 
+    "aeroway"  
+    "amenity" 
+    "atm"  
+    "barrier" 
+    "boundary"  
+    "building"  
+    "healthcare"  
+    "highway" 
+    "historic" 
+    "landcover" 
+    "landuse"  
+    "leisure"  
+    "military"  
+    "natural" 
+    "park" 
+    "place" 
+    "railway" 
+    "shop" 
+    "sport" 
+    "tourism"  
+    "water"  
+    "waterway" 
 )
 
-echo "[tiles] start uuid=${UUID}"
 
-[ -f "/extracts/before_${UUID}.osm.pbf" ] || { echo "[tiles] ERROR: missing before extract"; exit 1; }
-[ -f "/extracts/after_${UUID}.osm.pbf" ]  || { echo "[tiles] ERROR: missing after extract"; exit 1; }
+# Accurate, complete change detection between the two snapshots (by OSM id).
+# Produces changes.geojson (every add/mod/removal, for the timelapse) and
+# stats.json (exact counts + road-length changes) in the provision dir.
+# Non-fatal: if it fails, the viewer falls back to in-view detection.
+python3 /provisioning-scripts/compute-changes.py \
+    /extracts/before_${4}.osm.pbf /extracts/after_${4}.osm.pbf \
+    /appdata/provision/${4}/changes.geojson /appdata/provision/${4}/stats.json \
+    || echo "[generate-tiles] change computation skipped (viewer will fall back)"
 
-# 1) split each epoch into per-category, renumbered pbfs
-filter_epoch() {
-    local epoch="$1"
-    for i in "${arr[@]}"; do
-        osmium tags-filter --overwrite -o "/extracts/temp_${epoch}_${UUID}_${i}.osm.pbf" "/extracts/${epoch}_${UUID}.osm.pbf" "nwr/${i}"
-        osmium renumber --overwrite -o "/extracts/${epoch}_${UUID}_${i}.osm.pbf" "/extracts/temp_${epoch}_${UUID}_${i}.osm.pbf"
-        rm -f "/extracts/temp_${epoch}_${UUID}_${i}.osm.pbf"
-    done
-}
 
-echo "[tiles] filtering categories (before)"
-filter_epoch before
-echo "[tiles] filtering categories (after)"
-filter_epoch after
+## now loop through the above array
+for i in "${arr[@]}"
+do
+   osmium tags-filter -o /extracts/temp_before_$4_$i.osm.pbf /extracts/before_${4}.osm.pbf nwr/$i
+   osmium renumber -o /extracts/before_$4_$i.osm.pbf  /extracts/temp_before_$4_$i.osm.pbf
+   rm /extracts/temp_before_$4_$i.osm.pbf
+done
+
+for i in "${arr[@]}"
+do
+   osmium tags-filter -o /extracts/temp_after_$4_$i.osm.pbf /extracts/after_${4}.osm.pbf nwr/$i
+   osmium renumber -o /extracts/after_$4_$i.osm.pbf  /extracts/temp_after_$4_$i.osm.pbf
+   rm /extracts/temp_after_$4_$i.osm.pbf
+done
 
 cd /
 
-# 2) merge categories into a single mbtiles per epoch
-build_epoch() {
-    local epoch="$1"
-    local out="/tmp/${UUID}_${epoch}tiles.mbtiles"
-    rm -f "${out}"
-    for i in "${arr[@]}"; do
-        local f="/extracts/${epoch}_${UUID}_${i}.osm.pbf"
-        [ -f "${f}" ] || continue
-        echo "[tiles] ${epoch}: merge ${i}"
-        # one empty/edge category must not abort the whole build
-        tilemaker "${f}" --merge --compact --output="${out}" || echo "[tiles] ${epoch}: skipped ${i}"
-        rm -f "${f}"
-    done
-    if [ ! -f "${out}" ]; then
-        echo "[tiles] ERROR: no ${epoch} tiles produced"
-        exit 1
-    fi
-    # move into the watched dir only once fully written (mbtileserver fs-watch)
-    mv "${out}" "/appdata/${epoch}tiles/${UUID}.mbtiles"
-    echo "[tiles] wrote /appdata/${epoch}tiles/${UUID}.mbtiles"
-}
+# merge layers one by one
+for i in "${arr[@]}"
+do
+   tilemaker /extracts/before_$4_$i.osm.pbf --merge --compact  --output=/tmp/${4}_beforetiles.mbtiles
+done
 
-build_epoch before
-build_epoch after
+# we need to do this to have Mbtileserver works as expected- 
+# when mbtiles is copied to watched directory when generation is complete (rather than generating directly in watched directly)
+mv /tmp/${4}_beforetiles.mbtiles   /appdata/beforetiles/${4}.mbtiles
 
-rm -f "/extracts/before_${UUID}.osm.pbf" "/extracts/after_${UUID}.osm.pbf"
+# generate tiles from mbtiles
+# mb-util --image_format=pbf /appdata/beforetiles/${4}.mbtiles /appdata/beforetiles/${4} 
 
-echo "[tiles] done"
+
+for i in "${arr[@]}"
+do
+   tilemaker /extracts/after_$4_$i.osm.pbf --merge --compact   --output=/tmp/${4}_aftertiles.mbtiles
+done
+
+mv /tmp/${4}_aftertiles.mbtiles /appdata/aftertiles/${4}.mbtiles
+
+# mb-util --image_format=pbf /appdata/aftertiles/${4}.mbtiles /appdata/aftertiles/${4} 
+
+# gzip the generated tiles
+# cd /appdata/beforetiles/${4}/
+# gzip -7 -r *
+
+# cd /appdata/aftertiles/${4}/
+# gzip -7 -r *
+
+# remove intermediate files
+for i in "${arr[@]}"
+do
+   rm /extracts/before_$4_$i.osm.pbf 
+   rm /extracts/after_$4_$i.osm.pbf 
+done
+
+# remove intemediate mbtiles and extracts
+# rm /appdata/beforetiles/${4}.mbtiles
+# rm /appdata/aftertiles/${4}.mbtiles
+
+rm /extracts/before_${4}.osm.pbf
+rm /extracts/after_${4}.osm.pbf

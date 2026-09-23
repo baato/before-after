@@ -1,16 +1,13 @@
-#!/bin/bash
-set -eo pipefail
+#!/bin/bash 
 
-UUID="${4}"
+mkdir -p /appdata/beforetiles/
+mkdir -p /appdata/beforestyles
 
-echo "[prepare] preparing directories for uuid=${UUID}"
+mkdir -p /appdata/aftertiles/
+mkdir -p /appdata/afterstyles
 
-# base data dirs (also created by start.sh / compose, kept here for safety)
-mkdir -p /downloads /extracts
+mkdir -p /appdata/provision/${4}
 
-# tile + style + provision output dirs
-mkdir -p /appdata/beforetiles /appdata/aftertiles
-mkdir -p /appdata/beforestyles/"${UUID}" /appdata/afterstyles/"${UUID}"
-mkdir -p /appdata/provision/"${UUID}"
+#chown -R www-data:www-data /appdata/
 
-echo "[prepare] done"
+echo "Preparation completed!"

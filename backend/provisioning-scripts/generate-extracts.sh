@@ -1,41 +1,54 @@
 #!/bin/bash
+# Two modes (passed as $10):
+#   standard -> ORIGINAL: bbox-extract year file + latest file. Unchanged.
+#   history  -> bbox-extract the two Geofabrik DATED files (From/To). Same as
+#               standard, just with the dated filenames download-data.sh fetched.
+# Output (unchanged downstream): /extracts/before_<uuid>.osm.pbf, after_<uuid>.osm.pbf
 set -eo pipefail
 
-YEAR="${1}"
-BBOX="${2}"
-UUID="${4}"
-COUNTRY="${5}"
+MODE="${10:-standard}"
+log() { echo "[generate-extracts] $*"; }
 
-today_date=$(date +%Y%m%d)
+# =====================================================================
+# STANDARD (unchanged original behaviour)
+# =====================================================================
+if [ "$MODE" != "history" ]; then
+    echo "Generating  extract..."
+    today_date=$(date +%Y%m%d)
 
-echo "[extract] uuid=${UUID} incoming bbox=${BBOX}"
+    osmium extract --overwrite --bbox ${2} /downloads/${5}-${1}0101.osm.pbf -s simple --set-bounds --output=/extracts/before_${4}_unclipped.osm.pbf
+    osmosis --read-pbf /extracts/before_${4}_unclipped.osm.pbf --bounding-box clipIncompleteEntities=true --write-pbf /extracts/before_${4}.osm.pbf
+    rm /extracts/before_${4}_unclipped.osm.pbf
 
-# The frontend sends the bbox as four numbers (two lng/lat corners) but the
-# corner order can differ (search uses Photon's [W,N,E,S], drawn boxes come as
-# min/max). osmium --bbox strictly wants LEFT,BOTTOM,RIGHT,TOP (minlng,minlat,
-# maxlng,maxlat), so normalise here to be safe regardless of input order.
-IFS=',' read -r c0 c1 c2 c3 <<< "${BBOX}"
-read -r minlng maxlng < <(awk -v a="$c0" -v b="$c2" 'BEGIN{if(a<b)print a,b; else print b,a}')
-read -r minlat maxlat < <(awk -v a="$c1" -v b="$c3" 'BEGIN{if(a<b)print a,b; else print b,a}')
-OSM_BBOX="${minlng},${minlat},${maxlng},${maxlat}"
-echo "[extract] normalised osmium bbox=${OSM_BBOX}"
+    osmium extract --overwrite --bbox ${2} /downloads/${5}-$today_date.osm.pbf -s simple --set-bounds --output=/extracts/after_${4}_unclipped.osm.pbf
+    osmosis --read-pbf /extracts/after_${4}_unclipped.osm.pbf --bounding-box clipIncompleteEntities=true --write-pbf /extracts/after_${4}.osm.pbf
+    rm /extracts/after_${4}_unclipped.osm.pbf
 
-before_src="/downloads/${COUNTRY}-${YEAR}0101.osm.pbf"
-after_src="/downloads/${COUNTRY}-${today_date}.osm.pbf"
-[ -f "${before_src}" ] || { echo "[extract] ERROR: missing ${before_src}"; exit 1; }
-[ -f "${after_src}" ]  || { echo "[extract] ERROR: missing ${after_src}"; exit 1; }
+    rm /downloads/${5}-${1}0101.osm.pbf
+    rm /downloads/${5}-$today_date.osm.pbf
+    exit 0
+fi
 
-echo "[extract] before extract + clip"
-osmium extract --overwrite --bbox "${OSM_BBOX}" "${before_src}" -s simple --set-bounds --output="/extracts/before_${UUID}_unclipped.osm.pbf"
-osmosis --read-pbf "/extracts/before_${UUID}_unclipped.osm.pbf" --bounding-box clipIncompleteEntities=true --write-pbf "/extracts/before_${UUID}.osm.pbf"
-rm -f "/extracts/before_${UUID}_unclipped.osm.pbf"
+# =====================================================================
+# HISTORY (date range) — bbox-extract the two dated Geofabrik files
+# =====================================================================
+BBOX="$2"; UUID="$4"; COUNTRY="$5"; BEFORE_DATE="$8"; AFTER_DATE="$9"
+[ -n "$AFTER_DATE" ] || AFTER_DATE="latest"
+tag_for() { if [ "$1" = "latest" ]; then echo latest; else date -u -d "$1" +%y%m%d; fi; }
 
-echo "[extract] after extract + clip"
-osmium extract --overwrite --bbox "${OSM_BBOX}" "${after_src}" -s simple --set-bounds --output="/extracts/after_${UUID}_unclipped.osm.pbf"
-osmosis --read-pbf "/extracts/after_${UUID}_unclipped.osm.pbf" --bounding-box clipIncompleteEntities=true --write-pbf "/extracts/after_${UUID}.osm.pbf"
-rm -f "/extracts/after_${UUID}_unclipped.osm.pbf"
+extract_one() {  # $1 = date|latest   $2 = before|after
+    local d="$1" ep="$2" tag src unclipped out
+    tag="$(tag_for "$d")"
+    src="/downloads/${COUNTRY}-${tag}.osm.pbf"
+    unclipped="/extracts/${ep}_${UUID}_unclipped.osm.pbf"
+    out="/extracts/${ep}_${UUID}.osm.pbf"
+    [ -s "$src" ] || { log "ERROR: missing dated extract ${src}"; exit 2; }
+    osmium extract --overwrite --bbox ${BBOX} "$src" -s simple --set-bounds --output="$unclipped"
+    osmosis --read-pbf "$unclipped" --bounding-box clipIncompleteEntities=true --write-pbf "$out"
+    rm -f "$unclipped"
+    log "built ${out}"
+}
 
-# Remove the large country downloads now that the extracts exist
-rm -f "${before_src}" "${after_src}"
-
-echo "[extract] done"
+extract_one "$BEFORE_DATE" before
+extract_one "$AFTER_DATE"  after
+log "extracts ready"
