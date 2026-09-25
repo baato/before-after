@@ -19,13 +19,13 @@ if [ "$MODE" != "history" ]; then
     today_date=$(date +%Y%m%d)
 
     if [ ! -f "/downloads/$5-$10101.osm.pbf" ]; then
-        if ! [[ `wget -S --spider https://download.geofabrik.de/$7/$5-$10101.osm.pbf  2>&1 | grep 'HTTP/1.1 200 OK'` ]]; then exit 1; fi
+        if ! [[ `wget -S --spider https://download.geofabrik.de/$7/$5-$10101.osm.pbf  2>&1 | grep -E 'HTTP/[0-9.]+ 200'` ]]; then exit 1; fi
         wget https://download.geofabrik.de/$7/$5-$10101.osm.pbf  -O /tmp/$5-$10101-$4.osm.pbf
         mv /tmp/$5-$10101-$4.osm.pbf /downloads/$5-$10101.osm.pbf
     fi
 
     if [ ! -f "/downloads/$5-$today_date.osm.pbf" ]; then
-        if ! [[ `wget -S --spider https://download.geofabrik.de/$7/$5-latest.osm.pbf  2>&1 | grep 'HTTP/1.1 200 OK'` ]]; then exit 1; fi
+        if ! [[ `wget -S --spider https://download.geofabrik.de/$7/$5-latest.osm.pbf  2>&1 | grep -E 'HTTP/[0-9.]+ 200'` ]]; then exit 1; fi
         wget https://download.geofabrik.de/$7/$5-latest.osm.pbf -O  /tmp/$5-$today_date-$4.osm.pbf
         mv /tmp/$5-$today_date-$4.osm.pbf /downloads/$5-$today_date.osm.pbf
     fi
@@ -51,7 +51,7 @@ ensure() {  # $1 = date|latest ; ensures /downloads/<country>-<tag>.osm.pbf exis
     url="https://download.geofabrik.de/${CONTINENT}/${COUNTRY}-${tag}.osm.pbf"
     out="/downloads/${COUNTRY}-${tag}.osm.pbf"
     if [ -f "$out" ]; then log "cached ${out}"; return 0; fi
-    if ! wget -S --spider "$url" 2>&1 | grep -q 'HTTP/1.1 200 OK'; then
+    if ! wget -S --spider "$url" 2>&1 | grep -qE 'HTTP/[0-9.]+ 200'; then
         log "ERROR: ${url} not available."
         log "       Public Geofabrik keeps only ~90 days of dated snapshots — pick a more recent date."
         return 4

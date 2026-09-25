@@ -160,6 +160,11 @@
 
         <!-- DATE RANGE — history-based, pick two dates -->
         <template v-else>
+          <div
+            v-if="!datesReady"
+            class="dates-gate"
+          >{{ datesGateMessage }}</div>
+
           <div class="field-label">From date</div>
           <v-menu
             v-model="fromMenu"
@@ -167,6 +172,7 @@
             transition="scale-transition"
             offset-y
             min-width="auto"
+            :disabled="!datesReady"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -176,6 +182,7 @@
                 v-model="fromDate"
                 v-bind="attrs"
                 v-on="on"
+                :disabled="!datesReady"
                 :rules="requiredRules"
                 required
               ></v-text-field>
@@ -196,6 +203,7 @@
             transition="scale-transition"
             offset-y
             min-width="auto"
+            :disabled="!datesReady"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -205,6 +213,7 @@
                 v-model="toDate"
                 v-bind="attrs"
                 v-on="on"
+                :disabled="!datesReady"
                 :rules="requiredRules"
                 required
               ></v-text-field>
@@ -219,10 +228,8 @@
           </v-menu>
 
           <v-alert dense text type="info" color="white" class="time-note mt-1 mb-3">
-            Compares two dates using Geofabrik's dated map extracts. Only dates
-            Geofabrik actually publishes for this region are selectable — pick a
-            location first, and the calendar will highlight the available dates
-            (yearly snapshots back to 2014, plus recent months).
+            Only dates Geofabrik actually publishes for this region are
+            selectable (yearly snapshots back to 2014, plus recent months).
           </v-alert>
         </template>
 
@@ -350,6 +357,8 @@ export default {
     toDate: null, // 'YYYY-MM-DD'
     availableDates: [], // dates Geofabrik actually publishes for the region
     availableDatesSet: {},
+    datesLoading: false,
+    datesError: false,
     fromMenu: false,
     toMenu: false,
     today: new Date().toISOString().substr(0, 10),
@@ -389,20 +398,41 @@ export default {
     pickerMax() {
       return this.availableDates.length ? this.availableDates[0] : this.today;
     },
+    datesReady() {
+      return this.availableDates.length > 0;
+    },
+    datesGateMessage() {
+      if (!this.instance.country) {
+        return "Pick a location above first — then choose from the dates Geofabrik has for that region.";
+      }
+      if (this.datesLoading) return "Loading available dates for this region\u2026";
+      if (this.datesError) {
+        return "Couldn't load available dates. Make sure the server can reach download.geofabrik.de, then re-select the location.";
+      }
+      return "No dated extracts are published for this region.";
+    },
   },
   methods: {
     dateAllowed(d) {
-      // when we know Geofabrik's list, only those dates are selectable
-      return this.availableDates.length ? !!this.availableDatesSet[d] : true;
+      // ONLY dates Geofabrik actually publishes are selectable. If the list
+      // hasn't loaded, nothing is selectable (prevents picking a date that
+      // would 404 on download).
+      return !!this.availableDatesSet[d];
     },
     loadAvailableDates() {
       const country = this.instance.country;
       const continent = country ? countryContinents[country] : null;
+      // new region -> clear any previously picked dates and the list
+      this.fromDate = null;
+      this.toDate = null;
+      this.availableDates = [];
+      this.availableDatesSet = {};
+      this.datesError = false;
       if (!country || !continent) {
-        this.availableDates = [];
-        this.availableDatesSet = {};
+        this.datesLoading = false;
         return;
       }
+      this.datesLoading = true;
       const protocol = window.location.protocol;
       axios
         .get(
@@ -415,15 +445,14 @@ export default {
           const set = {};
           dates.forEach((d) => (set[d] = true));
           this.availableDatesSet = set;
-          // drop any already-picked date that isn't actually available
-          if (dates.length) {
-            if (this.fromDate && !set[this.fromDate]) this.fromDate = null;
-            if (this.toDate && !set[this.toDate]) this.toDate = null;
-          }
+          this.datesLoading = false;
+          this.datesError = dates.length === 0;
         })
         .catch(() => {
           this.availableDates = [];
           this.availableDatesSet = {};
+          this.datesLoading = false;
+          this.datesError = true;
         });
     },
     giveReasonForAskingPersonalDetails() {
@@ -743,6 +772,12 @@ export default {
         return true;
       }
       // date range (history)
+      if (!this.datesReady) {
+        this.dateError = this.instance.country
+          ? "Available dates for this region haven't loaded yet."
+          : "Pick a location first so the available dates can load.";
+        return false;
+      }
       if (!this.fromDate || !this.toDate) {
         this.dateError = "Pick both a From and a To date.";
         return false;
@@ -752,9 +787,8 @@ export default {
         return false;
       }
       if (
-        this.availableDates.length &&
-        (!this.availableDatesSet[this.fromDate] ||
-          !this.availableDatesSet[this.toDate])
+        !this.availableDatesSet[this.fromDate] ||
+        !this.availableDatesSet[this.toDate]
       ) {
         this.dateError =
           "Those dates aren't published by Geofabrik for this region — pick highlighted dates only.";
@@ -988,6 +1022,15 @@ export default {
   font-size: 0.72rem;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.75);
+}
+.provision-panel .dates-gate {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
 }
 .provision-panel .region-status {
   margin-top: 8px;

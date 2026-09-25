@@ -2578,6 +2578,9 @@
         .st-scard .st-cv { font-family: 'Space Grotesk', Roboto, sans-serif; font-size: 20px; font-weight: 600; margin-top: 3px; }
         .st-scard .st-cd { font-size: 12.5px; font-weight: 600; margin-top: 2px; }
         .st-up { color: #17a35c; } .st-down { color: #d83a3f; } .st-flat { color: #8a97a2; }
+        .st-rdtot { font-size: 13px; color: #1f2d3a; margin-top: 10px; }
+        .st-rdnote { font-size: 12px; color: #8a97a2; margin-top: 4px; }
+        .st-legend { font-size: 11px; font-weight: 500; color: #8a97a2; letter-spacing: 0; text-transform: none; margin-left: 8px; }
         .st-rows { display: flex; flex-direction: column; gap: 8px; }
         .st-row { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 12px; }
         .st-row .st-name { font-size: 13.5px; font-weight: 600; }
@@ -2780,33 +2783,41 @@
                     '</div>';
                 h += '<div class="st-bar"><span class="add" style="width:' + pa + '%"></span><span class="mod" style="width:' + pm + '%"></span><span class="rem" style="width:' + pr + '%"></span></div>';
 
+                var byc = st.byCategory || {};
                 var rd = st.roads || {};
                 if (rd.lengthBeforeKm !== undefined) {
                     var net = rd.netKm || 0;
                     var ncls = net > 0 ? "st-up" : (net < 0 ? "st-down" : "st-flat");
-                    h += '<div class="st-h">Road &amp; path length</div><div class="st-cards">';
-                    h += '<div class="st-scard"><div class="st-cl">Total length</div><div class="st-cv">' + rd.lengthBeforeKm + ' &rarr; ' + rd.lengthAfterKm + ' km</div><div class="st-cd ' + ncls + '">' + (net >= 0 ? "+" : "\u2212") + Math.abs(net) + ' km net</div></div>';
-                    h += '<div class="st-scard"><div class="st-cl">New vs removed</div><div class="st-cv"><span class="st-up">+' + (rd.addedKm || 0) + '</span> / <span class="st-down">\u2212' + (rd.removedKm || 0) + '</span> km</div><div class="st-cd st-flat">roads added / deleted</div></div>';
+                    h += '<div class="st-h">Road &amp; path length</div>';
+                    h += '<div class="st-cards">';
+                    h += '<div class="st-scard"><div class="st-cl">New roads built</div><div class="st-cv st-up">+' + (rd.addedKm || 0) + ' km</div></div>';
+                    h += '<div class="st-scard"><div class="st-cl">Roads removed</div><div class="st-cv st-down">\u2212' + (rd.removedKm || 0) + ' km</div></div>';
                     h += '</div>';
+                    h += '<div class="st-rdtot">Total road length <b>' + rd.lengthBeforeKm + ' km</b> &rarr; <b>' + rd.lengthAfterKm + ' km</b><span class="' + ncls + '" style="margin-left:8px;font-weight:700">' + (net >= 0 ? "+" : "\u2212") + Math.abs(net) + ' km net</span></div>';
+                    var rmod = (byc.roads && byc.roads.modified) || 0;
+                    if (rmod) h += '<div class="st-rdnote">' + rmod + ' road segment' + (rmod > 1 ? "s" : "") + ' also had tag or shape edits.</div>';
                 }
 
-                var byc = st.byCategory || {};
-                var order = ["buildings", "roads", "poi", "places", "water", "land", "aero"];
-                var lbl = { buildings: "Buildings", roads: "Roads & paths", poi: "Points of interest", places: "Places", water: "Water", land: "Land use", aero: "Aeroways" };
+                // counts only make sense for discrete features — roads are shown by length above
+                var order = ["buildings", "poi", "places", "water", "land", "aero"];
+                var lbl = { buildings: "Buildings", poi: "Points of interest", places: "Places", water: "Water bodies", land: "Land use", aero: "Aeroways" };
                 var maxRow = 1;
                 order.forEach(function (b) { var r = byc[b] || {}; maxRow = Math.max(maxRow, (r.added || 0) + (r.modified || 0) + (r.removed || 0)); });
-                h += '<div class="st-h">Changes by feature type</div><div class="st-rows">';
-                order.forEach(function (b) {
-                    var r = byc[b] || {}, sum = (r.added || 0) + (r.modified || 0) + (r.removed || 0);
-                    if (!sum) return;
-                    var w = function (n) { return ((n || 0) / maxRow * 100) + "%"; };
-                    h += '<div class="st-row">' +
-                        '<div class="st-name">' + esc(lbl[b] || b) + '</div>' +
-                        '<div class="st-track"><span class="add" style="width:' + w(r.added) + '"></span><span class="mod" style="width:' + w(r.modified) + '"></span><span class="rem" style="width:' + w(r.removed) + '"></span></div>' +
-                        '<div class="st-tot"><span class="st-up">+' + (r.added || 0) + '</span> <span style="color:#e08b00">~' + (r.modified || 0) + '</span> <span class="st-down">\u2212' + (r.removed || 0) + '</span></div>' +
-                        '</div>';
-                });
-                h += '</div>';
+                var anyc = order.some(function (b) { var r = byc[b] || {}; return (r.added || 0) + (r.modified || 0) + (r.removed || 0) > 0; });
+                if (anyc) {
+                    h += '<div class="st-h">Feature counts <span class="st-legend">+ added &middot; ~ modified &middot; \u2212 removed</span></div><div class="st-rows">';
+                    order.forEach(function (b) {
+                        var r = byc[b] || {}, sum = (r.added || 0) + (r.modified || 0) + (r.removed || 0);
+                        if (!sum) return;
+                        var w = function (n) { return ((n || 0) / maxRow * 100) + "%"; };
+                        h += '<div class="st-row">' +
+                            '<div class="st-name">' + esc(lbl[b] || b) + '</div>' +
+                            '<div class="st-track"><span class="add" style="width:' + w(r.added) + '"></span><span class="mod" style="width:' + w(r.modified) + '"></span><span class="rem" style="width:' + w(r.removed) + '"></span></div>' +
+                            '<div class="st-tot"><span class="st-up">+' + (r.added || 0) + '</span> <span style="color:#e08b00">~' + (r.modified || 0) + '</span> <span class="st-down">\u2212' + (r.removed || 0) + '</span></div>' +
+                            '</div>';
+                    });
+                    h += '</div>';
+                }
 
                 // a few real named changes, pulled from the change set
                 if (window.__CHANGES && window.__CHANGES.features) {

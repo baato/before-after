@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       accessToken:
-        "pk.eyJ1Ijoic3J2YmgiLCJhIjoiY21yYm1tNzBuMHg0aDMwc2VjY3B3bGZtdSJ9.DzMraI1zpB4c9q0FWTGGpQ",
+        "pk.eyJ1Ijoic3J2YmgiLCJhIjoiY2l5bWtwb2ZsMDAwbzJ2cXo4cm0zczU2diJ9.YBNdguBp6N0s5bEDi25uCA",
       mapView: null,
     };
   },
